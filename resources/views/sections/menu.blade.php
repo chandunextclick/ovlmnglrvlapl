@@ -89,9 +89,21 @@
                 @if (isset($sidebarUserPermissions['view_appreciation'])  && $sidebarUserPermissions['view_appreciation'] == 5 && isset($sidebarUserPermissions['manage_award']) && $sidebarUserPermissions['manage_award'] == 4)
                     <x-sub-menu-item :link="route('awards.index')" :text="__('app.menu.appreciation')" />
                 @endif
+
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+
                 <x-sub-menu-item :link="route('sprofile.index')" :text="__('app.menu.enquiry')" />
 
-                <x-sub-menu-item :link="route('sprofile.essldata')" :text="__('app.menu.essldata')" />    
+                @endif
+
+
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+
+                <x-sub-menu-item :link="route('sprofile.essldata')" :text="__('app.menu.essldata')" /> 
+                
+                @endif
+                
+                
             </div>
         </x-menu-item>
     @endif

@@ -589,6 +589,7 @@ class TaskController extends AccountBaseController
 
     public function update(UpdateTask $request, $id)
     {
+
         $task = Task::with('users', 'label', 'project')->findOrFail($id)->withCustomFields();
 
         $editTaskPermission = user()->permission('edit_tasks');
@@ -608,7 +609,7 @@ class TaskController extends AccountBaseController
         ));
 
     
-
+        
         $dueDate = ($request->has('without_duedate')) ? null : Carbon::createFromFormat($this->company->date_format, $request->due_date)->format('Y-m-d');
         $task->heading = $request->heading;
 
@@ -632,6 +633,8 @@ class TaskController extends AccountBaseController
                 $task->completed_on = null;
             }
         }
+
+       
 
         $task->dependent_task_id = $request->has('dependent') && $request->has('dependent_task_id') && $request->dependent_task_id != '' ? $request->dependent_task_id : null;
         $task->is_private = $request->has('is_private') ? 1 : 0;

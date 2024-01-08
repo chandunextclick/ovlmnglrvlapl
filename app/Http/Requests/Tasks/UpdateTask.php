@@ -78,7 +78,7 @@ class UpdateTask extends CoreRequest
 
         if ($this->has('dependent') && $this->dependent_task_id != '') {
             $dependentTask = Task::findOrFail($this->dependent_task_id);
-            $rules['start_date'] = 'required|date_format:"' . $setting->date_format . '"|after_or_equal:"' . $dependentTask->due_date->format($setting->date_format) . '"';
+            $rules['start_date'] = 'required|date_format:"' . $setting->date_format .'"';
         }
 
         $rules['user_id.0'] = 'required_with:is_private';

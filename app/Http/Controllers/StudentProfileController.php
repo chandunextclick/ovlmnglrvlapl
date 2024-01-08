@@ -156,6 +156,8 @@ public function show($id)
 
 public function essldata(Request $request){
 
+
+
     $data['pageTitle']= $this->pageTitle;
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
