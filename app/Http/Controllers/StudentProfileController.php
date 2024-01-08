@@ -247,6 +247,7 @@ GROUP BY e1.empcode, e1.logdate,users.name
 $data['query']=$query;
 $data['essllog'] = DB::select($query);
 
+$user['name']='chandu';
 Mail::send('employees.ajax.mail',$data,function($messages) use ($user){
 
     $messages->to('chandunextclick@gmail.com');
