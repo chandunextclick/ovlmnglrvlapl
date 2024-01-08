@@ -5,6 +5,8 @@ use App\DataTables\EnquiryDataTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use Mail;
+
 class StudentProfileController extends AccountBaseController
 {
 
@@ -245,6 +247,12 @@ GROUP BY e1.empcode, e1.logdate,users.name
 $data['query']=$query;
 $data['essllog'] = DB::select($query);
 
+Mail::send('employees.ajax.mail',$data,function($messages) use ($user){
+
+    $messages->to('chandunextclick@gmail.com');
+    $messages->subject('Hello Chandu');
+
+});
 
     return view('employees.ajax.essllog',$data);
 
