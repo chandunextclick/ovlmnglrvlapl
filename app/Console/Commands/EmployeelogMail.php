@@ -85,7 +85,7 @@ class EsslCommand extends Command
     $user['name']='Next Click';
     Mail::send('employees.ajax.mail',$data,function($messages) use ($user){
 
-    $messages->to('neerajnextclick@gmail.com');
+    $messages->to('chandunextclick@gmail.com');
     $messages->subject('Hello Chandu');
 
 });

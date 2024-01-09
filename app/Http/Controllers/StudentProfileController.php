@@ -255,7 +255,7 @@ $messages->subject('Hello Chandu');
 
 });
 
-return view('employees.ajax.mail',$data);
+return view('employees.ajax.essllog',$data);
 
 }
 
