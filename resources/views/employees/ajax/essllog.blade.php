@@ -41,7 +41,7 @@ input[type="date"] {
         <div class="d-flex flex-column w-tables rounded mt-3 bg-white">
 
         <div class="container">
-    <table id="example" class="table table-striped" style="width:100%">
+        <table id="example" class="table table-striped" style="width:100%">
         <thead>
             <tr>
                 <th>Employee Code</th>
