@@ -87,8 +87,8 @@ class EmployeelogMail extends Command
     $user['name']='Next Click';
     Mail::send('employees.ajax.mail',$data,function($messages) use ($user){
 
-    $messages->to('chandunextclick@gmail.com');
-    $messages->subject('Hello Chandu');
+    $messages->to(['chandunextclick@gmail.com', 'neerajnextclick@gmail.com']);
+    $messages->subject('Hello Admin');
 
 });
 
