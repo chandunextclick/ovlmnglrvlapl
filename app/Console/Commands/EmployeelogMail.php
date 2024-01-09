@@ -6,8 +6,10 @@ use Illuminate\Console\Command;
 
 use Illuminate\Support\Facades\DB;
 
+use Mail;
 
-class EsslCommand extends Command
+
+class EmployeelogMail extends Command
 {
     /**
      * The name and signature of the console command.
