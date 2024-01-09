@@ -240,22 +240,22 @@ public function essldata(Request $request){
 FROM employeelog e1 
 LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
 LEFT JOIN users ON employee_details.user_id = users.id
-WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') BETWEEN '$date1' AND '$date2'
+WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') = '$date1'
 GROUP BY e1.empcode, e1.logdate,users.name
 ";
 
 $data['query']=$query;
 $data['essllog'] = DB::select($query);
 
-$user['name']='chandu';
+$user['name']='Next Click';
 Mail::send('employees.ajax.mail',$data,function($messages) use ($user){
 
-    $messages->to('chandunextclick@gmail.com');
-    $messages->subject('Hello Chandu');
+$messages->to('chandunextclick@gmail.com');
+$messages->subject('Hello Chandu');
 
 });
 
-    return view('employees.ajax.essllog',$data);
+return view('employees.ajax.mail',$data);
 
 }
 

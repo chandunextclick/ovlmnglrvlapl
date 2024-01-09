@@ -23,6 +23,7 @@ use App\Console\Commands\AutoCreateRecurringTasks;
 use App\Console\Commands\SendAutoFollowUpReminder;
 use App\Console\Commands\AutoCreateRecurringExpenses;
 use App\Console\Commands\EsslCommand;
+use App\Console\Commands\EmployeelogMail;
 use App\Console\Commands\AutoCreateRecurringInvoices;
 use App\Console\Commands\SuperAdmin\FreeLicenceRenew;
 
@@ -58,7 +59,8 @@ class Kernel extends ConsoleKernel
         BirthdayReminderCommand::class,
         SendTimeTracker::class,
         FreeLicenceRenew::class,
-        EsslCommand::class
+        EsslCommand::class,
+        EmployeelogMail::class
     ];
 
     /**
@@ -93,6 +95,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('delete-seen-notification')->daily()->timezone($timezone);
         $schedule->command('logcleaner:run')->daily()->timezone($timezone);
         $schedule->command('update-exchange-rate')->daily()->timezone($timezone);
+        $schedule->command('empdaily-log')->daily()->timezone($timezone);
 
         $schedule->command('clear-null-session')->hourly();
         $schedule->command('create-database-backup')->hourly();
@@ -100,6 +103,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('add-missing-permissions')->everyThirtyMinutes();
         $schedule->command('send-time-tracker')->everyMinute();
         $schedule->command('essl-log')->everyMinute();
+
 
         // WORKSUITESAAS
         $schedule->command('free-licence-renew')->daily();
