@@ -31,6 +31,16 @@ class EsslCommand extends Command
     public function handle()
     {
 
+        $sql = "
+            DELETE e1
+            FROM employeelog e1
+            JOIN employeelog e2 ON e1.essl = e2.essl AND e1.id > e2.id
+        ";
+
+        DB::delete($sql);
+
+        DB::commit();
+
         $url = 'http://chandunextclick-001-site1.anytempurl.com/getessldata.php'; // Replace with the URL you want to fetch data from
 
 
