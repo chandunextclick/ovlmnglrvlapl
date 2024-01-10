@@ -512,7 +512,7 @@ class TaskController extends AccountBaseController
             || ($this->task->project && ($this->task->project->project_admin == user()->id))
             || ($editTaskPermission == 'both' && (in_array(user()->id, $taskUsers) || $this->task->added_by == user()->id))
             || ($editTaskPermission == 'owned' && (in_array('client', user_roles()) && $this->task->project && ($this->task->project->client_id == user()->id)))
-            || ($editTaskPermission == 'both' && (in_array('client', user_roles()) && ($this->task->project && ($this->task->project->client_id == user()->id)) || $this->task->added_by == user()->id))
+            || ($editTaskPermission == 'both' && (in_array('client', user_roles()) && ($this->task->project && ($this->task->project->client_id == user()->id)) || $this->task->added_by == user()->id || in_array(user()->id,$headIds)))
         ));
 
         if (!empty($this->task->getCustomFieldGroupsWithFields())) {
