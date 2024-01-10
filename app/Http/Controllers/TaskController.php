@@ -597,23 +597,25 @@ class TaskController extends AccountBaseController
 
         $editTaskPermission = user()->permission('edit_tasks');
         $taskUsers = $task->users->pluck('id')->toArray();
+        
         $this->headIds = DB::table('project_departments')
                         ->leftJoin('teams', 'project_departments.team_id', 'teams.id') // connecting department with teams
-                        ->where('project_id',$this->task->project_id)
+                        ->where('project_id',$task->project_id)
                         ->pluck('head_id')
                         ->toArray();
 
+        
     
         abort_403(!($editTaskPermission == 'all'
             || ($editTaskPermission == 'owned' && in_array(user()->id, $taskUsers))
-            || ($editTaskPermission == 'added' && ($this->task->added_by == user()->id || in_array(user()->id,$headIds)))
-            || ($this->task->project && ($this->task->project->project_admin == user()->id))
-            || ($editTaskPermission == 'both' && (in_array(user()->id, $taskUsers) || ($this->task->added_by == user()->id || in_array(user()->id,$this->headIds))))
-            || ($editTaskPermission == 'owned' && (in_array('client', user_roles()) && $this->task->project && ($this->task->project->client_id == user()->id)))
-            || ($editTaskPermission == 'both' && (in_array('client', user_roles()) && ($this->task->project && ($this->task->project->client_id == user()->id)) || ($this->task->added_by == user()->id || in_array(user()->id,$this->headIds))))
+            || ($editTaskPermission == 'added' && ($task->added_by == user()->id || in_array(user()->id,$headIds)))
+            || ($task->project && ($task->project->project_admin == user()->id))
+            || ($editTaskPermission == 'both' && (in_array(user()->id, $taskUsers) || ($task->added_by == user()->id || in_array(user()->id,$this->headIds))))
+            || ($editTaskPermission == 'owned' && (in_array('client', user_roles()) && $task->project && ($task->project->client_id == user()->id)))
+            || ($editTaskPermission == 'both' && (in_array('client', user_roles()) && ($task->project && ($task->project->client_id == user()->id)) || ($task->added_by == user()->id || in_array(user()->id,$this->headIds))))
         ));
 
-    
+        
         
         $dueDate = ($request->has('without_duedate')) ? null : Carbon::createFromFormat($this->company->date_format, $request->due_date)->format('Y-m-d');
         $task->heading = $request->heading;
