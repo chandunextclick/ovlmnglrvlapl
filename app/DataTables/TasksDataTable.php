@@ -373,8 +373,9 @@ class TasksDataTable extends BaseDataTable
             ->leftJoin('project_departments', 'project_departments.project_id', 'tasks.project_id') //connecting taks with project_department
             ->leftJoin('teams', 'project_departments.team_id', 'teams.id') // connecting department with teams
             ->leftJoin('tasks as dependent', 'dependent.id', '=', 'tasks.dependent_task_id')
+            ->leftJoin('taskboard_columns as dependentboard', 'dependentboard.id', '=', 'dependent.board_column_id')
             ->selectRaw('tasks.id, tasks.task_short_code, tasks.added_by, projects.project_name, projects.project_admin, tasks.heading, client.name as clientName, creator_user.name as created_by, creator_user.image as created_image, tasks.board_column_id,
-             tasks.due_date,tasks.created_at,tasks.updated_at,tasks.completed_on,taskboard_columns.column_name as board_column, taskboard_columns.label_color,
+             tasks.due_date,tasks.created_at,tasks.updated_at,tasks.completed_on,taskboard_columns.column_name as board_column, taskboard_columns.label_color,dependentboard.slug,
               tasks.project_id, tasks.is_private ,( select count("id") from pinned where pinned.task_id = tasks.id and pinned.user_id = ' . user()->id . ') as pinned_task')
             ->addSelect('tasks.company_id') // Company_id is fetched so the we have fetch company relation with it)
             ->with('users', 'activeTimerAll', 'boardColumn', 'activeTimer', 'timeLogged', 'timeLogged.breaks', 'userActiveTimer', 'userActiveTimer.activeBreak', 'labels', 'taskUsers')
@@ -469,7 +470,6 @@ class TasksDataTable extends BaseDataTable
             
             if ($this->viewTaskPermission == 'owned') {
 
-                $model->leftJoin('taskboard_columns as dependentboard', 'dependentboard.id', '=', 'dependent.board_column_id');
                 $model->where(function ($q) use ($request) {  
                     $q->where('task_users.user_id', '=', user()->id);
                     $q->where(function ($query) {
@@ -595,6 +595,11 @@ class TasksDataTable extends BaseDataTable
                 'fnDrawCallback' => 'function( oSettings ) {
                     $("#allTasks-table .select-picker").selectpicker();
                     $(".bs-tooltip-top").removeClass("show");
+                }',
+                'createdRow' => 'function (row, data, dataIndex) {
+                    if (data.slug == "completed") {
+                        $(row).addClass("bg-success"); // Add the "row-green" class for rows with priority 1
+                    }
                 }',
             ])
             ->buttons(Button::make(['extend' => 'excel', 'text' => '<i class="fa fa-file-export"></i> ' . trans('app.exportExcel')]));
