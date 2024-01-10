@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DataTables\TasksDataTable;
 use App\Events\TaskReminderEvent;
+use App\Events\TaskEvent;
 use App\Helper\Reply;
 use App\Http\Requests\Tasks\StoreTask;
 use App\Http\Requests\Tasks\UpdateTask;

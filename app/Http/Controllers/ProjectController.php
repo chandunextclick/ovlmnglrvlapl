@@ -703,7 +703,7 @@ class ProjectController extends AccountBaseController
         $this->projectcompletedtasks =  DB::table('tasks')
                                         ->join('taskboard_columns', 'taskboard_columns.id', '=', 'tasks.board_column_id')
                                         ->join('task_results', 'task_results.task_id', '=', 'tasks.id')
-                                        ->where('tasks.project_id', '=', 374)
+                                        ->where('tasks.project_id', '=', $id)
                                         ->where('taskboard_columns.slug', '=', 'completed')
                                         ->select('tasks.heading', 'task_results.result')
                                         ->get();
