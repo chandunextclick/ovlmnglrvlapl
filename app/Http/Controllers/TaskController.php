@@ -503,16 +503,19 @@ class TaskController extends AccountBaseController
         $this->task = Task::with('users', 'label', 'project')->findOrFail($id)->withCustomFields();
         $this->taskUsers = $taskUsers = $this->task->users->pluck('id')->toArray();
         $this->headIds = DB::table('project_departments')
-                            ->where('project_id',$this->task->project_id)
-                            ->pluck('team_id')
-                            ->toArray();
+                        ->leftJoin('teams', 'project_departments.team_id', 'teams.id') // connecting department with teams
+                        ->where('project_id',$this->task->project_id)
+                        ->pluck('head_id')
+                        ->toArray();
+
+    
         abort_403(!($editTaskPermission == 'all'
             || ($editTaskPermission == 'owned' && in_array(user()->id, $taskUsers))
             || ($editTaskPermission == 'added' && ($this->task->added_by == user()->id || in_array(user()->id,$headIds)))
             || ($this->task->project && ($this->task->project->project_admin == user()->id))
-            || ($editTaskPermission == 'both' && (in_array(user()->id, $taskUsers) || $this->task->added_by == user()->id))
+            || ($editTaskPermission == 'both' && (in_array(user()->id, $taskUsers) || ($this->task->added_by == user()->id || in_array(user()->id,$this->headIds))))
             || ($editTaskPermission == 'owned' && (in_array('client', user_roles()) && $this->task->project && ($this->task->project->client_id == user()->id)))
-            || ($editTaskPermission == 'both' && (in_array('client', user_roles()) && ($this->task->project && ($this->task->project->client_id == user()->id)) || $this->task->added_by == user()->id || in_array(user()->id,$headIds)))
+            || ($editTaskPermission == 'both' && (in_array('client', user_roles()) && ($this->task->project && ($this->task->project->client_id == user()->id)) || ($this->task->added_by == user()->id || in_array(user()->id,$this->headIds))))
         ));
 
         if (!empty($this->task->getCustomFieldGroupsWithFields())) {
