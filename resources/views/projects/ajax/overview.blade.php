@@ -205,6 +205,27 @@ $memberIds = $project->members->pluck('user_id')->toArray();
     
         <!--  -->
 
+        <div class="row">
+            <!-- PROJECT Completed Results -->
+            <div class="col-md-12 mb-4">
+                <x-cards.data :title="__('modules.projects.completetaskresult')"
+                    otherClasses="d-flex d-xl-flex d-lg-block d-md-flex  justify-content-between align-items-center">
+
+                    @foreach ($projectcompletedtasks  as $completedtasks)
+
+                    <div>
+
+                    <h6>{{ $completedtasks->heading }}</h6>
+
+                    {!! ucfirst($completedtasks->result) !!}
+
+                    </div>
+                    
+                    @endforeach
+                </x-cards.data>
+            </div>
+        </div>
+
         <!-- TASK STATUS AND BUDGET START -->
         <div class="row mb-4">
             <!-- TASK STATUS START -->

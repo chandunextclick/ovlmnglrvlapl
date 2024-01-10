@@ -681,6 +681,7 @@ class ProjectController extends AccountBaseController
 
         $this->projectStatusColor = ProjectStatusSetting::where('status_name', $this->project->status)->first();
 
+
         $memberIds = $this->project->members->pluck('user_id')->toArray();
 
         abort_403(!(
@@ -698,6 +699,16 @@ class ProjectController extends AccountBaseController
         if (!empty($this->project->getCustomFieldGroupsWithFields())) {
             $this->fields = $this->project->getCustomFieldGroupsWithFields()->fields;
         }
+
+        $this->projectcompletedtasks =  DB::table('tasks')
+                                        ->join('taskboard_columns', 'taskboard_columns.id', '=', 'tasks.board_column_id')
+                                        ->join('task_results', 'task_results.task_id', '=', 'tasks.id')
+                                        ->where('tasks.project_id', '=', 374)
+                                        ->where('taskboard_columns.slug', '=', 'completed')
+                                        ->select('tasks.heading', 'task_results.result')
+                                        ->get();
+
+
 
         $this->messageSetting = MessageSetting::first();
         $this->projectStatus = ProjectStatusSetting::where('status', 'active')->get();

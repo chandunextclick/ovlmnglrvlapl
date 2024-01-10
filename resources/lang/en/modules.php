@@ -335,6 +335,7 @@ return array (
         'clientTaskNotification' => 'Send task notification to client',
         'allProject' => 'All Projects',
         'withoutDeadline' => 'There is no project deadline',
+        'completetaskresult' => 'Completed Tasks Results',
         'pause' => 'Pause',
         'resume' => 'Resume',
         'cancel' => 'Cancel',

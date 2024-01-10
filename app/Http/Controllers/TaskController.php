@@ -708,6 +708,7 @@ class TaskController extends AccountBaseController
         $this->viewTaskNotePermission = user()->permission('view_task_notes');
         $this->viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
 
+
         $this->task = Task::with(['boardColumn', 'project', 'users', 'label', 'approvedTimeLogs',
                                 'approvedTimeLogs.user', 'approvedTimeLogs.activeBreak','comments',
                                 'comments.commentEmoji', 'comments.like', 'comments.dislike', 'comments.likeUsers',
@@ -725,13 +726,13 @@ class TaskController extends AccountBaseController
             ->withCount('subtasks', 'files', 'comments', 'activeTimerAll')
             ->findOrFail($id)->withCustomFields();
 
-        $this->taskUsers = $taskUsers = $this->task->users->pluck('id')->toArray();
-        
         $this->headIds = DB::table('project_departments')
+        ->leftJoin('teams', 'project_departments.team_id', 'teams.id') // connecting department with teams
         ->where('project_id',$this->task->project_id)
-        ->pluck('team_id')
+        ->pluck('head_id')
         ->toArray();
 
+        $this->taskUsers = $taskUsers = $this->task->users->pluck('id')->toArray();
 
         $this->taskSettings = TaskSetting::first();
 

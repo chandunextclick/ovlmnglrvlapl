@@ -2,6 +2,9 @@
 $editTaskPermission = user()->permission('edit_tasks');
 $sendReminderPermission = user()->permission('send_reminder');
 $changeStatusPermission = user()->permission('change_status');
+
+
+
 @endphp
 
 <div id="task-detail-section">
@@ -72,7 +75,7 @@ $changeStatusPermission = user()->permission('change_status');
                                             href="javascript:;">@lang('modules.tasks.reminder')</a>
                                     @endif
 
-                                    @if ($editTaskPermission == 'all' || ($editTaskPermission == 'added' && $task->added_by == user()->id) || ($task->project && $task->project->project_admin == user()->id))
+                                    @if ($editTaskPermission == 'all' || (($editTaskPermission == 'added' || $editTaskPermission == 'both') && ($task->added_by == user()->id || in_array(user()->id,$headIds))) || ($task->project && $task->project->project_admin == user()->id))
                                         <a class="dropdown-item openRightModal"
                                             href="{{ route('tasks.edit', $task->id) }}">@lang('app.edit')
                                             @lang('app.task')</a>
