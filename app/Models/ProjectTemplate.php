@@ -52,6 +52,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $members_many_count
  * @property int|null $company_id
  * @property int $added_by
+ * @property int $public
  * @property-read \App\Models\Company|null $company
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTemplate whereAddedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTemplate whereCompanyId($value)

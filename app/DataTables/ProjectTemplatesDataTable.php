@@ -48,9 +48,9 @@ class ProjectTemplatesDataTable extends BaseDataTable
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink-' . $row->id . '" tabindex="0">';
 
-                    $action .= ' <a href="' . route('project-template.show', [$row->id]) . '" class="dropdown-item"><i class="fa fa-eye mr-2"></i>' . __('app.view') . '</a>';
+                    $action .= ' <a href="' . route('project-template.show', [$row->id]) . '" class="dropdown-item"><i class="fa fa-eye mr-2"></i>' . __('app.view') . $row->public . '</a>';
 
-                if ($this->addProjectPermission == 'all' || $this->addProjectPermission == 'added') {
+                if ($this->addProjectPermission == 'all' || $this->addProjectPermission == 'added' || $row->public == 1) {
                     $action .= '<a class="dropdown-item openRightModal" href="' . route('projects.create') . '?template=' . $row->id . '">
                         <i class="fa fa-plus mr-2"></i>
                         ' . trans('app.create') . ' ' . trans('app.project') . '

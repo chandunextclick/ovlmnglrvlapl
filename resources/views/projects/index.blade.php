@@ -178,12 +178,12 @@ $viewProjectTemplatePermission = user()->permission('view_project_template');
                         @lang('app.project')
                     </x-forms.link-primary>
                 @endif
-                @if ($viewProjectTemplatePermission == 'all' || in_array($manageProjectTemplatePermission , ['added', 'all']))
+                <!-- @if ($viewProjectTemplatePermission == 'all' || in_array($manageProjectTemplatePermission , ['added', 'all'])) -->
                     <x-forms.link-secondary :link="route('project-template.index')"
                         class="mr-3 mb-2 mb-lg-0 mb-md-0 float-left" icon="layer-group">
                         @lang('app.menu.projectTemplate')
                     </x-forms.link-secondary>
-                @endif
+                <!-- @endif -->
 
 
                 @if ($addProjectPermission == 'all' || $addProjectPermission == 'added' || $addProjectPermission == 'both')

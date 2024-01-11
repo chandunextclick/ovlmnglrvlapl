@@ -51,22 +51,36 @@ class EmployeelogMail extends Command
                     e1.empcode,
                     users.name,
                     e1.logdate,
-                    TIME_FORMAT(SEC_TO_TIME(SUM(
+                    TIME_FORMAT(SUBTIME(TIME_FORMAT(SEC_TO_TIME(
+                        TIMESTAMPDIFF(
+                            SECOND,
+                            (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                             FROM employeelog e2
+                             WHERE e2.empcode = e1.empcode
+                               AND e2.logdate = e1.logdate
+                               AND e2.direction = 'in'),
+                            (SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                             FROM employeelog e2
+                             WHERE e2.empcode = e1.empcode
+                               AND e2.logdate = e1.logdate
+                               AND e2.direction = 'out')
+                        )
+                    ), '%H:%i'),TIME_FORMAT(SEC_TO_TIME(SUM(
                         CASE
-                            WHEN e1.direction = 'in'
+                            WHEN e1.direction = 'out'
                             THEN TIMESTAMPDIFF(
                                     SECOND,
                                     STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
                                     (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
-                                    FROM employeelog e2
-                                    WHERE e2.empcode = e1.empcode
-                                    AND e2.logdate = e1.logdate
-                                    AND e2.logtime > e1.logtime
-                                    AND e2.direction = 'out')
+                                     FROM employeelog e2
+                                     WHERE e2.empcode = e1.empcode
+                                       AND e2.logdate = e1.logdate
+                                       AND e2.logtime > e1.logtime
+                                       AND e2.direction = 'in')
                             )
                             ELSE 0
                         END
-                    )), '%H:%i') AS total_working_time,
+                    )), '%H:%i')), '%H:%i') as total_working_time,
                     TIME_FORMAT(SEC_TO_TIME(SUM(
                         CASE
                             WHEN e1.direction = 'out'
@@ -109,9 +123,23 @@ class EmployeelogMail extends Command
         e1.empcode,
         users.name,
         e1.logdate,
-        TIME_FORMAT(SEC_TO_TIME(SUM(
+        TIME_FORMAT(SUBTIME(TIME_FORMAT(SEC_TO_TIME(
+            TIMESTAMPDIFF(
+                SECOND,
+                (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                 FROM employeelog e2
+                 WHERE e2.empcode = e1.empcode
+                   AND e2.logdate = e1.logdate
+                   AND e2.direction = 'in'),
+                (SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                 FROM employeelog e2
+                 WHERE e2.empcode = e1.empcode
+                   AND e2.logdate = e1.logdate
+                   AND e2.direction = 'out')
+            )
+        ), '%H:%i'),TIME_FORMAT(SEC_TO_TIME(SUM(
             CASE
-                WHEN e1.direction = 'in'
+                WHEN e1.direction = 'out'
                 THEN TIMESTAMPDIFF(
                         SECOND,
                         STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
@@ -120,11 +148,11 @@ class EmployeelogMail extends Command
                          WHERE e2.empcode = e1.empcode
                            AND e2.logdate = e1.logdate
                            AND e2.logtime > e1.logtime
-                           AND e2.direction = 'out')
+                           AND e2.direction = 'in')
                 )
                 ELSE 0
             END
-        )), '%H:%i') AS total_working_time,
+        )), '%H:%i')), '%H:%i') as total_working_time,
         TIME_FORMAT(SEC_TO_TIME(SUM(
             CASE
                 WHEN e1.direction = 'out'
