@@ -61,7 +61,9 @@ class TaskBoardController extends AccountBaseController
 
             $boardColumns = TaskboardColumn::withCount(['tasks as tasks_count' => function ($q) use ($startDate, $endDate, $request) {
                 $q->leftJoin('projects', 'projects.id', '=', 'tasks.project_id')
-                    ->leftJoin('users as client', 'client.id', '=', 'projects.client_id');
+                    ->leftJoin('users as client', 'client.id', '=', 'projects.client_id')
+                    ->leftJoin('project_departments', 'project_departments.project_id', 'tasks.project_id') //connecting taks with project_department
+                    ->leftJoin('teams', 'project_departments.team_id', 'teams.id'); // connecting department with teams 
 
                 if (
                     ($this->viewUnassignedTasksPermission == 'all' && !in_array('client', user_roles())
@@ -161,11 +163,13 @@ class TaskBoardController extends AccountBaseController
 
                     if ($this->viewTaskPermission == 'added') {
                         $q->where('tasks.added_by', '=', user()->id);
+                        $q->orWhere('teams.head_id', user()->id);
                     }
 
                     if ($this->viewTaskPermission == 'both') {
                         $q->where(function ($q1) use ($request) {
                             $q1->where('task_users.user_id', '=', user()->id);
+                            $q1->orWhere('teams.head_id', user()->id);
 
                             $q1->orWhere('tasks.added_by', '=', user()->id);
 
