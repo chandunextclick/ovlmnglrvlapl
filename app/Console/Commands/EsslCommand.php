@@ -113,6 +113,28 @@ class EsslCommand extends Command
         DB::commit();
 
 
+    // Step 1: Create temporary table
+    DB::statement('CREATE TEMPORARY TABLE temp_table AS
+        SELECT e1.id
+        FROM employeelog e1
+        WHERE e1.direction = (
+            SELECT e2.direction
+            FROM employeelog e2
+            WHERE e1.empcode = e2.empcode
+            AND e1.logdate = e2.logdate
+            AND CAST(e2.essl AS SIGNED) > CAST(e1.essl AS SIGNED)
+            ORDER BY e2.logtime ASC
+            LIMIT 1
+        )');
+
+    // Step 2: Delete from employeelog using the temporary table
+    DB::table('employeelog as e1')
+        ->join('temp_table as temp', 'e1.id', '=', 'temp.id')
+        ->delete();
+
+    // Step 3: Drop the temporary table
+    DB::statement('DROP TEMPORARY TABLE IF EXISTS temp_table');
+
 
 
     }
