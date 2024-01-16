@@ -48,7 +48,7 @@ class ProjectTemplatesDataTable extends BaseDataTable
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink-' . $row->id . '" tabindex="0">';
 
-                    $action .= ' <a href="' . route('project-template.show', [$row->id]) . '" class="dropdown-item"><i class="fa fa-eye mr-2"></i>' . __('app.view') . $row->public . '</a>';
+                    $action .= ' <a href="' . route('project-template.show', [$row->id]) . '" class="dropdown-item"><i class="fa fa-eye mr-2"></i>' . __('app.view') . '</a>';
 
                 if ($this->addProjectPermission == 'all' || $this->addProjectPermission == 'added' || $row->public == 1) {
                     $action .= '<a class="dropdown-item openRightModal" href="' . route('projects.create') . '?template=' . $row->id . '">
@@ -123,7 +123,7 @@ class ProjectTemplatesDataTable extends BaseDataTable
         $request = $this->request();
 
         $model = $model::with(['category', 'members'])
-            ->select('id', 'project_name', 'category_id');
+            ->select('id', 'project_name', 'category_id','public');
 
         if ($request->searchText != '') {
             $model->where(function ($query) {

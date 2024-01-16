@@ -223,6 +223,9 @@ class ProjectController extends AccountBaseController
     public function create()
     {
         $this->addPermission = user()->permission('add_projects');
+
+        var_dump(request('template'));
+
         abort_403(!in_array($this->addPermission, ['all', 'added']));
 
         $this->pageTitle = __('app.add') . ' ' . __('app.project');

@@ -502,6 +502,8 @@ $changeStatusPermission = user()->permission('change_status');
             if ($('#stop-task-timer').length) {
                 setTimeout(updateTimer, 1000);
             }
+            
+            
 
             //    change task status
             $('body').on('click', '.change-task-status', function() {
@@ -1013,6 +1015,46 @@ $changeStatusPermission = user()->permission('change_status');
                     }
                 })
             });
+
+            $('#pause-timer-btn').click(function() {
+                var id = $(this).data('time-id');
+                var url = "{{ route('timelogs.pause_timer', ':id') }}";
+                url = url.replace(':id', id);
+                var token = '{{ csrf_token() }}';
+                $.easyAjax({
+                    url: url,
+                    blockUI: true,
+                    type: "POST",
+                    data: {
+                        timeId: id,
+                        _token: token
+                    },
+                    success: function(data) {
+                        window.location.reload();
+                    }
+                })
+            });
+            
+            $('#resume-timer-btn').click(function() {
+                var id = $(this).data('time-id');
+                var url = "{{ route('timelogs.resume_timer', ':id') }}";
+                url = url.replace(':id', id);
+                var token = '{{ csrf_token() }}';
+                $.easyAjax({
+                    url: url,
+                    blockUI: true,
+                    type: "POST",
+                    data: {
+                        timeId: id,
+                        _token: token
+                    },
+                    success: function(data) {
+                        window.location.reload();
+                    }
+                })
+            });
+
+            
 
             $('body').on('click', '#reminderButton', function() {
                 Swal.fire({
