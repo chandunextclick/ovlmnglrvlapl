@@ -43,9 +43,9 @@ $changeStatusPermission = user()->permission('change_status');
                                 @elseif (!is_null($task->userActiveTimer))
 
                                     <span class="border p-2 rounded mr-2 bg-light"><i class="fa fa-clock mr-1"></i><span id="active-task-timer">{{ $task->userActiveTimer->timer }}</span></span>
-
+                                  
                                     @if (is_null($task->userActiveTimer->activeBreak))
-                                        <x-forms.button-secondary icon="pause-circle" data-time-id="{{ $task->userActiveTimer->id }}" id="pause-timer-btn" class="mr-2">@lang('modules.timeLogs.pauseTimer')</x-forms.button-secondary>
+                                        <!-- <x-forms.button-secondary icon="pause-circle" data-time-id="{{ $task->userActiveTimer->id }}" id="pause-timer-btn" class="mr-2">@lang('modules.timeLogs.pauseTimer')</x-forms.button-secondary> -->
 
                                         <x-forms.button-secondary data-time-id="{{ $task->userActiveTimer->id }}"
                                             id="stop-task-timer" icon="stop-circle">
@@ -502,8 +502,6 @@ $changeStatusPermission = user()->permission('change_status');
             if ($('#stop-task-timer').length) {
                 setTimeout(updateTimer, 1000);
             }
-            
-            
 
             //    change task status
             $('body').on('click', '.change-task-status', function() {
@@ -1017,44 +1015,14 @@ $changeStatusPermission = user()->permission('change_status');
             });
 
             $('#pause-timer-btn').click(function() {
-                var id = $(this).data('time-id');
-                var url = "{{ route('timelogs.pause_timer', ':id') }}";
-                url = url.replace(':id', id);
-                var token = '{{ csrf_token() }}';
-                $.easyAjax({
-                    url: url,
-                    blockUI: true,
-                    type: "POST",
-                    data: {
-                        timeId: id,
-                        _token: token
-                    },
-                    success: function(data) {
-                        window.location.reload();
-                    }
-                })
+                console.log("showblade");
+                window.location.reload();
             });
             
-            $('#resume-timer-btn').click(function() {
-                var id = $(this).data('time-id');
-                var url = "{{ route('timelogs.resume_timer', ':id') }}";
-                url = url.replace(':id', id);
-                var token = '{{ csrf_token() }}';
-                $.easyAjax({
-                    url: url,
-                    blockUI: true,
-                    type: "POST",
-                    data: {
-                        timeId: id,
-                        _token: token
-                    },
-                    success: function(data) {
-                        window.location.reload();
-                    }
-                })
-            });
 
-            
+            $('#resume-timer-btn').click(function() {
+                window.location.reload();
+            });
 
             $('body').on('click', '#reminderButton', function() {
                 Swal.fire({

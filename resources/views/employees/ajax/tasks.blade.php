@@ -366,6 +366,7 @@ $addTaskPermission = user()->permission('add_tasks');
         var url = "{{ route('timelogs.pause_timer', ':id') }}";
         url = url.replace(':id', id);
         var token = '{{ csrf_token() }}';
+        console.log("taskblade");
         $.easyAjax({
             url: url,
             blockUI: true,

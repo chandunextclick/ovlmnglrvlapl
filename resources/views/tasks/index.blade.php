@@ -601,6 +601,7 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
                         }
                         
                         $('#timer-clock').html(response.clockHtml);
+                        $('#active-task-timer').html(response.clockHtml);
                         if ($('#allTasks-table').length) {
                             window.LaravelDataTables["allTasks-table"].draw(false);
                         }
@@ -673,6 +674,7 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
             var url = "{{ route('timelogs.pause_timer', ':id') }}";
             url = url.replace(':id', id);
             var token = '{{ csrf_token() }}';
+            console.log("indexblade");
             $.easyAjax({
                 url: url,
                 blockUI: true,
@@ -685,6 +687,7 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
                 },
                 success: function(response) {
                     if (response.status == 'success') {
+
                         if (response.activeTimerCount > 0) {
                             $('#show-active-timer .active-timer-count').html(response.activeTimerCount);
                         } else {
@@ -695,7 +698,9 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
                         if ($('#allTasks-table').length) {
                             window.LaravelDataTables["allTasks-table"].draw(false);
                         }
+                        window.location.reload();
                     }
+                    
                 }
             })
         });

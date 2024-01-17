@@ -404,6 +404,7 @@
         let url = "{{ route('timelogs.pause_timer', ':id') }}";
         url = url.replace(':id', id);
         const token = '{{ csrf_token() }}';
+        console.log("appblade");
         $.easyAjax({
             url: url,
             blockUI: true,
@@ -430,6 +431,7 @@
 
                     $('#timer-clock').html(response.clockHtml);
                 }
+                window.location.reload();
             }
         })
     });

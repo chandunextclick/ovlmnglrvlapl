@@ -50,7 +50,7 @@ class ProjectTemplatesDataTable extends BaseDataTable
 
                     $action .= ' <a href="' . route('project-template.show', [$row->id]) . '" class="dropdown-item"><i class="fa fa-eye mr-2"></i>' . __('app.view') . '</a>';
 
-                if ($this->addProjectPermission == 'all' || $this->addProjectPermission == 'added' || $row->public == 1) {
+                if ($this->addProjectPermission == 'all' || $this->addProjectPermission == 'added') {
                     $action .= '<a class="dropdown-item openRightModal" href="' . route('projects.create') . '?template=' . $row->id . '">
                         <i class="fa fa-plus mr-2"></i>
                         ' . trans('app.create') . ' ' . trans('app.project') . '
