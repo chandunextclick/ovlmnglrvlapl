@@ -23,10 +23,12 @@ $changeStatusPermission = user()->permission('change_status');
                             || ($task->project && $task->project->project_admin == user()->id)
                             )
                                 @if ($task->boardColumn->slug != 'completed')
-                                    <x-forms.button-primary icon="check" data-status="completed"
-                                        class="change-task-status mr-2 mb-2 mb-lg-0 mb-md-0">
+                                @if (($task->userActiveTimer))
+                                    <x-forms.button-primary icon="check" data-status="completed" id="stop-task-timer" data-time-id="{{ $task->userActiveTimer->id }}"
+                                        class=" mr-2 mb-2 mb-lg-0 mb-md-0">
                                         @lang('modules.tasks.markComplete')
                                     </x-forms.button-primary>
+                                @endif
                                 @else
                                     <x-forms.button-secondary icon="times" data-status="incomplete"
                                         class="change-task-status mr-3">
@@ -48,7 +50,7 @@ $changeStatusPermission = user()->permission('change_status');
                                         <!-- <x-forms.button-secondary icon="pause-circle" data-time-id="{{ $task->userActiveTimer->id }}" id="pause-timer-btn" class="mr-2">@lang('modules.timeLogs.pauseTimer')</x-forms.button-secondary> -->
 
                                         <x-forms.button-secondary data-time-id="{{ $task->userActiveTimer->id }}"
-                                            id="stop-task-timer" icon="stop-circle">
+                                            id="stop-task-timer" icon="stop-circle" style="display:none;">
                                             @lang('modules.timeLogs.stopTimer')
                                         </x-forms.button-secondary>
                                     @else
@@ -997,6 +999,7 @@ $changeStatusPermission = user()->permission('change_status');
 
             $('#stop-task-timer').click(function() {
                 var id = $(this).data('time-id');
+                console.log(id);
                 var url = "{{ route('timelogs.stop_timer', ':id') }}";
                 url = url.replace(':id', id);
                 var token = '{{ csrf_token() }}';

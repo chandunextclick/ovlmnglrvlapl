@@ -447,8 +447,42 @@ class TimelogController extends AccountBaseController
 
     public function stopTimer(Request $request)
     {
-        $timeId = $request->timeId;
-        $timeLog = ProjectTimeLog::with('activeBreak', 'project')->findOrFail($timeId);
+        $timeId = $request->timeId;                                                                                                                                                                                                                                               
+        $timeLog = ProjectTimeLog::with('project')->findOrFail($timeId);
+
+        $currentDate = now()->format('Y-m-d');
+
+        $breakresult = DB::table('employeelog as e1')
+                ->select(DB::raw("TIME_FORMAT(SEC_TO_TIME(SUM(
+                    CASE
+                    WHEN e1.direction = 'out'
+                    THEN TIMESTAMPDIFF(
+                        SECOND,
+                        STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                        (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                            FROM employeelog e2
+                            WHERE e2.empcode = e1.empcode
+                            AND e2.logdate = e1.logdate
+                            AND e2.logtime > e1.logtime
+                            AND e2.direction = 'in')
+                        )
+                    ELSE 0
+                    END
+                )), '%H:%i:%s') AS total_break_time"))
+                ->leftJoin('employee_details', 'employee_details.employee_id', '=', 'e1.empcode')
+                ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') >= STR_TO_DATE('2024-01-17 15:37:25', '%Y-%m-%d %H:%i:%s')")
+                ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') <= STR_TO_DATE('2024-01-17 15:46:24', '%Y-%m-%d %H:%i:%s')")
+                ->whereDate('e1.logdate', '2024-01-17')
+                ->where('employee_details.user_id', 8)
+                ->orderBy('e1.logtime', 'ASC')
+                ->get();
+
+        foreach ($breakresult as $result) {
+            $totalBreakTime = $result->total_break_time;
+            // Use $totalBreakTime as needed
+            
+        }
+        
         $editTimelogPermission = user()->permission('edit_timelogs');
         $activeTimelogPermission = user()->permission('manage_active_timelogs');
 
@@ -463,6 +497,7 @@ class TimelogController extends AccountBaseController
         ));
 
         $timeLog->end_time = now();
+        $timeLog->total_break_minutes = $totalBreakTime;
         $timeLog->save();
 
         $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time);
@@ -472,12 +507,12 @@ class TimelogController extends AccountBaseController
 
         // Stop breaktime if active
         /** @phpstan-ignore-next-line */
-        if (!is_null($timeLog->activeBreak)) {
-            /** @phpstan-ignore-next-line */
-            $activeBreak = $timeLog->activeBreak;
-            $activeBreak->end_time = $timeLog->end_time;
-            $activeBreak->save();
-        }
+        // if (!is_null($timeLog->activeBreak)) {
+        //     /** @phpstan-ignore-next-line */
+        //     $activeBreak = $timeLog->activeBreak;
+        //     $activeBreak->end_time = $timeLog->end_time;
+        //     $activeBreak->save();
+        // }
 
         if (!is_null($timeLog->project_id)) {
             $this->logProjectActivity($timeLog->project_id, 'modules.tasks.timerStoppedBy');

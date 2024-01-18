@@ -312,6 +312,11 @@ class TasksDataTable extends BaseDataTable
             return '<a href="' . route('projects.show', $row->project_id) . '" class="text-darkest-grey">' . ucfirst($row->project_name) . '</a>';
         });
 
+        $datatables->addColumn('category', function ($row) {
+            return $row->category_name;
+        });
+
+
         $datatables->setRowId(function ($row) {
             return 'row-' . $row->id;
         });
@@ -352,6 +357,7 @@ class TasksDataTable extends BaseDataTable
         $taskBoardColumn = TaskboardColumn::completeColumn();
 
         $model = $model->leftJoin('projects', 'projects.id', '=', 'tasks.project_id')
+            ->leftJoin('project_category', 'project_category.id', '=', 'projects.category_id')
             ->leftJoin('users as client', 'client.id', '=', 'projects.client_id')
             ->join('taskboard_columns', 'taskboard_columns.id', '=', 'tasks.board_column_id');
 
@@ -375,7 +381,7 @@ class TasksDataTable extends BaseDataTable
             ->leftJoin('tasks as dependent', 'dependent.id', '=', 'tasks.dependent_task_id')
             ->leftJoin('taskboard_columns as dependentboard', 'dependentboard.id', '=', 'dependent.board_column_id')
             ->selectRaw('tasks.id, tasks.task_short_code, tasks.added_by, projects.project_name, projects.project_admin, tasks.heading, client.name as clientName, creator_user.name as created_by, creator_user.image as created_image, tasks.board_column_id,
-             tasks.due_date,tasks.created_at,tasks.updated_at,tasks.completed_on,taskboard_columns.column_name as board_column, taskboard_columns.label_color,dependentboard.slug,
+             tasks.due_date,tasks.created_at,tasks.updated_at,tasks.completed_on,taskboard_columns.column_name as board_column, taskboard_columns.label_color,dependentboard.slug,project_category.category_name,
               tasks.project_id, tasks.is_private ,( select count("id") from pinned where pinned.task_id = tasks.id and pinned.user_id = ' . user()->id . ') as pinned_task')
             ->addSelect('tasks.company_id') // Company_id is fetched so the we have fetch company relation with it)
             ->with('users', 'activeTimerAll', 'boardColumn', 'activeTimer', 'timeLogged', 'timeLogged.breaks', 'userActiveTimer', 'userActiveTimer.activeBreak', 'labels', 'taskUsers')
@@ -627,6 +633,7 @@ class TasksDataTable extends BaseDataTable
             __('app.task') => ['data' => 'heading', 'name' => 'heading', 'exportable' => false, 'title' => __('app.task')],
             __('app.menu.tasks') . ' ' => ['data' => 'task', 'name' => 'heading', 'visible' => false, 'title' => __('app.menu.tasks')],
             __('app.project') => ['data' => 'project_name', 'name' => 'projects.project_name', 'title' => __('app.project')],
+            __('modules.projects.projectCategory') => ['data' => 'category_name', 'name' => 'category_name', 'title' => __('modules.projects.projectCategory')], // modified by chandu to add project category column on the datatable on 18/01/24 
             __('app.client') => ['data' => 'clientName', 'name' => 'clientName', 'title' => __('app.client')],
             __('modules.tasks.assigned') => ['data' => 'name', 'name' => 'name', 'visible' => false, 'title' => __('modules.tasks.assigned')],
             __('app.dueDate') => ['data' => 'due_date', 'name' => 'due_date', 'title' => __('app.dueDate')],
