@@ -240,7 +240,6 @@
                     linkedCalendars: false,
                     multidate: true,
                     todayHighlight: true,
-                    minDate:currentDate,
                     format: 'yyyy-mm-d'
 
                 });
