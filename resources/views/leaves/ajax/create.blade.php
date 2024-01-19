@@ -434,8 +434,11 @@
 
             console.log($(this).val());
             var currentDate = new Date();
+        
 
             if($(this).val() == '11'){
+
+                $('#single_date').prop('readonly', true);
 
                 $('#reason').prop('readonly', false);
 
@@ -447,13 +450,11 @@
 
                 $('.optional_date_div').addClass('d-none');
 
-                // dp1.setMin(currentDate);
-
-                dp1.setDate(new Date(currentDate));
-            
+    
 
             }else if($(this).val() == '12'){
 
+                $('#single_date').prop('readonly', true);
 
                 $('#reason').prop('readonly', false);
 
@@ -470,6 +471,8 @@
 
             }else if($(this).val() == '15'){
 
+                $('#single_date').prop('readonly', true);
+
                 $('#reason').prop('readonly', false);
 
                 $('#reason').val('');
@@ -480,12 +483,10 @@
 
                 $('.optional_date_div').addClass('d-none');
 
-                dp1.setMin(currentDate);
-
-                dp1.setDate(new Date(currentDate));
-
 
             }else{
+
+                $('#single_date').prop('readonly', true);
 
                 $('#reason').prop('readonly', false);
 
