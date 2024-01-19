@@ -360,7 +360,7 @@
 
                 }    
 
-                
+            
                 dp1.setMin(minDate);
                 $('#multi_date').daterangepicker('setStartDate', minDate);
             }
@@ -448,7 +448,7 @@
 
                 $('.optional_date_div').addClass('d-none');
 
-                dp1.setMin(currentDate);
+                // dp1.setMin(currentDate);
 
                 dp1.setDate(new Date(currentDate));
             
