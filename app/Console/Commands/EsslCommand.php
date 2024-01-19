@@ -76,41 +76,41 @@ class EsslCommand extends Command
 
     // -----------------------------------------------------------------------------------------------------------------
 
-        $url = 'http://chandunextclick-001-site1.anytempurl.com/updatesync.php?lastid='.$esslValue; // Replace with the URL you want to fetch data from
+        // $url = 'http://chandunextclick-001-site1.anytempurl.com/updatesync.php?lastid='.$esslValue; // Replace with the URL you want to fetch data from
 
 
 
 
 
 
-        $ch = curl_init($url);
+        // $ch = curl_init($url);
     
-        // Set the request type to GET
-        curl_setopt($ch, CURLOPT_HTTPGET, true);
+        // // Set the request type to GET
+        // curl_setopt($ch, CURLOPT_HTTPGET, true);
     
-        // Set other cURL options
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // // Set other cURL options
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     
     
-        // Execute the cURL session
-        $response = curl_exec($ch);
+        // // Execute the cURL session
+        // $response = curl_exec($ch);
     
-        if (curl_errno($ch)) {
-            echo 'Curl error: ' . curl_error($ch);
-        }
+        // if (curl_errno($ch)) {
+        //     echo 'Curl error: ' . curl_error($ch);
+        // }
     
-        curl_close($ch);
+        // curl_close($ch);
 
 
-        $sql = "
-            DELETE e1
-            FROM employeelog e1
-            JOIN employeelog e2 ON e1.essl = e2.essl AND e1.id > e2.id
-        ";
+        // $sql = "
+        //     DELETE e1
+        //     FROM employeelog e1
+        //     JOIN employeelog e2 ON e1.essl = e2.essl AND e1.id > e2.id
+        // ";
 
-        DB::delete($sql);
+        // DB::delete($sql);
 
-        DB::commit();
+        // DB::commit();
 
 
     // // Step 1: Create temporary table
