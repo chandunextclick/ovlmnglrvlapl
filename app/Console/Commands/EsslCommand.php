@@ -125,7 +125,7 @@ class EsslCommand extends Command
                     AND CAST(e2.essl AS SIGNED) > CAST(e1.essl AS SIGNED)
                     ORDER BY e2.logtime ASC
                     LIMIT 1
-                )AND STR_TO_DATE(e1.logdate, "%Y-%m-%d") = CURDATE()');
+                )');
 
     // Step 2: Delete from employeelog using the temporary table
     DB::table('employeelog as e1')
