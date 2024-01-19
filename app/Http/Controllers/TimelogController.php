@@ -472,8 +472,8 @@ class TimelogController extends AccountBaseController
                 ->leftJoin('employee_details', 'employee_details.employee_id', '=', 'e1.empcode')
                 ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') >= STR_TO_DATE('2024-01-17 15:37:25', '%Y-%m-%d %H:%i:%s')")
                 ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') <= STR_TO_DATE('2024-01-17 15:46:24', '%Y-%m-%d %H:%i:%s')")
-                ->whereDate('e1.logdate', '2024-01-17')
-                ->where('employee_details.user_id', 8)
+                ->whereDate('e1.logdate', $currentDate)
+                ->where('employee_details.user_id', $timeLog->user_id)
                 ->orderBy('e1.logtime', 'ASC')
                 ->get();
 
