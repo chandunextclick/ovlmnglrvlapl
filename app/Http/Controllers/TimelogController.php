@@ -450,38 +450,40 @@ class TimelogController extends AccountBaseController
         $timeId = $request->timeId;                                                                                                                                                                                                                                               
         $timeLog = ProjectTimeLog::with('project')->findOrFail($timeId);
 
-        // $currentDate = now()->format('Y-m-d');
+        $currentDate = now()->format('Y-m-d');
 
-        // $breakresult = DB::table('employeelog as e1')
-        //         ->select(DB::raw("TIME_FORMAT(SEC_TO_TIME(SUM(
-        //             CASE
-        //             WHEN e1.direction = 'out'
-        //             THEN TIMESTAMPDIFF(
-        //                 SECOND,
-        //                 STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s'),
-        //                 (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
-        //                     FROM employeelog e2
-        //                     WHERE e2.empcode = e1.empcode
-        //                     AND e2.logdate = e1.logdate
-        //                     AND e2.logtime > e1.logtime
-        //                     AND e2.direction = 'in')
-        //                 )
-        //             ELSE 0
-        //             END
-        //         )), '%H:%i:%s') AS total_break_time"))
-        //         ->leftJoin('employee_details', 'employee_details.employee_id', '=', 'e1.empcode')
-        //         ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') >= STR_TO_DATE($timeLog->start_time, '%Y-%m-%d %H:%i:%s')")
-        //         ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') <= STR_TO_DATE($timeLog->end_time, '%Y-%m-%d %H:%i:%s')")
-        //         ->whereDate('e1.logdate', $currentDate)
-        //         ->where('employee_details.user_id', $timeLog->user_id)
-        //         ->orderBy('e1.logtime', 'ASC')
-        //         ->get();
 
-        // foreach ($breakresult as $result) {
-        //     $totalBreakTime = $result->total_break_time;
-        //     // Use $totalBreakTime as needed
-            
-        // }
+        $breakresult = DB::table('employeelog as e1')
+                ->select(DB::raw("TIME_FORMAT(SEC_TO_TIME(SUM(
+                    CASE
+                    WHEN e1.direction = 'out'
+                    THEN TIMESTAMPDIFF(
+                        SECOND,
+                        STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                        (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                            FROM employeelog e2
+                            WHERE e2.empcode = e1.empcode
+                            AND e2.logdate = e1.logdate
+                            AND e2.logtime > e1.logtime
+                            AND e2.direction = 'in')
+                        )
+                    ELSE 0
+                    END
+                )), '%H:%i:%s') AS total_break_time"))
+                ->leftJoin('employee_details', 'employee_details.employee_id', '=', 'e1.empcode')
+                ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') >= STR_TO_DATE('$timeLog->start_time', '%Y-%m-%d %H:%i:%s')")
+                ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') <= STR_TO_DATE('$timeLog->end_time', '%Y-%m-%d %H:%i:%s')")
+                ->whereDate('e1.logdate', $currentDate)
+                ->where('employee_details.user_id',$timeLog->user_id)
+                ->orderBy('e1.logtime', 'ASC')
+                ->get();
+
+
+        foreach ($breakresult as $result) {
+
+            $totalBreakTime = $result->total_break_time;
+            // Use $totalBreakTime as needed
+        }
         
         $editTimelogPermission = user()->permission('edit_timelogs');
         $activeTimelogPermission = user()->permission('manage_active_timelogs');
@@ -496,23 +498,29 @@ class TimelogController extends AccountBaseController
         || ($timeLog->project && ($timeLog->project->project_admin == user()->id))
         ));
 
-        
 
         $timeLog->end_time = now();
 
-        // Subtract break time from end time
+        if($totalBreakTime!=NULL){
+
+            $totalBreakTimeparsed=Carbon::parse($totalBreakTime);
+
+            $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time)-$totalBreakTimeparsed->hour;
+            $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time)-$totalBreakTimeparsed->minute;
+            $timeLog->total_break_minutes = $totalBreakTime;
+
+        }else{
+
+            $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time);
+            $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time);
+            $timeLog->total_break_minutes = 0;
+
+        }
         
-        // $totalBreakTimeparsed=Carbon::parse($totalBreakTime);
+        
 
-        // $endTimeWithBreak = $timeLog->end_time->sub($totalBreakTimeparsed->hour, 'hours')->sub($totalBreakTimeparsed->minute, 'minutes')->sub($totalBreakTimeparsed->second, 'seconds');
-
-        // $timeLog->end_time = $endTimeWithBreak;
-
-        // $timeLog->total_break_minutes = $totalBreakTime;
         $timeLog->save();
 
-        $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time);
-        $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time);
         $timeLog->edited_by_user = $this->user->id;
         $timeLog->save();
 
