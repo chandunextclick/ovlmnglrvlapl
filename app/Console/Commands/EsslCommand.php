@@ -128,12 +128,13 @@ class EsslCommand extends Command
                 )');
 
     // Step 2: Delete from employeelog using the temporary table
-    DB::table('employeelog as e1')
-        ->join('temp_table as temp', 'e1.id', '=', 'temp.id')
-        ->delete();
+    // DB::table('employeelog as e1')
+    //     ->join('temp_table as temp', 'e1.id', '=', 'temp.id')
+    //     ->delete();
 
     // Step 3: Drop the temporary table
-    DB::statement('DROP TEMPORARY TABLE IF EXISTS temp_table');
+    // DB::statement('DROP TEMPORARY TABLE IF EXISTS temp_table');
+    
 
 
 
