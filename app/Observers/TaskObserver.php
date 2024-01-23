@@ -114,7 +114,7 @@ class TaskObserver
                 if ($task->boardColumn->slug == 'completed') {
                     // send task complete notification
                     $admins = User::allAdmins($task->company->id);
-                    event(new TaskEvent($task, $admins, 'TaskCompleted'));
+                    // event(new TaskEvent($task, $admins, 'TaskCompleted'));
 
                     if ($task->addedByUser) {
                         $addedByUserRole = $task->addedByUser->roles->pluck('name')->toArray();
