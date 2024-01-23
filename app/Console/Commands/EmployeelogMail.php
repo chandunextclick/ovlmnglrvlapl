@@ -33,7 +33,6 @@ class EmployeelogMail extends Command
     public function handle()
     {
 
-
         // Step 1: Create temporary table
         DB::statement('CREATE TEMPORARY TABLE temp_table AS
         SELECT e1.id
@@ -62,6 +61,59 @@ class EmployeelogMail extends Command
 
         $date1 = $data['date1'];
 
+
+        $insertresult = "SELECT
+                        users.company_id,
+                        users.id AS user_id,
+                        users.company_id AS location_id,
+                        (
+                            SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                            FROM employeelog e2
+                            WHERE e2.empcode = e1.empcode
+                            AND e2.logdate = e1.logdate
+                            AND e2.direction = 'in'
+                        ) AS clock_in_time,
+                        (
+                            SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                            FROM employeelog e2
+                            WHERE e2.empcode = e1.empcode
+                            AND e2.logdate = e1.logdate
+                            AND e2.direction = 'out'
+                        ) AS clock_out_time,
+                        (
+                            SELECT auto_clock_in_location
+                            FROM attendance_settings
+                            WHERE company_id = users.company_id
+                            LIMIT 1
+                        ) AS working_from,
+                        (
+                            SELECT office_start_time
+                            FROM attendance_settings
+                            WHERE company_id = users.company_id
+                            LIMIT 1
+                        ) AS shift_start_time,
+                        (
+                            SELECT office_end_time
+                            FROM attendance_settings
+                            WHERE company_id = users.company_id
+                            ORDER BY users.id ASC
+                            LIMIT 1
+                        ) AS shift_end_time
+                    FROM users
+                    LEFT JOIN employee_details ON users.id = employee_details.user_id
+                    LEFT JOIN employeelog e1 ON employee_details.employee_id = e1.empcode
+                    WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') = '$date1'
+                    GROUP BY company_id, user_id, location_id, clock_in_time, clock_out_time, shift_start_time, shift_end_time";
+
+                            
+
+        $result=DB::select($insertresult);
+
+        // Convert the result to an array
+        $insertData = json_decode(json_encode($result), true);
+
+        DB::table('attendances')->insert($insertData);
+        
         $users = DB::table('users')
         ->where('company_id',4)
         ->where('email', '!=', '')
@@ -69,8 +121,7 @@ class EmployeelogMail extends Command
 
     foreach ($users as $user) {
 
-        $query1 = "
-                    SELECT
+        $query1 = " SELECT
                     e1.empcode,
                     users.name,
                     e1.logdate,

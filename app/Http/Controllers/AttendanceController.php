@@ -163,6 +163,7 @@ class AttendanceController extends AccountBaseController
 
             $shiftScheduleCollection = $employee->shifts->keyBy('date');
 
+            
             foreach ($employee->attendance as $attendance) {
                 $clockInTime = Carbon::createFromFormat('Y-m-d H:i:s', $attendance->clock_in_time->timezone(company()->timezone)->toDateTimeString(), 'UTC');
 
@@ -223,9 +224,11 @@ class AttendanceController extends AccountBaseController
 
             foreach ($employee->leaves as $leave) {
                 if ($leave->duration == 'half day') {
-                    if ($final[$employee->id . '#' . $employee->name][$leave->leave_date->day] == '-' || $final[$employee->id . '#' . $employee->name][$leave->leave_date->day] == 'Absent') {
-                        $final[$employee->id . '#' . $employee->name][$leave->leave_date->day] = 'Half Day';
-                    }
+
+                    // if ($final[$employee->id . '#' . $employee->name][$leave->leave_date->day] == '-' || $final[$employee->id . '#' . $employee->name][$leave->leave_date->day] == 'Absent') {
+                    //     $final[$employee->id . '#' . $employee->name][$leave->leave_date->day] = 'Half Day';
+                    // } commented by chandu
+                    $final[$employee->id . '#' . $employee->name][$leave->leave_date->day] = 'Half Day';
                 }
                 else {
                     $final[$employee->id . '#' . $employee->name][$leave->leave_date->day] = 'Leave';
@@ -245,6 +248,7 @@ class AttendanceController extends AccountBaseController
         $this->employeeAttendence = $final;
         $this->holidayOccasions = $holidayOccasions;
         $this->leaveReasons = $leaveReasons;
+
 
         $this->weekMap = Holiday::weekMap('D');
 
@@ -302,6 +306,54 @@ class AttendanceController extends AccountBaseController
 
         $this->totalTime = 0;
 
+        $this->logdate=$attendance->clock_in_time->format('Y-m-d');
+
+        $this->loguser=$attendance->user->id;
+
+        $query="SELECT employeelog.id,STR_TO_DATE(CONCAT(employeelog.logdate,employeelog.logtime), '%Y-%m-%d %H:%i:%s') AS log_datetime,employeelog.direction,attendances.work_from_type,attendances.location_id,attendances.working_from,attendances.late,attendances.half_day,attendances.latitude,attendances.longitude FROM employeelog 
+                LEFT JOIN employee_details on employee_details.employee_id=employeelog.empcode
+                LEFT JOIN users on employee_details.user_id=users.id
+                LEFT JOIN attendances on attendances.user_id=users.id
+                WHERE STR_TO_DATE(employeelog.logdate, '%Y-%m-%d') = '$this->logdate' and users.id='$this->loguser' and STR_TO_DATE(attendances.clock_in_time, '%Y-%m-%d') = '$this->logdate' order by employeelog.logtime ASC";
+        
+        $this->emplogactivity=DB::select($query);
+
+        $totalquery="SELECT TIME_FORMAT(SUBTIME(TIME_FORMAT(SEC_TO_TIME(
+                    TIMESTAMPDIFF(
+                        SECOND,
+                        (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                        FROM employeelog e2
+                        WHERE e2.empcode = e1.empcode
+                        AND e2.logdate = e1.logdate
+                        AND e2.direction = 'in'),
+                        (SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                        FROM employeelog e2
+                        WHERE e2.empcode = e1.empcode
+                        AND e2.logdate = e1.logdate
+                        AND e2.direction = 'out')
+                    )
+                    ), '%H:%i'),TIME_FORMAT(SEC_TO_TIME(SUM(
+                    CASE
+                        WHEN e1.direction = 'out'
+                        THEN TIMESTAMPDIFF(
+                                SECOND,
+                                STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                                (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                FROM employeelog e2
+                                WHERE e2.empcode = e1.empcode
+                                AND e2.logdate = e1.logdate
+                                AND e2.logtime > e1.logtime
+                                AND e2.direction = 'in')
+                        )
+                        ELSE 0
+                    END
+                    )), '%H:%i')), '%H:%i') as total_working_time FROM employeelog e1 
+                    LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
+                    LEFT JOIN users ON employee_details.user_id = users.id
+                    WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') = '$this->logdate' and users.id='$this->loguser'";
+
+        $this->emplogtotal=DB::select($totalquery);
+        
         foreach ($attendanceActivity as $key => $activity) {
             if ($key == 0) {
                 $this->firstClockIn = $activity;
@@ -332,6 +384,22 @@ class AttendanceController extends AccountBaseController
 
             $this->totalTime = $this->totalTime + $this->endTime->timezone($this->company->timezone)->diffInMinutes($activity->clock_in_time->timezone($this->company->timezone));
         }
+
+
+        
+
+        $this->logtotalTime=$this->emplogtotal[0]->total_working_time;
+
+        // Explode the time string into hours and minutes
+        list($hours, $minutes) = explode(':',$this->logtotalTime);
+
+        // Format the result
+        $formattedTime = sprintf('%dh %02dm', $hours, $minutes);
+
+        // Now, $formattedTime contains the formatted total working time
+        $this->emptotalTime = $formattedTime;
+
+ 
 
         $this->maxClockIn = $attendanceActivity->count() < $this->attendanceSettings->clockin_in_day;
 
