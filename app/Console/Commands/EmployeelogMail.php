@@ -181,15 +181,18 @@ class EmployeelogMail extends Command
             
 
             $data['essllog'] = DB::select($query1);
+            $count=0;
+            if($data['essllog']){
 
-            Mail::send('employees.ajax.mail',$data,function($messages) use ($user){
+                Mail::send('employees.ajax.mail',$data,function($messages) use ($user){  
+                    $messages->to($user->email);
+                    $messages->subject('Log( '.date("Y-m-d", strtotime("-1 day")).' ) of '. $user->name);
+                    
+                    });
 
-            $messages->to($user->email);
-            $messages->subject('Log( '.date("Y-m-d", strtotime("-1 day")).' ) of '. $user->name);
-            
-            });
+            }
+                
 
-        
     }
 
         $query = "

@@ -28,7 +28,7 @@ class TaskResultController extends AccountBaseController
      */
     public function store(StoreTaskResult $request)
     {
-        $this->addPermission = user()->permission('add_task_notes');
+        $this->addPermission = user()->permission('add_task_result');
         $task = Task::findOrFail($request->taskId);
         $taskUsers = $task->users->pluck('id')->toArray();
 
@@ -62,12 +62,12 @@ class TaskResultController extends AccountBaseController
      */
     public function destroy($id)
     {
-        $result = TaskResult::findOrFail($id);
-        $this->deleteTaskNotePermission = user()->permission('delete_task_notes');
-        abort_403(!($this->deleteTaskNotePermission == 'all' || ($this->deleteTaskNotePermission == 'added' && $note->added_by == user()->id)));
+        $this->result = TaskResult::findOrFail($id);
+        $this->deleteTaskResultPermission = user()->permission('delete_task_result');
+        abort_403(!($this->deleteTaskResultPermission == 'all' || ($this->deleteTaskResultPermission == 'added' && $this->result->added_by == user()->id)));
 
-        $result_task_id = $result->task_id;
-        $result->delete();
+        $result_task_id = $this->result->task_id;
+        $this->result->delete();
         $this->results = TaskResult::with('task')->where('task_id', $result_task_id)->orderBy('id', 'desc')->get();
         $view = view('tasks.results.show', $this->data)->render();
 
@@ -82,8 +82,8 @@ class TaskResultController extends AccountBaseController
     public function edit($id)
     {
         $this->result = TaskResult::with('user', 'task')->findOrFail($id);
-        $this->editTaskNotePermission = user()->permission('edit_task_notes');
-        abort_403(!($this->editTaskNotePermission == 'all' || ($this->editTaskNotePermission == 'added' && $this->note->added_by == user()->id)));
+        $this->editTaskResultPermission = user()->permission('edit_task_result');
+        abort_403(!($this->editTaskResultPermission == 'all' || ($this->editTaskResultPermission == 'added' && $this->result->added_by == user()->id)));
 
         return view('tasks.results.edit', $this->data);
 
@@ -91,15 +91,15 @@ class TaskResultController extends AccountBaseController
 
     public function update(StoreTaskResult $request, $id)
     {
-        $result = TaskResult::findOrFail($id);
-        $this->editTaskNotePermission = user()->permission('edit_task_notes');
+        $this->result = TaskResult::findOrFail($id);
+        $this->editTaskResultPermission = user()->permission('edit_task_result');
 
-        abort_403(!($this->editTaskNotePermission == 'all' || ($this->editTaskNotePermission == 'added' && $note->added_by == user()->id)));
+        abort_403(!($this->editTaskResultPermission == 'all' || ($this->editTaskResultPermission == 'added' && $this->result->added_by == user()->id)));
 
-        $result->result = trim_editor($request->result);
-        $result->save();
+        $this->result->result = trim_editor($request->result);
+        $this->result->save();
 
-        $this->results = TaskResult::with('task')->where('task_id', $result->task_id)->orderBy('id', 'desc')->get();
+        $this->results = TaskResult::with('task')->where('task_id', $this->result->task_id)->orderBy('id', 'desc')->get();
         $view = view('tasks.results.show', $this->data)->render();
 
         return Reply::dataOnly(['status' => 'success', 'view' => $view]);
