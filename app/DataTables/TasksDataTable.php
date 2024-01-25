@@ -199,11 +199,11 @@ class TasksDataTable extends BaseDataTable
             }
 
             if (is_null($row->userActiveTimer)) {
-                return '<a href="javascript:;" class="text-primary btn border f-15 start-timer" data-task-id="' . $row->id . '" data-toggle="tooltip" data-original-title="' . __('modules.timeLogs.startTimer') . '"><i class="bi bi-play-circle-fill"></i></a>';
+                return '<a href="javascript:;" class="text-primary btn border f-15 start-timer" data-task-id="' . $row->id . '" data-project-id="' . $row->project_id . '" data-toggle="tooltip" data-original-title="' . __('modules.timeLogs.startTimer') . '"><i class="bi bi-play-circle-fill"></i></a>';
             }
 
             if (is_null($row->userActiveTimer->activeBreak)) {
-                $timerButtons = '<div class="btn-group" role="group">';
+                $timerButtons = '<div class="btn-group d-none" role="group">';
                 // $timerButtons .= '<a href="javascript:;" class="text-secondary btn border f-15 pause-timer" data-time-id="' . $row->userActiveTimer->id . '" data-toggle="tooltip" data-original-title="' . __('modules.timeLogs.pauseTimer') . '"><i class="bi bi-pause-circle-fill"></i></a>';
                 $timerButtons .= '<a href="javascript:;" class="text-secondary btn border f-15 stop-timer" data-time-id="' . $row->userActiveTimer->id . '" data-toggle="tooltip" data-original-title="' . __('modules.timeLogs.stopTimer') . '"><i class="bi bi-stop-circle-fill"></i></a>';
                 $timerButtons .= '</div>';
@@ -211,7 +211,7 @@ class TasksDataTable extends BaseDataTable
             }
 
             $timerButtons = '<div class="btn-group" role="group">';
-            $timerButtons .= '<a href="javascript:;" class="text-secondary btn border f-15 resume-timer" data-time-id="' . $row->userActiveTimer->activeBreak->id . '" data-toggle="tooltip" data-original-title="' . __('modules.timeLogs.resumeTimer') . '"><i class="bi bi-play-circle-fill"></i></a>';
+            // $timerButtons .= '<a href="javascript:;" class="text-secondary btn border f-15 resume-timer" data-time-id="' . $row->userActiveTimer->activeBreak->id . '" data-toggle="tooltip" data-original-title="' . __('modules.timeLogs.resumeTimer') . '"><i class="bi bi-play-circle-fill"></i></a>';
             $timerButtons .= '<a href="javascript:;" class="text-secondary btn border f-15 stop-timer" data-time-id="' . $row->userActiveTimer->id . '" data-toggle="tooltip" data-original-title="' . __('modules.timeLogs.stopTimer') . '"><i class="bi bi-stop-circle-fill"></i></a>';
             $timerButtons .= '</div>';
             return $timerButtons;
@@ -278,7 +278,7 @@ class TasksDataTable extends BaseDataTable
                 || ($this->changeStatusPermission == 'both' && (in_array(user()->id, $taskUsers) || $row->added_by == user()->id))
                 || ($row->project_admin == user()->id)
             ) {
-                $status = '<select class="form-control select-picker change-status" data-task-id="' . $row->id . '">';
+                $status = '<select class="form-control select-picker change-status" data-task-id="' . $row->id . '" data-project-id="' . $row->project_id . '">';
 
                 foreach ($taskBoardColumns as $item) {
                     $status .= '<option ';
@@ -286,6 +286,11 @@ class TasksDataTable extends BaseDataTable
                     if ($item->id == $row->board_column_id) {
                         $status .= 'selected';
                     }
+
+                    if (($item->column_name == 'Completed')&&($row->userActiveTimer)) {
+                        $status .= 'stop-timer data-time-id="'. $row->userActiveTimer->id .'"';
+                    }
+
 
                     $status .= '  data-content="<i class=\'fa fa-circle mr-2\' style=\'color: ' . $item->label_color . '\'></i> ' . $item->column_name . '" value="' . $item->slug . '">' . $item->column_name . '</option>';
                 }

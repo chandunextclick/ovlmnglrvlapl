@@ -450,8 +450,37 @@ class TimelogController extends AccountBaseController
         $timeId = $request->timeId;                                                                                                                                                                                                                                               
         $timeLog = ProjectTimeLog::with('project')->findOrFail($timeId);
 
+        $currentDatetime = now();
+
         $currentDate = now()->format('Y-m-d');
 
+        $startDateTimeFormatted = $timeLog->start_time->format('Y-m-d');
+        
+        $breakdays = DB::select(DB::raw("
+                    SELECT TIMEDIFF(
+                        (
+                            SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                            FROM employeelog e2
+                            WHERE e2.empcode = e1.empcode
+                            AND e2.logdate = DATE_ADD(STR_TO_DATE(e1.logdate, '%Y-%m-%d'), INTERVAL 1 DAY)
+                            AND e2.logdate != DATE_ADD(STR_TO_DATE('$currentDate', '%Y-%m-%d'), INTERVAL 1 DAY)
+                            AND e2.direction = 'in'
+                        ),
+                        (
+                            SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                            FROM employeelog e2
+                            WHERE e2.empcode = e1.empcode
+                            AND e2.logdate = e1.logdate
+                            AND e2.logdate != '$currentDate'
+                            AND e2.direction = 'out'
+                        )
+                    ) AS testtime
+                    FROM employeelog e1
+                    LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
+                    WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') BETWEEN '$startDateTimeFormatted' AND DATE_SUB(STR_TO_DATE('$currentDate', '%Y-%m-%d'), INTERVAL 1 DAY)
+                        AND employee_details.user_id = '$timeLog->user_id'
+                    GROUP BY e1.logdate
+                "));
 
         $breakresult = DB::table('employeelog as e1')
                 ->select(DB::raw("TIME_FORMAT(SEC_TO_TIME(SUM(
@@ -472,18 +501,56 @@ class TimelogController extends AccountBaseController
                 )), '%H:%i:%s') AS total_break_time"))
                 ->leftJoin('employee_details', 'employee_details.employee_id', '=', 'e1.empcode')
                 ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') >= STR_TO_DATE('$timeLog->start_time', '%Y-%m-%d %H:%i:%s')")
-                ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') <= STR_TO_DATE('$timeLog->end_time', '%Y-%m-%d %H:%i:%s')")
-                ->whereDate('e1.logdate', $currentDate)
+                ->whereRaw("STR_TO_DATE(CONCAT(e1.logdate, ' ', e1.logtime), '%Y-%m-%d %H:%i:%s') <= STR_TO_DATE('$currentDatetime', '%Y-%m-%d %H:%i:%s')")
                 ->where('employee_details.user_id',$timeLog->user_id)
                 ->orderBy('e1.logtime', 'ASC')
                 ->get();
 
+        $totalBreakTime=[];
 
         foreach ($breakresult as $result) {
 
-            $totalBreakTime = $result->total_break_time;
+            $totalBreakTime[] = $result->total_break_time;
             // Use $totalBreakTime as needed
         }
+
+
+        foreach ($breakdays as $breaks) {
+
+            
+            $totalBreakTime[]=$breaks->testtime;
+        
+        }
+
+        $validTimes = array_filter($totalBreakTime, function ($time) {
+            return $time !== null;
+        });
+        
+        // Initialize variables to hold hours, minutes, and seconds
+        $totalHours = 0;
+        $totalMinutes = 0;
+        $totalSeconds = 0;
+        
+        // Parse and add each valid time string
+        foreach ($validTimes as $time) {
+            list($hours, $minutes, $seconds) = sscanf($time, "%d:%d:%d");
+            $totalHours += $hours;
+            $totalMinutes += $minutes;
+            $totalSeconds += $seconds;
+        }
+        
+        // Adjust minutes and seconds if they exceed their respective limits
+        $totalMinutes += floor($totalSeconds / 60);
+        $totalSeconds %= 60;
+        
+        $totalHours += floor($totalMinutes / 60);
+        $totalMinutes %= 60;
+        
+        // Format the total time
+        $totalTimeFormatted = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
+        
+        // dd($totalTimeFormatted);
+
         
         $editTimelogPermission = user()->permission('edit_timelogs');
         $activeTimelogPermission = user()->permission('manage_active_timelogs');
@@ -501,13 +568,14 @@ class TimelogController extends AccountBaseController
 
         $timeLog->end_time = now();
 
-        if($totalBreakTime!=NULL){
+        if($totalTimeFormatted!=NULL){
+            
 
-            $totalBreakTimeparsed=Carbon::parse($totalBreakTime);
+            $totalBreakTimeparsed=Carbon::parse($totalTimeFormatted);
 
             $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time)-$totalBreakTimeparsed->hour;
-            $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time)-$totalBreakTimeparsed->minute;
-            $timeLog->total_break_minutes = $totalBreakTime;
+            $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time)-(($totalBreakTimeparsed->hour * 60)+$totalBreakTimeparsed->minute);
+            $timeLog->total_break_minutes = $totalTimeFormatted;
 
         }else{
 

@@ -579,6 +579,7 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
             var user_id = "{{ user()->id }}";
             var token = "{{ csrf_token() }}";
             var task_id = $(this).data('task-id');
+            var project_id = $(this).data('project-id');
             var memo = "{{ __('app.task') }}#" + $(this).data('task-id');
 
             $.easyAjax({
@@ -588,6 +589,7 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
                 blockUI: true,
                 data: {
                     task_id: task_id,
+                    project_id: project_id,
                     memo: memo,
                     '_token': token,
                     user_id: user_id
