@@ -114,6 +114,9 @@ class EmployeelogMail extends Command
 
         DB::table('attendances')->insert($insertData);
         
+
+        DB::commit();
+
         $users = DB::table('users')
         ->where('company_id',4)
         ->where('email', '!=', '')

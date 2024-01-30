@@ -357,7 +357,7 @@ class AttendanceController extends AccountBaseController
         foreach ($attendanceActivity as $key => $activity) {
             if ($key == 0) {
                 $this->firstClockIn = $activity;
-                $this->attendanceDate = ($activity->shift_start_time) ? Carbon::parse($activity->shift_start_time) : Carbon::parse($this->firstClockIn->clock_in_time)->timezone($this->company->timezone);
+                $this->attendanceDate =  Carbon::parse($this->firstClockIn->clock_in_time)->timezone($this->company->timezone);
                 $this->startTime = Carbon::parse($this->firstClockIn->clock_in_time)->timezone($this->company->timezone);
             }
 

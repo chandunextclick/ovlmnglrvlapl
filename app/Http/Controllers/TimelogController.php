@@ -454,33 +454,35 @@ class TimelogController extends AccountBaseController
 
         $currentDate = now()->format('Y-m-d');
 
-        $startDateTimeFormatted = $timeLog->start_time->format('Y-m-d');
+        $startDateFormatted = $timeLog->start_time->format('Y-m-d');
+
+        $startDateTimeFormatted = $timeLog->start_time;
         
-        $breakdays = DB::select(DB::raw("
-                    SELECT TIMEDIFF(
-                        (
-                            SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
-                            FROM employeelog e2
-                            WHERE e2.empcode = e1.empcode
-                            AND e2.logdate = DATE_ADD(STR_TO_DATE(e1.logdate, '%Y-%m-%d'), INTERVAL 1 DAY)
-                            AND e2.logdate != DATE_ADD(STR_TO_DATE('$currentDate', '%Y-%m-%d'), INTERVAL 1 DAY)
-                            AND e2.direction = 'in'
-                        ),
-                        (
-                            SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
-                            FROM employeelog e2
-                            WHERE e2.empcode = e1.empcode
-                            AND e2.logdate = e1.logdate
-                            AND e2.logdate != '$currentDate'
-                            AND e2.direction = 'out'
-                        )
-                    ) AS testtime
-                    FROM employeelog e1
-                    LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
-                    WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') BETWEEN '$startDateTimeFormatted' AND DATE_SUB(STR_TO_DATE('$currentDate', '%Y-%m-%d'), INTERVAL 1 DAY)
-                        AND employee_details.user_id = '$timeLog->user_id'
-                    GROUP BY e1.logdate
-                "));
+        // $breakdays = DB::select(DB::raw("
+        //             SELECT TIMEDIFF(
+        //                 (
+        //                     SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+        //                     FROM employeelog e2
+        //                     WHERE e2.empcode = e1.empcode
+        //                     AND e2.logdate = DATE_ADD(STR_TO_DATE(e1.logdate, '%Y-%m-%d'), INTERVAL 1 DAY)
+        //                     AND e2.logdate != DATE_ADD(STR_TO_DATE('$currentDate', '%Y-%m-%d'), INTERVAL 1 DAY)
+        //                     AND e2.direction = 'in'
+        //                 ),
+        //                 (
+        //                     SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+        //                     FROM employeelog e2
+        //                     WHERE e2.empcode = e1.empcode
+        //                     AND e2.logdate = e1.logdate
+        //                     AND e2.logdate != '$currentDate'
+        //                     AND e2.direction = 'out'
+        //                 )
+        //             ) AS testtime
+        //             FROM employeelog e1
+        //             LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
+        //             WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') BETWEEN '$startDateTimeFormatted' AND DATE_SUB(STR_TO_DATE('$currentDate', '%Y-%m-%d'), INTERVAL 1 DAY)
+        //                 AND employee_details.user_id = '$timeLog->user_id'
+        //             GROUP BY testtime
+        //         "));
 
         $breakresult = DB::table('employeelog as e1')
                 ->select(DB::raw("TIME_FORMAT(SEC_TO_TIME(SUM(
@@ -506,21 +508,87 @@ class TimelogController extends AccountBaseController
                 ->orderBy('e1.logtime', 'ASC')
                 ->get();
 
+
+        $interval = $startDateTimeFormatted->diff($currentDatetime);
+
+        $totalDaysdifference = $interval->days;
+
+        $loopdate = $timeLog->start_time->format('Y-m-d');
+
         $totalBreakTime=[];
 
-        foreach ($breakresult as $result) {
+        // foreach ($breakresult as $result) {
 
-            $totalBreakTime[] = $result->total_break_time;
-            // Use $totalBreakTime as needed
-        }
+        //     $totalBreakTime[] = $result->total_break_time;
+        //     // Use $totalBreakTime as needed
+        // }
+
+        
+
+        for ($i = 0; $i <= $totalDaysdifference; $i++) {
+
+            $loopmaxdate = date("Y-m-d", strtotime($loopdate . " +$i day"));
+
+            $loopmindate = date("Y-m-d", strtotime($loopmaxdate . " +1 day"));
+
+            $breakdays = DB::select(DB::raw("
+                    SELECT IFNULL(
+                        TIMEDIFF(
+                            (
+                                SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                FROM employeelog e2
+                                WHERE e2.empcode = e1.empcode
+                                AND e2.logdate = '$loopmindate'
+                                AND e2.direction = 'in'
+                            ),
+                            (
+                                SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                FROM employeelog e2
+                                WHERE e2.empcode = e1.empcode
+                                AND e2.logdate = '$loopmaxdate'
+                                AND e2.direction = 'out'
+                            )
+                        ),
+                        (SELECT CASE WHEN (
+                                    SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                    FROM employeelog e2
+                                    WHERE e2.empcode = e1.empcode
+                                    AND e2.logdate = '$loopmindate'
+                                    AND e2.direction = 'in'
+                                    LIMIT 1
+                                ) THEN (select TIMEDIFF(
+                                    (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                    FROM employeelog e2
+                                    WHERE e2.empcode = e1.empcode
+                                    AND e2.logdate = '$currentDate'
+                                    AND e2.direction = 'in'
+                                    LIMIT 1),(SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                    FROM employeelog e2
+                                    WHERE e2.empcode = e1.empcode
+                                    AND e2.logdate = '$startDateFormatted'
+                                    AND e2.direction = 'out'
+                                    LIMIT 1))- INTERVAL $totalDaysdifference DAY AS time_difference)
+                                ELSE '24:00:00'
+                            END)
+                    ) AS testtime
+                    FROM employeelog e1
+                    LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
+                    WHERE employee_details.user_id = '$timeLog->user_id'
+                    GROUP BY testtime
+                            "));
 
 
-        foreach ($breakdays as $breaks) {
+
+            foreach ($breakdays as $breaks) {
 
             
-            $totalBreakTime[]=$breaks->testtime;
-        
+                $totalBreakTime[]=$breaks->testtime;
+            
+            }
+
+
         }
+
 
         $validTimes = array_filter($totalBreakTime, function ($time) {
             return $time !== null;
@@ -548,9 +616,7 @@ class TimelogController extends AccountBaseController
         
         // Format the total time
         $totalTimeFormatted = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
-        
-        // dd($totalTimeFormatted);
-
+         
         
         $editTimelogPermission = user()->permission('edit_timelogs');
         $activeTimelogPermission = user()->permission('manage_active_timelogs');
@@ -570,12 +636,12 @@ class TimelogController extends AccountBaseController
 
         if($totalTimeFormatted!=NULL){
             
-
-            $totalBreakTimeparsed=Carbon::parse($totalTimeFormatted);
-
-            $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time)-$totalBreakTimeparsed->hour;
-            $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time)-(($totalBreakTimeparsed->hour * 60)+$totalBreakTimeparsed->minute);
+            
+            $totalBreakTimeparsed=Carbon::now()->startOfDay()->addHours($totalHours)->addMinutes($totalMinutes)->addSeconds($totalSeconds);
+            $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time)-$totalHours;
+            $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time)-(($totalHours * 60)+$totalMinutes);
             $timeLog->total_break_minutes = $totalTimeFormatted;
+            // var_dump($timeLog->total_hours.'||'.$timeLog->total_minutes.'||'.$timeLog->total_break_minutes);
 
         }else{
 
@@ -585,7 +651,7 @@ class TimelogController extends AccountBaseController
 
         }
         
-        
+        // dd($totalTimeFormatted);
 
         $timeLog->save();
 

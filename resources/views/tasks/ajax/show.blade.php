@@ -25,7 +25,7 @@ $changeStatusPermission = user()->permission('change_status');
                                 @if ($task->boardColumn->slug != 'completed')
                                 @if (($task->userActiveTimer))
                                     <x-forms.button-primary icon="check" data-status="completed" id="stop-task-timer" data-time-id="{{ $task->userActiveTimer->id }}"
-                                        class="change-task-status mr-2 mb-2 mb-lg-0 mb-md-0">
+                                        class="mr-2 mb-2 mb-lg-0 mb-md-0">
                                         @lang('modules.tasks.markComplete')
                                     </x-forms.button-primary>
                                 @endif
@@ -1012,6 +1012,9 @@ $changeStatusPermission = user()->permission('change_status');
                         _token: token
                     },
                     success: function(data) {
+                        var taskid = '{{ $task->id }}';
+                        var status = 'completed'
+                        updateTask(taskid, status);
                         window.location.reload();
                     }
                 })
