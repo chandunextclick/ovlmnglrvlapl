@@ -50,8 +50,8 @@ $changeStatusPermission = user()->permission('change_status');
                                         <!-- <x-forms.button-secondary icon="pause-circle" data-time-id="{{ $task->userActiveTimer->id }}" id="pause-timer-btn" class="mr-2">@lang('modules.timeLogs.pauseTimer')</x-forms.button-secondary> -->
 
                                         <x-forms.button-secondary data-time-id="{{ $task->userActiveTimer->id }}"
-                                            id="stop-task-timer" icon="stop-circle" style="display:none;">
-                                            @lang('modules.timeLogs.stopTimer')
+                                            id="stop-task-timer" icon="stop-circle" >
+                                            @lang('modules.timeLogs.requesttopause')
                                         </x-forms.button-secondary>
                                     @else
                                         <x-forms.button-secondary id="resume-timer-btn" icon="play-circle"

@@ -573,6 +573,7 @@ return array (
         'logTime' => 'Log Time',
         'startTimer' => 'Start Timer',
         'stopTimer' => 'Stop Timer',
+        'requesttopause' => 'Request To Pause',
         'selectProject' => 'Select Project',
         'selectTask' => 'Select Task',
         'task' => 'Task',

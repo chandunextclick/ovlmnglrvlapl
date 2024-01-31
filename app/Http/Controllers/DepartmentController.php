@@ -50,7 +50,7 @@ class DepartmentController extends AccountBaseController
     {
         $this->departments = Team::allDepartments();
 
-        $this->employees = DB::select("SELECT u.id,u.name FROM employee_details e,users u where u.id=e.user_id");
+        $this->employees = DB::select("SELECT u.id,u.name FROM employee_details e,users u where u.id=e.user_id and u.company_id=".company()->id);
 
         if (request()->ajax()) {
             $html = view('departments.ajax.create', $this->data)->render();
@@ -107,7 +107,7 @@ class DepartmentController extends AccountBaseController
         $this->department = Team::findOrFail($id);
         $this->departments = Team::all();
 
-        $this->employees = DB::select("SELECT u.id,u.name FROM employee_details e,users u where u.id=e.user_id");
+        $this->employees = DB::select("SELECT u.id,u.name FROM employee_details e,users u where u.id=e.user_id and u.company_id=".company()->id);
 
 
         if (request()->ajax()) {

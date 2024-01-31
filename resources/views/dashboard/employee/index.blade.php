@@ -242,7 +242,7 @@
                         <!-- EMP DASHBOARD INFO END -->
                         @endif
 
-                        @if (!is_null($myActiveTimer))
+                        <!-- @if (!is_null($myActiveTimer))
                             <div class="col-sm-12" id="myActiveTimerSection">
                                 <x-cards.data class="mb-3" :title="__('modules.timeLogs.myActiveTimer')">
                                     <div class="row">
@@ -306,7 +306,7 @@
                                     </div>
                                 </x-cards.data>
                             </div>
-                        @endif
+                        @endif -->
 
                         @if (in_array('attendance', user_modules()) && in_array('shift_schedule', $activeWidgets) && $sidebarUserPermissions['view_shift_roster'] != 5 && $sidebarUserPermissions['view_shift_roster'] != 'none')
                             <div class="col-sm-12">

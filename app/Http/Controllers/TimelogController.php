@@ -517,78 +517,82 @@ class TimelogController extends AccountBaseController
 
         $totalBreakTime=[];
 
-        // foreach ($breakresult as $result) {
+        foreach ($breakresult as $result) {
 
-        //     $totalBreakTime[] = $result->total_break_time;
-        //     // Use $totalBreakTime as needed
-        // }
+            $totalBreakTime[] = $result->total_break_time;
+            // Use $totalBreakTime as needed
+        }
 
         
+        if($totalDaysdifference!=0){
 
-        for ($i = 0; $i <= $totalDaysdifference; $i++) {
 
-            $loopmaxdate = date("Y-m-d", strtotime($loopdate . " +$i day"));
+            for ($i = 0; $i <= $totalDaysdifference; $i++) {
 
-            $loopmindate = date("Y-m-d", strtotime($loopmaxdate . " +1 day"));
+                $loopmaxdate = date("Y-m-d", strtotime($loopdate . " +$i day"));
 
-            $breakdays = DB::select(DB::raw("
-                    SELECT IFNULL(
-                        TIMEDIFF(
-                            (
-                                SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
-                                FROM employeelog e2
-                                WHERE e2.empcode = e1.empcode
-                                AND e2.logdate = '$loopmindate'
-                                AND e2.direction = 'in'
-                            ),
-                            (
-                                SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
-                                FROM employeelog e2
-                                WHERE e2.empcode = e1.empcode
-                                AND e2.logdate = '$loopmaxdate'
-                                AND e2.direction = 'out'
-                            )
-                        ),
-                        (SELECT CASE WHEN (
+                $loopmindate = date("Y-m-d", strtotime($loopmaxdate . " +1 day"));
+
+                var_dump($loopmaxdate.'||'.$loopmindate.'||'.$totalDaysdifference.'||'.$currentDate);
+
+                $breakdays = DB::select(DB::raw("
+                        SELECT IFNULL(
+                            TIMEDIFF(
+                                (
                                     SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
                                     FROM employeelog e2
                                     WHERE e2.empcode = e1.empcode
                                     AND e2.logdate = '$loopmindate'
                                     AND e2.direction = 'in'
-                                    LIMIT 1
-                                ) THEN (select TIMEDIFF(
-                                    (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                ),
+                                (
+                                    SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
                                     FROM employeelog e2
                                     WHERE e2.empcode = e1.empcode
-                                    AND e2.logdate = '$currentDate'
-                                    AND e2.direction = 'in'
-                                    LIMIT 1),(SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
-                                    FROM employeelog e2
-                                    WHERE e2.empcode = e1.empcode
-                                    AND e2.logdate = '$startDateFormatted'
+                                    AND e2.logdate = '$loopmaxdate'
                                     AND e2.direction = 'out'
-                                    LIMIT 1))- INTERVAL $totalDaysdifference DAY AS time_difference)
-                                ELSE '24:00:00'
-                            END)
-                    ) AS testtime
-                    FROM employeelog e1
-                    LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
-                    WHERE employee_details.user_id = '$timeLog->user_id'
-                    GROUP BY testtime
-                            "));
+                                )
+                            ),
+                            (SELECT CASE WHEN (
+                                        SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                        FROM employeelog e2
+                                        WHERE e2.empcode = e1.empcode
+                                        AND e2.logdate = '$loopmindate'
+                                        AND e2.direction = 'in'
+                                        LIMIT 1
+                                    ) THEN (select TIMEDIFF(
+                                        (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                        FROM employeelog e2
+                                        WHERE e2.empcode = e1.empcode
+                                        AND e2.logdate = '$currentDate'
+                                        AND e2.direction = 'in'
+                                        LIMIT 1),(SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                        FROM employeelog e2
+                                        WHERE e2.empcode = e1.empcode
+                                        AND e2.logdate = '$startDateFormatted'
+                                        AND e2.direction = 'out'
+                                        LIMIT 1))- INTERVAL $totalDaysdifference DAY AS time_difference)
+                                    ELSE '24:00:00'
+                                END)
+                        ) AS testtime
+                        FROM employeelog e1
+                        LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
+                        WHERE employee_details.user_id = '$timeLog->user_id'
+                        GROUP BY testtime
+                                "));
 
 
 
-            foreach ($breakdays as $breaks) {
+                foreach ($breakdays as $breaks) {
 
-            
-                $totalBreakTime[]=$breaks->testtime;
-            
+                
+                    $totalBreakTime[]=$breaks->testtime;
+                
+                }
+
+
             }
-
-
         }
-
 
         $validTimes = array_filter($totalBreakTime, function ($time) {
             return $time !== null;
@@ -617,7 +621,8 @@ class TimelogController extends AccountBaseController
         // Format the total time
         $totalTimeFormatted = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
          
-        
+
+
         $editTimelogPermission = user()->permission('edit_timelogs');
         $activeTimelogPermission = user()->permission('manage_active_timelogs');
 
