@@ -160,7 +160,7 @@ class TaskReportDataTable extends BaseDataTable
         $model = $model->leftJoin('projects', 'projects.id', '=', 'tasks.project_id')
             ->leftJoin('users as client', 'client.id', '=', 'projects.client_id')
             ->join('taskboard_columns', 'taskboard_columns.id', '=', 'tasks.board_column_id')
-            ->Join('project_time_logs', 'project_time_logs.task_id', '=', 'tasks.id');
+            ->leftJoin('project_time_logs', 'project_time_logs.task_id', '=', 'tasks.id');
 
         if ($this->viewUnassignedTasksPermission == 'all' && !in_array('client', user_roles()) && ($request->assignedTo == 'unassigned' || $request->assignedTo == 'all')) {
             $model->leftJoin('task_users', 'task_users.task_id', '=', 'tasks.id')
