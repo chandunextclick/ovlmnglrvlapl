@@ -224,7 +224,6 @@ class ProjectController extends AccountBaseController
     {
         $this->addPermission = user()->permission('add_projects');
 
-        var_dump(request('template'));
 
         abort_403(!in_array($this->addPermission, ['all', 'added']));
 
@@ -244,10 +243,11 @@ class ProjectController extends AccountBaseController
             $this->projectMembers = $this->project->members ? $this->project->members->pluck('user_id')->toArray() : null;
         }
 
-        $this->projectTemplate = request('template') ? ProjectTemplate::with('projectMembers')->findOrFail(request('template')) : null;
+        $this->projectTemplate = request('template') ? ProjectTemplate::with('projectMembers','projectDepartments')->findOrFail(request('template')) : null;
 
         if ($this->projectTemplate) {
             $this->projectTemplateMembers = $this->projectTemplate->projectMembers ? $this->projectTemplate->projectMembers->pluck('id')->toArray() : null;
+            $this->projectTemplateDepartments = $this->projectTemplate->projectDepartments ? $this->projectTemplate->projectDepartments->pluck('id')->toArray() : null;
         }
 
         $project = new Project();
@@ -362,8 +362,6 @@ class ProjectController extends AccountBaseController
             }
 
             if (!empty($request->team_id)) {
-
-                    
 
                 $dataToInsert = [];
                 foreach ($request->team_id as $teamId) {

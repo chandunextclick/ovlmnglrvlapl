@@ -143,7 +143,7 @@ class ProjectTimeLog extends BaseModel
     public function getHoursAttribute()
     {
         $totalMinutes = $this->total_minutes;
-        $totalMinutes = $totalMinutes - $this->breaks->sum('total_minutes');
+        // $totalMinutes = $totalMinutes - $this->breaks->sum('total_minutes');
 
         /** @phpstan-ignore-next-line */
         return CarbonInterval::formatHuman($totalMinutes);

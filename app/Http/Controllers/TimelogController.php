@@ -366,15 +366,17 @@ class TimelogController extends AccountBaseController
      * @return \Illuminate\Http\Response
      */
     public function startTimer(StartTimer $request)
-    {
+    {   
         $timeLog = new ProjectTimeLog();
 
         $activeTimer = ProjectTimeLog::with('user')
             ->whereNull('end_time')
             ->join('users', 'users.id', '=', 'project_time_logs.user_id')
-            ->where('user_id', $this->user->id)->first();
+            ->where('user_id', $this->user->id)->count();
 
-        if (is_null($activeTimer)) {
+
+
+        if ($activeTimer<=1) {
             $taskId = $request->task_id;
 
             if ($request->has('create_task')) {
@@ -458,31 +460,23 @@ class TimelogController extends AccountBaseController
 
         $startDateTimeFormatted = $timeLog->start_time;
         
-        // $breakdays = DB::select(DB::raw("
-        //             SELECT TIMEDIFF(
-        //                 (
-        //                     SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
-        //                     FROM employeelog e2
-        //                     WHERE e2.empcode = e1.empcode
-        //                     AND e2.logdate = DATE_ADD(STR_TO_DATE(e1.logdate, '%Y-%m-%d'), INTERVAL 1 DAY)
-        //                     AND e2.logdate != DATE_ADD(STR_TO_DATE('$currentDate', '%Y-%m-%d'), INTERVAL 1 DAY)
-        //                     AND e2.direction = 'in'
-        //                 ),
-        //                 (
-        //                     SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, ' ', e2.logtime), '%Y-%m-%d %H:%i:%s'))
-        //                     FROM employeelog e2
-        //                     WHERE e2.empcode = e1.empcode
-        //                     AND e2.logdate = e1.logdate
-        //                     AND e2.logdate != '$currentDate'
-        //                     AND e2.direction = 'out'
-        //                 )
-        //             ) AS testtime
-        //             FROM employeelog e1
-        //             LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
-        //             WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') BETWEEN '$startDateTimeFormatted' AND DATE_SUB(STR_TO_DATE('$currentDate', '%Y-%m-%d'), INTERVAL 1 DAY)
-        //                 AND employee_details.user_id = '$timeLog->user_id'
-        //             GROUP BY testtime
-        //         "));
+        $pausetime = DB::select(DB::raw("
+                    SELECT sum(total_hours) as total_hours,
+                    sum(total_minutes) as total_minutes FROM `project_time_log_breaks`
+                    where project_time_log_id='$timeId'
+                "));
+
+        $totalpausehour = 0;
+
+        $totalpauseminute = 0;
+
+        foreach ($pausetime  as $pause) {
+
+            $totalpausehour = $pause->total_hours;
+            $totalpauseminute = $pause->total_minutes;                                                                                
+          
+        }
+
 
         $breakresult = DB::table('employeelog as e1')
                 ->select(DB::raw("TIME_FORMAT(SEC_TO_TIME(SUM(
@@ -642,9 +636,8 @@ class TimelogController extends AccountBaseController
         if($totalTimeFormatted!=NULL){
             
             
-            $totalBreakTimeparsed=Carbon::now()->startOfDay()->addHours($totalHours)->addMinutes($totalMinutes)->addSeconds($totalSeconds);
-            $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time)-$totalHours;
-            $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time)-(($totalHours * 60)+$totalMinutes);
+            $timeLog->total_hours = $timeLog->end_time->diffInHours($timeLog->start_time)-($totalHours)-($totalpauseminute/60);
+            $timeLog->total_minutes = $timeLog->end_time->diffInMinutes($timeLog->start_time)-(($totalHours * 60)+$totalMinutes)-($totalpauseminute);
             $timeLog->total_break_minutes = $totalTimeFormatted;
             // var_dump($timeLog->total_hours.'||'.$timeLog->total_minutes.'||'.$timeLog->total_break_minutes);
 
@@ -655,8 +648,8 @@ class TimelogController extends AccountBaseController
             $timeLog->total_break_minutes = 0;
 
         }
-        
-        // dd($totalTimeFormatted);
+
+
 
         $timeLog->save();
 
@@ -876,50 +869,106 @@ class TimelogController extends AccountBaseController
 
     public function pauseTimer(Request $request)
     {
-        $timeId = $request->timeId;
-        $timeLog = ProjectTimeLog::findOrFail($timeId);
-        $editTimelogPermission = user()->permission('edit_timelogs');
-        $activeTimelogPermission = user()->permission('manage_active_timelogs');
 
-        abort_403(!(
-            $editTimelogPermission == 'all'
-        || ($editTimelogPermission == 'added' && $timeLog->added_by == user()->id)
-        || ($editTimelogPermission == 'owned'
-            && (($timeLog->project && $timeLog->project->client_id == user()->id) || $timeLog->user_id == user()->id)
-            )
-        || ($editTimelogPermission == 'both' && (($timeLog->project && $timeLog->project->client_id == user()->id) || $timeLog->user_id == user()->id || $timeLog->added_by == user()->id))
-        ));
+        if (in_array('admin', user_roles())) {
 
-        $timeLogBreak = new ProjectTimeLogBreak();
-        $timeLogBreak->project_time_log_id = $timeLog->id;
-        $timeLogBreak->start_time = now();
-        $timeLogBreak->total_minutes = 0;
-        $timeLogBreak->save();
+            $activeTimer = ProjectTimeLog::with('user', 'activeBreak')->findOrFail($request->timeId);
+            
+        }else{
 
-        if (!is_null($timeLog->project_id)) {
-            $this->logProjectActivity($timeLog->project_id, 'modules.tasks.timerPausedBy');
-        }
-
-        if (!is_null($timeLog->task_id)) {
-            $this->logTaskActivity($timeLog->task_id, user()->id, 'timerPausedBy');
-        }
-
-        $this->logUserActivity($this->user->id, 'modules.tasks.timerPausedBy');
-
-        /** @phpstan-ignore-next-line */
-        $html = $this->showActiveTimer()->render();
-
-        $this->selfActiveTimer = ProjectTimeLog::with('activeBreak')
-            ->where('user_id', user()->id)
+            $activeTimer = ProjectTimeLog::with('user', 'activeBreak')
             ->whereNull('end_time')
+            ->where('user_id', $this->user->id)
             ->first();
-        $clockHtml = view('sections.timer_clock', $this->data)->render();
 
-        return Reply::successWithData(__('messages.timerPausedSuccessfully'), ['html' => $html, 'clockHtml' => $clockHtml]);
+        }
+
+
+
+        $task = Task::findOrFail($activeTimer->task_id);
+
+        if($task->task_time_id==0){
+
+            if($activeTimer && $activeTimer->activeBreak !== null){
+
+
+                return Reply::error(__('messages.timelogAlreadyExist'));
+
+
+            }else{
+
+                $task->update(['task_time_id' => $request->timeId]);
+
+                return Reply::successWithData(__('messages.requestedSuccessfully'), ['redirectUrl' => route('tasks.show', $activeTimer->task_id)]);
+
+            }
+
+            
+        }else{
+
+        
+            if($activeTimer && $activeTimer->activeBreak !== null){
+
+
+                return Reply::error(__('messages.timelogAlreadyExist'));
+
+
+            }else{
+
+            $timeId = $request->timeId;
+            $timeLog = ProjectTimeLog::findOrFail($timeId);
+            $editTimelogPermission = user()->permission('edit_timelogs');
+            $activeTimelogPermission = user()->permission('manage_active_timelogs');
+
+            abort_403(!(
+                $editTimelogPermission == 'all'
+            || ($editTimelogPermission == 'added' && $timeLog->added_by == user()->id)
+            || ($editTimelogPermission == 'owned'
+                && (($timeLog->project && $timeLog->project->client_id == user()->id) || $timeLog->user_id == user()->id)
+                )
+            || ($editTimelogPermission == 'both' && (($timeLog->project && $timeLog->project->client_id == user()->id) || $timeLog->user_id == user()->id || $timeLog->added_by == user()->id))
+            ));
+
+            $timeLogBreak = new ProjectTimeLogBreak();
+            $timeLogBreak->project_time_log_id = $timeLog->id;
+            $timeLogBreak->start_time = now();
+            $timeLogBreak->total_minutes = 0;
+            $timeLogBreak->save();
+
+            if (!is_null($timeLog->project_id)) {
+                $this->logProjectActivity($timeLog->project_id, 'modules.tasks.timerPausedBy');
+            }
+
+            if (!is_null($timeLog->task_id)) {
+                $this->logTaskActivity($timeLog->task_id, user()->id, 'timerPausedBy');
+            }
+
+            $this->logUserActivity($this->user->id, 'modules.tasks.timerPausedBy');
+
+            $task->update(['task_time_id' => 0]);
+
+            /** @phpstan-ignore-next-line */
+            $html = $this->showActiveTimer()->render();
+
+            $this->selfActiveTimer = ProjectTimeLog::with('activeBreak')
+                ->where('user_id', user()->id)
+                ->whereNull('end_time')
+                ->first();
+            $clockHtml = view('sections.timer_clock', $this->data)->render();
+
+            return Reply::successWithData(__('messages.timerPausedSuccessfully'), ['html' => $html, 'clockHtml' => $clockHtml]);
+
+
+            }
+
+        }
+
+        
     }
 
     public function resumeTimer(Request $request)
     {
+       
         $timeId = $request->timeId;
         $timeLogBreak = ProjectTimeLogBreak::findOrfail($timeId);
         $timeLog = ProjectTimeLog::findOrFail($timeLogBreak->project_time_log_id);
@@ -934,25 +983,39 @@ class TimelogController extends AccountBaseController
         || ($editTimelogPermission == 'both' && (($timeLog->project && $timeLog->project->client_id == user()->id) || $timeLog->user_id == user()->id || $timeLog->added_by == user()->id))
         ));
 
-        $endTime = now();
-        $timeLogBreak->end_time = $endTime;
-
-        $timeLogBreak->total_hours = $endTime->diffInHours($timeLogBreak->start_time);
-
-        $timeLogBreak->total_minutes = $endTime->diffInMinutes($timeLogBreak->start_time);
-        $timeLogBreak->save();
-
-        $this->logUserActivity($this->user->id, 'modules.tasks.timerStartedBy');
-
-        /** @phpstan-ignore-next-line */
-        $html = $this->showActiveTimer()->render();
-        $this->selfActiveTimer = ProjectTimeLog::with('activeBreak')
-            ->where('user_id', user()->id)
+        $activeTimer = ProjectTimeLog::with('user')
             ->whereNull('end_time')
-            ->first();
-        $clockHtml = view('sections.timer_clock', $this->data)->render();
+            ->join('users', 'users.id', '=', 'project_time_logs.user_id')
+            ->where('user_id', $this->user->id)->count();
 
-        return Reply::successWithData(__('messages.timerStartedSuccessfully'), ['html' => $html, 'clockHtml' => $clockHtml]);
+        if($activeTimer<=1){
+
+            $endTime = now();
+            $timeLogBreak->end_time = $endTime;
+    
+            $timeLogBreak->total_hours = $endTime->diffInHours($timeLogBreak->start_time);
+    
+            $timeLogBreak->total_minutes = $endTime->diffInMinutes($timeLogBreak->start_time);
+            $timeLogBreak->save();
+    
+            $this->logUserActivity($this->user->id, 'modules.tasks.timerStartedBy');
+    
+            /** @phpstan-ignore-next-line */
+            $html = $this->showActiveTimer()->render();
+            $this->selfActiveTimer = ProjectTimeLog::with('activeBreak')
+                ->where('user_id', user()->id)
+                ->whereNull('end_time')
+                ->first();
+            $clockHtml = view('sections.timer_clock', $this->data)->render();
+    
+            return Reply::successWithData(__('messages.timerStartedSuccessfully'), ['html' => $html, 'clockHtml' => $clockHtml]);
+
+        }
+        return Reply::error(__('messages.timelogAlreadyExist'));
+
+        
     }
+
+    
 
 }

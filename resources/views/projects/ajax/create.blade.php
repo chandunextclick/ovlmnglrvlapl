@@ -104,7 +104,7 @@
                                 <select class="form-control multiple-users" multiple name="team_id[]" id="employee_department" required
                                         data-live-search="true">
                                     @foreach ($teams as $team)
-                                        <option @if ($project && $project->team_id === $team->id) selected @endif value="{{ $team->id }}">{{ mb_ucfirst($team->team_name) }}</option>
+                                        <option @if ($project && $project->team_id === $team->id)  selected @endif @if(isset($projectTemplateDepartments) && in_array($team->id, $projectTemplateDepartments)) selected @endif value="{{ $team->id }}">{{ mb_ucfirst($team->team_name) }}</option>
                                     @endforeach
                                 </select>
                             </x-forms.input-group>
@@ -167,7 +167,7 @@
                     @endif
 
                     @if ($addProjectMemberPermission == 'all' || $addProjectMemberPermission == 'added')
-                        <div class="col-md-12 d-none" id="add_members">
+                        <div class="col-md-12 " id="add_members">
                             <div class="form-group my-3">
                                 <x-forms.label class="my-3" fieldId="selectEmployee" fieldRequired="true"
                                                :fieldLabel="__('modules.projects.addMemberTitle')">
@@ -514,7 +514,8 @@
             });
         });
 
-        $("#selectEmployee").selectpicker('selectAll');
+        $('#employee_department').trigger('change');
+        // $("#selectEmployee").selectpicker('selectAll');
 
         init(RIGHT_MODAL);
     });

@@ -6,6 +6,7 @@ use App\DataTables\BaseDataTable;
 use App\Models\Task;
 use App\Models\TaskboardColumn;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Html\Button;
 
@@ -69,6 +70,23 @@ class TaskReportDataTable extends BaseDataTable
             })
             ->editColumn('clientName', function ($row) {
                 return ($row->clientName) ? mb_ucwords($row->clientName) : '-';
+            })
+            ->addColumn('total_minutes', function ($row) {
+
+                $minutes=$row->total_minutes;
+
+                $timeFormatted = CarbonInterval::formatHuman($minutes);
+
+                if($row->board_column!='Completed'){
+
+                    return ucfirst('');
+
+                }else{
+
+                    return ucfirst($timeFormatted);
+
+                }
+    
             })
             ->addColumn('task', function ($row) {
                 return ucfirst($row->heading);
@@ -141,7 +159,8 @@ class TaskReportDataTable extends BaseDataTable
 
         $model = $model->leftJoin('projects', 'projects.id', '=', 'tasks.project_id')
             ->leftJoin('users as client', 'client.id', '=', 'projects.client_id')
-            ->join('taskboard_columns', 'taskboard_columns.id', '=', 'tasks.board_column_id');
+            ->join('taskboard_columns', 'taskboard_columns.id', '=', 'tasks.board_column_id')
+            ->Join('project_time_logs', 'project_time_logs.task_id', '=', 'tasks.id');
 
         if ($this->viewUnassignedTasksPermission == 'all' && !in_array('client', user_roles()) && ($request->assignedTo == 'unassigned' || $request->assignedTo == 'all')) {
             $model->leftJoin('task_users', 'task_users.task_id', '=', 'tasks.id')
@@ -156,7 +175,7 @@ class TaskReportDataTable extends BaseDataTable
         $model->leftJoin('users as creator_user', 'creator_user.id', '=', 'tasks.created_by')
             ->leftJoin('task_labels', 'task_labels.task_id', '=', 'tasks.id')
             ->selectRaw('tasks.id, tasks.added_by, projects.project_name, projects.client_id, tasks.heading, client.name as clientName, creator_user.name as created_by, creator_user.image as created_image, tasks.board_column_id,
-             tasks.due_date, taskboard_columns.column_name as board_column, taskboard_columns.label_color,
+             tasks.due_date, taskboard_columns.column_name as board_column, taskboard_columns.label_color,sum(project_time_logs.total_minutes) total_minutes,
               tasks.project_id, tasks.is_private ,( select count("id") from pinned where pinned.task_id = tasks.id and pinned.user_id = ' . user()->id . ') as pinned_task')
             ->addSelect('tasks.company_id') // Company_id is fetched so the we have fetch company relation with it)
             ->whereNull('projects.deleted_at')
@@ -260,6 +279,7 @@ class TaskReportDataTable extends BaseDataTable
             __('app.task') => ['data' => 'heading', 'name' => 'heading', 'exportable' => false, 'title' => __('app.task')],
             __('app.menu.tasks') => ['data' => 'task', 'name' => 'heading', 'visible' => false, 'title' => __('app.menu.tasks')],
             __('app.project') => ['data' => 'project_name', 'name' => 'projects.project_name', 'title' => __('app.project')],
+            __('app.menu.timeLogs') => ['data' => 'total_minutes', 'name' => 'project_time_logs.total_minutes', 'title' => __('app.menu.timeLogs')],
             __('modules.tasks.assigned') => ['data' => 'name', 'name' => 'name', 'visible' => false, 'title' => __('modules.tasks.assigned')],
             __('app.dueDate') => ['data' => 'due_date', 'name' => 'due_date', 'title' => __('app.dueDate')],
             __('modules.tasks.assignTo') => ['data' => 'users', 'name' => 'member.name', 'exportable' => false, 'title' => __('modules.tasks.assignTo')],

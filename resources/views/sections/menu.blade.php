@@ -90,7 +90,7 @@
                     <x-sub-menu-item :link="route('awards.index')" :text="__('app.menu.appreciation')" />
                 @endif
 
-                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 && 1==0)
 
                 <x-sub-menu-item :link="route('sprofile.index')" :text="__('app.menu.enquiry')" />
 
@@ -100,6 +100,12 @@
                 @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
 
                 <x-sub-menu-item :link="route('sprofile.essldata')" :text="__('app.menu.essldata')" /> 
+                
+                @endif
+
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+
+                <x-sub-menu-item :link="route('sprofile.customerpersonaview')" :text="__('app.menu.personal')" /> 
                 
                 @endif
                 

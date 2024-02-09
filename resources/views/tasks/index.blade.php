@@ -84,6 +84,7 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
                         <option value="pinned">@lang('app.pinned')</option>
                         <option value="priority" {{ request('priority') == 'yes' ? 'selected' : '' }}>@lang('app.priority')</option>
                         <option value="private">@lang('app.private')</option>
+                        <option value="paused">@lang('app.pause')</option>
                     </select>
                 </div>
             </div>
@@ -247,6 +248,8 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
                     </x-forms.button-primary>
                 @endif
 
+                
+
             </div>
 
             <x-datatable.actions>
@@ -278,6 +281,13 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
 
                 <a href="javascript:;" class="btn btn-secondary f-14 show-pinned" data-toggle="tooltip"
                     data-original-title="@lang('app.pinned')"><i class="side-icon bi bi-pin-angle"></i></a>
+
+                @if (in_array('admin', user_roles()))
+                    <a href="javascript:;" class="btn btn-secondary f-14 show-paused" data-toggle="tooltip"
+                    data-original-title="@lang('modules.tasks.pauserequest')"><i class="side-icon bi bi-pause-fill"></i></a>
+                @endif
+                
+                    
             </div>
         </div>
 
@@ -405,6 +415,22 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
                 $('#pinned').val('all');
             } else {
                 $('#pinned').val('pinned');
+            }
+
+            $('#pinned').selectpicker('refresh');
+            $(this).toggleClass('btn-active');
+            $('#reset-filters').removeClass('d-none');
+            showTable();
+        });
+
+        $('.show-paused').click(function() {
+
+            $('.task').removeClass('btn-active');
+
+            if ($(this).hasClass('btn-active')) {
+                $('#pinned').val('all');
+            } else {
+                $('#pinned').val('paused');
             }
 
             $('#pinned').selectpicker('refresh');
@@ -700,7 +726,7 @@ $viewUnassignedTasksPermission = user()->permission('view_unassigned_tasks');
                         if ($('#allTasks-table').length) {
                             window.LaravelDataTables["allTasks-table"].draw(false);
                         }
-                        window.location.reload();
+                        
                     }
                     
                 }

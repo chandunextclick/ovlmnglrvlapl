@@ -431,6 +431,7 @@
 
                     $('#timer-clock').html(response.clockHtml);
                 }
+                console.log('reload check');
                 window.location.reload();
             }
         })

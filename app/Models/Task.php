@@ -29,6 +29,7 @@ use Illuminate\Notifications\Notifiable;
  * @property \Illuminate\Support\Carbon|null $completed_on
  * @property int|null $created_by
  * @property int|null $recurring_task_id
+ * @property int|null $task_time_id
  * @property-read \Illuminate\Database\Eloquent\Collection|Task[] $recurrings
  * @property-read int|null $recurrings_count
  * @property int|null $dependent_task_id

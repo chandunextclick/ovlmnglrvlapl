@@ -96,6 +96,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('logcleaner:run')->daily()->timezone($timezone);
         $schedule->command('update-exchange-rate')->daily()->timezone($timezone);
         $schedule->command('empdaily-log')->daily()->timezone($timezone);
+        $schedule->command('monthly-report-log')->daily()->timezone($timezone);
 
         $schedule->command('clear-null-session')->hourly();
         $schedule->command('create-database-backup')->hourly();

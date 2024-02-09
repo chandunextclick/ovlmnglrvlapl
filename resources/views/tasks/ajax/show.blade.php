@@ -44,15 +44,21 @@ $changeStatusPermission = user()->permission('change_status');
                                     </x-forms.button-secondary>
                                 @elseif (!is_null($task->userActiveTimer))
 
-                                    <span class="border p-2 rounded mr-2 bg-light"><i class="fa fa-clock mr-1"></i><span id="active-task-timer">{{ $task->userActiveTimer->timer }}</span></span>
-                                  
-                                    @if (is_null($task->userActiveTimer->activeBreak))
-                                        <!-- <x-forms.button-secondary icon="pause-circle" data-time-id="{{ $task->userActiveTimer->id }}" id="pause-timer-btn" class="mr-2">@lang('modules.timeLogs.pauseTimer')</x-forms.button-secondary> -->
 
-                                        <x-forms.button-secondary data-time-id="{{ $task->userActiveTimer->id }}"
-                                            id="stop-task-timer" icon="stop-circle" >
-                                            @lang('modules.timeLogs.requesttopause')
-                                        </x-forms.button-secondary>
+                                    @if (is_null($task->userActiveTimer->activeBreak))
+
+                                    <span class="border p-2 rounded mr-2 bg-light"><i class="fa fa-clock mr-1"></i><span id="active-task-timer">{{ $task->userActiveTimer->timer }}</span></span>
+
+                                        @if ($task->task_time_id==0)
+
+                                            <x-forms.button-secondary icon="pause-circle" data-time-id="{{ $task->userActiveTimer->id }}" id="pause-timer-btn" class="mr-2">@lang('modules.timeLogs.pauseTimer')</x-forms.button-secondary>
+                                        
+                                        @else
+
+                                        <x-forms.button-secondary icon="pause-circle"  class="mr-2">@lang('modules.timeLogs.requested')</x-forms.button-secondary>
+                                    
+                                        @endif
+
                                     @else
                                         <x-forms.button-secondary id="resume-timer-btn" icon="play-circle"
                                         data-time-id="{{ $task->userActiveTimer->activeBreak->id }}">@lang('modules.timeLogs.resumeTimer')</x-forms.button-secondary>
@@ -1027,6 +1033,8 @@ $changeStatusPermission = user()->permission('change_status');
             
 
             $('#resume-timer-btn').click(function() {
+
+                console.log("showresumeblade");
                 window.location.reload();
             });
 

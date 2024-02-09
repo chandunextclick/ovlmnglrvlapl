@@ -107,6 +107,20 @@ class TasksDataTable extends BaseDataTable
                             </a>';
             }
 
+            if($row->task_time_id!=0){
+
+            
+                if (in_array('admin', user_roles())) {
+
+                    $action .= '<a class="dropdown-item" href="javascript:;" data-time-id='.$row->task_time_id.' id="pause-timer-btn">
+                                    <i class="fa fa-pause"></i>
+                                    ' . trans('app.pause') . '
+                                </a>';
+
+                }
+            
+            }
+
             $action .= '</div>
                     </div>
                 </div>';
@@ -254,7 +268,7 @@ class TasksDataTable extends BaseDataTable
             }
 
             if ($row->activeTimer && $row->active_timer_all_count == 1) {
-                $timer .= '<span class="badge badge-primary mr-1" data-toggle="tooltip" data-original-title="' . __('modules.projects.activeTimers') . '" ><i class="fa fa-clock"></i> ' . $row->activeTimer->timer . '</span>';
+                $timer .= '<span class="badge badge-primary mr-1 d-none" data-toggle="tooltip" data-original-title="' . __('modules.projects.activeTimers') . '" ><i class="fa fa-clock"></i> ' . $row->activeTimer->timer . '</span>';
             }
 
             if ($row->subtasks_count > 0) {
@@ -387,7 +401,7 @@ class TasksDataTable extends BaseDataTable
             ->leftJoin('taskboard_columns as dependentboard', 'dependentboard.id', '=', 'dependent.board_column_id')
             ->selectRaw('tasks.id, tasks.task_short_code, tasks.added_by, projects.project_name, projects.project_admin, tasks.heading, client.name as clientName, creator_user.name as created_by, creator_user.image as created_image, tasks.board_column_id,
              tasks.due_date,tasks.created_at,tasks.updated_at,tasks.completed_on,taskboard_columns.column_name as board_column, taskboard_columns.label_color,dependentboard.slug,project_category.category_name,
-              tasks.project_id, tasks.is_private ,( select count("id") from pinned where pinned.task_id = tasks.id and pinned.user_id = ' . user()->id . ') as pinned_task')
+              tasks.project_id, tasks.is_private,tasks.task_time_id,( select count("id") from pinned where pinned.task_id = tasks.id and pinned.user_id = ' . user()->id . ') as pinned_task')
             ->addSelect('tasks.company_id') // Company_id is fetched so the we have fetch company relation with it)
             ->with('users', 'activeTimerAll', 'boardColumn', 'activeTimer', 'timeLogged', 'timeLogged.breaks', 'userActiveTimer', 'userActiveTimer.activeBreak', 'labels', 'taskUsers')
             ->withCount('activeTimerAll', 'completedSubtasks', 'subtasks')
@@ -402,6 +416,11 @@ class TasksDataTable extends BaseDataTable
         if ($request->pinned == 'priority') {
         
             $model->where('projects.priority',1);
+        }
+
+        if ($request->pinned == 'paused') {
+        
+            $model->where('tasks.task_time_id', '!=', 0);
         }
 
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\DataTables\EnquiryDataTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 use Mail;
 
@@ -13,7 +15,7 @@ class StudentProfileController extends AccountBaseController
     public function __construct()
     {
         parent::__construct();
-        $this->pageTitle = 'app.menu.enquiry';
+        
         $this->middleware(function ($request, $next) {
             abort_403(!in_array('employees', $this->user->modules));
 
@@ -25,7 +27,7 @@ class StudentProfileController extends AccountBaseController
 public function index(Request $request)
 {
 
-    $data['pageTitle']= $this->pageTitle;
+    $data['pageTitle']= 'Enquiry';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
     $data['checkListCompleted']= $this->checkListCompleted;
@@ -94,6 +96,61 @@ public function index(Request $request)
 
 
     return view('employees.enquiry',$data);
+}
+
+
+public function customerpersonacreate(Request $request)
+{
+
+    $data['pageTitle']= 'Write For Us';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    $data['checkListCompleted']= $this->checkListCompleted;
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+    
+
+
+    return view('employees.customerpersonacreate',$data);
+}
+
+public function customerpersonaview()
+{
+
+    $data['pageTitle']= 'Customer Persona';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    $data['checkListCompleted']= $this->checkListCompleted;
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+    
+
+    $data['customerpersona']= DB::table('customer_persona')->get();
+    
+
+    return view('employees.customerpersonaview',$data);
 }
 
 
@@ -264,6 +321,66 @@ $data['query']=$query;
 $data['essllog'] = DB::select($query);
 
 return view('employees.ajax.essllog',$data);
+
+}
+
+
+
+public function store(Request $request) {
+
+// Validation rules
+$rules = [
+    'persona_age' => 'digits:2|numeric', // Validate age as a numeric value with exactly 2 digits
+    // Add other validation rules for other fields as needed
+];
+
+// Custom validation messages
+$messages = [
+    'persona_age.digits' => 'The age must be exactly two digits.',
+    'persona_age.numeric' => 'The age must be a number.',
+    // Add custom messages for other validation rules as needed
+];
+
+
+   // Validate the request data
+   $validator = Validator::make($request->all(), $rules, $messages);
+
+
+      // Check if validation fails
+      if ($validator->fails()) {
+        
+        dd($validator->errors()->all());
+    }
+
+   
+$data['persona'] = [
+    'name' => $request->input('persona_name'),
+    'age' => $request->input('persona_age'),
+    'occupation' => $request->input('persona_occupation'),
+    'experience' => $request->input('persona_experience'),
+    'location' => $request->input('persona_location'),
+    'user_description' => $request->input('persona_user_description'),
+    'personal_characteristics' => $request->input('persona_Characteristics'),
+    'goals' => $request->input('persona_goals'),
+    'needs' => $request->input('persona_needs'),
+    'hobbies_and_interest' => $request->input('persona_interest'),
+    'challenges' => $request->input('persona_Challenges'),
+    'source_info' => $request->input('persona_source'),
+];
+
+try{
+// Insert data into the persona table
+
+DB::table('customer_persona')->insert($data['persona']);
+
+return back()->with('message','The Data Inserted');
+
+}catch(\Exception $e) {
+
+    return back()->with('message',$e->getMessage());
+
+}
+
 
 }
 

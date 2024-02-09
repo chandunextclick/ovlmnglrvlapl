@@ -159,8 +159,13 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::match(['get', 'post'], 'sprofile/essldata', [StudentProfileController::class, 'essldata'])->name('sprofile.essldata');
 
+    Route::match(['get', 'post'], 'sprofile/customerpersonacreate', [StudentProfileController::class, 'customerpersonacreate'])->name('sprofile.customerpersonacreate');
 
-    Route::resource('sprofile', StudentProfileController::class)->only(['show','essldata']);
+    Route::post('sprofile/store', [StudentProfileController::class, 'store'])->name('sprofile.store');
+
+    Route::get('sprofile/customerpersonaview', [StudentProfileController::class, 'customerpersonaview'])->name('sprofile.customerpersonaview');
+
+    Route::resource('sprofile', StudentProfileController::class);
 
 
 
