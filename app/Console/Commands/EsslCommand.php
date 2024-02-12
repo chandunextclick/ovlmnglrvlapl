@@ -118,25 +118,78 @@ class EsslCommand extends Command
         DB::commit();
 
 
-        $data = [
-            'name' => 'John Doe',
-            'message' => 'This is a test email message.',
-        ];
-        
-        // Sample user admin data
-        $useradmin = [
-            'email' => 'admin@example.com',
-            'name' => 'Admin',
-        ];
-        
-        Mail::send([],[], function($message) use ($useradmin) {
-            $message->to($useradmin['email'], $useradmin['name'])
-                    ->subject('Welcome to our website');
-        });
-        
+        $query = "
+        SELECT
+        e1.empcode,
+        users.name,
+        e1.logdate,
+        TIME_FORMAT(SUBTIME(TIME_FORMAT(SEC_TO_TIME(
+            TIMESTAMPDIFF(
+                SECOND,
+                (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                 FROM employeelog e2
+                 WHERE e2.empcode = e1.empcode
+                   AND e2.logdate = e1.logdate
+                   AND e2.direction = 'in'),
+                (SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                 FROM employeelog e2
+                 WHERE e2.empcode = e1.empcode
+                   AND e2.logdate = e1.logdate
+                   AND e2.direction = 'out')
+            )
+        ), '%H:%i'),TIME_FORMAT(SEC_TO_TIME(SUM(
+            CASE
+                WHEN e1.direction = 'out'
+                THEN TIMESTAMPDIFF(
+                        SECOND,
+                        STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                        (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                         FROM employeelog e2
+                         WHERE e2.empcode = e1.empcode
+                           AND e2.logdate = e1.logdate
+                           AND e2.logtime > e1.logtime
+                           AND e2.direction = 'in')
+                )
+                ELSE 0
+            END
+        )), '%H:%i')), '%H:%i') as total_working_time,
+        TIME_FORMAT(SEC_TO_TIME(SUM(
+            CASE
+                WHEN e1.direction = 'out'
+                THEN TIMESTAMPDIFF(
+                        SECOND,
+                        STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                        (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                         FROM employeelog e2
+                         WHERE e2.empcode = e1.empcode
+                           AND e2.logdate = e1.logdate
+                           AND e2.logtime > e1.logtime
+                           AND e2.direction = 'in')
+                )
+                ELSE 0
+            END
+        )), '%H:%i') AS total_break_time
+    FROM employeelog e1 
+    LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
+    LEFT JOIN users ON employee_details.user_id = users.id
+    WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') = '2024-02-09'
+    GROUP BY e1.empcode, e1.logdate,users.name
+    ";
+    
+    $data['query']=$query;
+    $data['essllog'] = DB::select($query);
+    
+    $useradmin['name']='Next Click';
+    Mail::send('employees.ajax.mail',$data,function($messages) use ($useradmin){
 
+    $messages->to(['chandunextclick@gmail.com', 'neerajnextclick@gmail.com']);
+    $messages->subject('Hello Admin');
 
-    }
+});
+
+    
+
+}
 
 
 
