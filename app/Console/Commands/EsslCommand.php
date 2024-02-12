@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 
 use Illuminate\Support\Facades\DB;
 
+use Mail;
+
 
 class EsslCommand extends Command
 {
