@@ -115,6 +115,14 @@ class EsslCommand extends Command
         DB::commit();
 
 
+        Mail::send([], [], function($message) use ($useradmin) {
+            $message->to('chandunextclick@gmail.com')
+                    ->subject('Hello Admin')
+                    ->setBody('This is a test email without using a Blade template.');
+        });
+        
+
+
     }
 
 
