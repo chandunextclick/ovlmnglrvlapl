@@ -6,9 +6,8 @@ use Illuminate\Console\Command;
 
 use Illuminate\Support\Facades\DB;
 
-use Illuminate\Support\Facades\Mail;
 
-
+use Mail;
 
 
 class EsslCommand extends Command
@@ -119,10 +118,20 @@ class EsslCommand extends Command
         DB::commit();
 
 
-        Mail::send([], [], function($message) use ($useradmin) {
-            $message->to('chandunextclick@gmail.com')
-                    ->subject('Hello Admin')
-                    ->setBody('This is a test email without using a Blade template.');
+        $data = [
+            'name' => 'John Doe',
+            'message' => 'This is a test email message.',
+        ];
+        
+        // Sample user admin data
+        $useradmin = [
+            'email' => 'admin@example.com',
+            'name' => 'Admin',
+        ];
+        
+        Mail::send([],[], function($message) use ($useradmin) {
+            $message->to($useradmin['email'], $useradmin['name'])
+                    ->subject('Welcome to our website');
         });
         
 
