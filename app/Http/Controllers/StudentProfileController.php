@@ -158,7 +158,7 @@ public function customerpersonaview()
 public function show($id)
 {
 
-    $data['pageTitle']= $this->pageTitle;
+    $data['pageTitle']= 'Enquiry Detail';;
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
     $data['checkListCompleted']= $this->checkListCompleted;
@@ -217,7 +217,7 @@ public function essldata(Request $request){
 
 
 
-    $data['pageTitle']= $this->pageTitle;
+    $data['pageTitle']= 'Employee Log';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
     $data['checkListCompleted']= $this->checkListCompleted;
