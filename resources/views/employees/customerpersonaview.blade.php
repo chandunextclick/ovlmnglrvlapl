@@ -32,11 +32,24 @@ input[type="date"] {
         <div class="d-block d-lg-flex d-md-flex justify-content-between action-bar">
             <div id="table-actions" class="flex-grow-1 align-items-center">
 
-            <x-forms.link-primary :link="route('sprofile.customerpersonacreate')" class="mr-3 float-left" icon="plus">
-                        @lang('app.add')
-                        @lang('app.menu.personal')
-            </x-forms.link-primary>
+                <x-forms.link-primary :link="route('sprofile.customerpersonacreate')" class="mr-3 float-left" icon="plus">
+                            @lang('app.add')
+                            @lang('app.menu.personal')
+                </x-forms.link-primary>
+            </div>
+            <div id="table-actions" class="flex-grow-1 align-items-center mr-4"> 
+            <input type="text" id="myInputTextField"  class="form-control height-35 f-14" placeholder="Search">
+            </div>
+            <div id="table-actions" class="flex-grow-1 align-items-center"> 
+            <input list="courselist" type="text" class="form-control height-35 f-14" placeholder="Course"  name="persona_course" id="persona_course"  required>
+                        <datalist id="courselist">
 
+                            @foreach($courses as $course) 
+    
+                            <option value="{{$course['course_name']}}"></option>
+
+                            @endforeach
+                        </datalist> 
             </div>
         </div>
     <!-- Task Box Start -->
@@ -47,7 +60,9 @@ input[type="date"] {
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Course</th>
                 <th>Age</th>
+                <th>Education</th>
                 <th>Occupation</th>
                 <th>Experience</th>
                 <th>Location</th>
@@ -70,7 +85,9 @@ input[type="date"] {
             <tr>
                 
                 <td><?=$value->name?></td>
+                <td><?=$value->course?></td>
                 <td><?=$value->age?></td>
+                <td><?=$value->education?></td>
                 <td><?=$value->occupation?></td>
                 <td><?=$value->experience?></td>
                 <td><?=$value->location?></td>-
@@ -207,8 +224,49 @@ input[type="date"] {
 
 $(document).ready(function() {
 
-    new DataTable('#example');
+    otable=new DataTable('#example');
 
+    
+
+    var val =  $("#myInputTextField").val();
+
+    console.log(val);
+
+    $("#myInputTextField").keyup(function(){
+
+        if($(this).val()==null){
+
+            otable.search("").draw();
+
+        }else{
+
+            otable.search($(this).val()).draw();
+            
+        }
+
+
+
+
+    });
+
+    $("#persona_course").change(function(){
+
+        console.log($(this).val());
+
+        if($(this).val()==null){
+
+            otable.search("").draw();
+
+        }else{
+
+            otable.column(1).search($(this).val()).draw();
+        }
+        
+
+
+    });
+
+    
 
 });
 

@@ -213,7 +213,7 @@
                             </div>
                             @endforeach
                         </div>
-                        <div class="mt-2 bg-white" style="min-height:10px;max-height:400px;overflow-y:scroll;">
+                        <div class="mt-2 bg-white d-none" style="min-height:10px;max-height:400px;overflow-y:scroll;" id="course-feedback">
                             <h3 class="m-2">Course Feedback</h3>  
                             
                             <div class="card border-0 b-shadow-4">
@@ -233,7 +233,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-2 bg-white" style="min-height:10px;max-height:400px;overflow-y:scroll;">
+                        <div class="mt-2 bg-white d-none" style="min-height:10px;max-height:400px;overflow-y:scroll;" id="call-feedback">
                             <h3 class="m-2">Call Feedback</h3>  
                             
                             <div class="card border-0 b-shadow-4">
@@ -333,7 +333,7 @@
 
 function callPhpApi(enqid) {
 
-    const apiUrl = 'https://nextclickonline.com/testenqapplication/enquirylog'; // Replace with your server's endpoint URL
+    const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirylog'; // Replace with your server's endpoint URL
     const id = enqid; // Replace with the ID you want to send
 
 // Create the data to send as JSON
@@ -357,6 +357,13 @@ fetch(apiUrl,{
   .then(data => {
     // Handle the response data here
     console.log(data.enquiry_log);
+
+
+
+            // if(data.enquiry_log.length!==0){
+
+            //     $("#course-feedback").removeClass("d-none");
+            // }
             
             $("#enq-log").empty();
 

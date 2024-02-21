@@ -24,7 +24,7 @@ class StudentProfileController extends AccountBaseController
     }
     
 
-public function index(Request $request)
+public function enquiry(Request $request)
 {
 
     $data['pageTitle']= 'Enquiry';
@@ -45,7 +45,7 @@ public function index(Request $request)
     $data['worksuitePlugins']=$this->worksuitePlugins;
     $data['company']=$this->company;
     
-    $url = 'https://nextclickonline.com/testenqapplication/enquiry'; // Replace with the URL you want to fetch data from
+    $url = 'https://nextclickonline.cyradrive.com/testenqapplication/enquiry'; // Replace with the URL you want to fetch data from
 
     // $ch = curl_init($url);
     // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -60,10 +60,11 @@ public function index(Request $request)
     
     $data['date1'] = date("Y-m-d", strtotime("-1 month", strtotime($data['date2'])));
 
-    
+    // dd($request->input('start_date'));    
 
 
     if ($request->isMethod('post')) {
+
         // Handle POST request
         $data['date1'] = $request->input('start_date');
         $data['date2'] = $request->input('end_date');
@@ -102,7 +103,7 @@ public function index(Request $request)
 public function customerpersonacreate(Request $request)
 {
 
-    $data['pageTitle']= 'Write For Us';
+    $data['pageTitle']= 'Customer Persona';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
     $data['checkListCompleted']= $this->checkListCompleted;
@@ -119,8 +120,33 @@ public function customerpersonacreate(Request $request)
     $data['unreadMessagesCount']=$this->unreadMessagesCount;
     $data['worksuitePlugins']=$this->worksuitePlugins;
     $data['company']=$this->company;
-    
 
+    $url="https://api.edoxi.com/api/master-course-list";
+
+    $ch = curl_init($url);
+    
+    // Set the request type to GET
+    curl_setopt($ch, CURLOPT_HTTPGET, true);
+
+    // Set other cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+
+    // Execute the cURL session
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+
+
+    // Process the response
+    $data['response'] = json_decode($response, true);
+
+    $data['courses'] = $data['response']["list"];
+    
 
     return view('employees.customerpersonacreate',$data);
 }
@@ -147,6 +173,32 @@ public function customerpersonaview()
     $data['company']=$this->company;
     
 
+    $url="https://api.edoxi.com/api/master-course-list";
+
+    $ch = curl_init($url);
+    
+    // Set the request type to GET
+    curl_setopt($ch, CURLOPT_HTTPGET, true);
+
+    // Set other cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+
+    // Execute the cURL session
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+
+
+    // Process the response
+    $data['response'] = json_decode($response, true);
+
+    $data['courses'] = $data['response']["list"];
+
     $data['customerpersona']= DB::table('customer_persona')->get();
     
 
@@ -155,7 +207,7 @@ public function customerpersonaview()
 
 
 
-public function show($id)
+public function enquirydetail($id)
 {
 
     $data['pageTitle']= 'Enquiry Detail';;
@@ -177,7 +229,7 @@ public function show($id)
     $data['company']=$this->company;
     
 
-    $url = 'https://nextclickonline.com/testenqapplication/enquirydetail'; // Replace with the URL you want to fetch data from
+    $url = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirydetail'; // Replace with the URL you want to fetch data from
 
 
 
@@ -196,9 +248,8 @@ public function show($id)
     $this->env=$data['enq'];
     curl_close($ch);
 
-    
 
-    // var_dump($this->env->enquiry_details);
+
 
     // Check for errors
 
@@ -242,20 +293,44 @@ public function essldata(Request $request){
     
     $data['date1'] = date("Y-m-d");
 
-    
+    $data['userid'] = 0;
 
 
     if ($request->isMethod('post')) {
         // Handle POST request
         $data['date1'] = $request->input('start_date');
         $data['date2'] = $request->input('end_date');
+        $data['userid'] = $request->input('userid');
         
         // Retrieve and display data based on the POST data
     }
 
+    $userid=$data['userid'];
     $date1 = $data['date1'];
     $date2 = $data['date2'];
 
+    $addon = "";
+    $countaddon = "";
+
+    if($data['userid']!=0){
+
+        $addon = " users.id=$userid and";
+
+        $countaddon = " user_id=$userid and";;
+
+    }else{
+
+        $addon = "";
+
+        $countaddon = "";
+
+    }
+
+
+
+
+
+    $userquery="select * from users where company_id=4 and user_auth_id!=''";
 
     $query = "
     SELECT
@@ -291,7 +366,7 @@ public function essldata(Request $request){
             )
             ELSE 0
         END
-    )), '%H:%i')), '%H:%i') as total_working_time,
+    )), '%H:%i')), '%H:%i:%s') as total_working_time,
     TIME_FORMAT(SEC_TO_TIME(SUM(
         CASE
             WHEN e1.direction = 'out'
@@ -307,18 +382,91 @@ public function essldata(Request $request){
             )
             ELSE 0
         END
-    )), '%H:%i') AS total_break_time
+    )), '%H:%i:%s') AS total_break_time
 FROM employeelog e1 
 LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
 LEFT JOIN users ON employee_details.user_id = users.id
-WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') BETWEEN  '$date1' and '$date2'
+WHERE $addon STR_TO_DATE(e1.logdate, '%Y-%m-%d') BETWEEN  '$date1' and '$date2'
 GROUP BY e1.empcode, e1.logdate,users.name
 ";
 
 
 
+
+
 $data['query']=$query;
+
+$data['userquery']=DB::select($userquery);
+
 $data['essllog'] = DB::select($query);
+
+$halfday=DB::select("SELECT count(*) as count FROM `leaves` where $countaddon half_day_type!='' and leave_date between '$date1' and '$date2' ");
+
+// var_dump($halfday[0]->count);
+
+$countofhalfday = 0;
+
+$countofhalfday = (($halfday[0]->count)*0.5);
+
+$totalWorkTime=[];
+
+foreach ($data['essllog'] as $value) {
+
+                
+    $totalWorkTime[]=$value->total_working_time;
+
+}
+
+$validTimes = array_filter($totalWorkTime, function ($time) {
+    return $time !== null;
+});
+
+// Initialize variables to hold hours, minutes, and seconds
+$totalHours = 0;
+$totalMinutes = 0;
+$totalSeconds = 0;
+$timecount=0;
+$caltotmin=0;
+$caltothours=0;
+
+// Parse and add each valid time string
+foreach ($validTimes as $time) {
+    list($hours, $minutes, $seconds) = sscanf($time, "%d:%d:%d");
+    $totalHours += $hours;
+    $totalMinutes += $minutes;
+    $totalSeconds += $seconds;
+    $timecount+=1;
+
+}
+
+$timecount-=$countofhalfday;
+
+// var_dump($timecount);
+
+ // Adjust minutes and seconds if they exceed their respective limits
+        $totalMinutes += floor($totalSeconds / 60);
+        $totalSeconds %= 60;
+        
+        $totalHours += floor($totalMinutes / 60);
+        $totalMinutes %= 60;
+        
+        // Format the total time
+        $data['totalTimeFormatted'] = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
+
+        $caltotmin = ($totalHours * 60)+($totalMinutes);
+
+        if($timecount!=0){
+
+            $caltotmin /= $timecount; 
+
+            $caltotmin = floor($caltotmin);
+
+        }
+
+        
+        $caltothours += floor($caltotmin / 60);
+        $caltotmin %=60;
+        $data['avgTimeFormatted'] = sprintf("%02d:%02d", $caltothours, $caltotmin);
 
 return view('employees.ajax.essllog',$data);
 
@@ -355,7 +503,11 @@ $messages = [
    
 $data['persona'] = [
     'name' => $request->input('persona_name'),
+    'course' => $request->input('persona_course'),
     'age' => $request->input('persona_age'),
+    'education' => $request->input('persona_education'),
+    'subject' => $request->input('persona_education_subject'),
+    'specialization' => $request->input('persona_education_specification'),
     'occupation' => $request->input('persona_occupation'),
     'experience' => $request->input('persona_experience'),
     'location' => $request->input('persona_location'),

@@ -155,7 +155,7 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
 
 
-    Route::match(['get', 'post'], 'sprofile/index', [StudentProfileController::class, 'index'])->name('sprofile.index');
+    Route::match(['get', 'post'], 'sprofile/enquiry', [StudentProfileController::class, 'enquiry'])->name('sprofile.enquiry');
 
     Route::match(['get', 'post'], 'sprofile/essldata', [StudentProfileController::class, 'essldata'])->name('sprofile.essldata');
 
@@ -169,7 +169,7 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
 
 
-    Route::get('sprofile/{id}', 'UserProfileController@show');
+    Route::get('sprofile/enquirydetail/{id}', [StudentProfileController::class, 'enquirydetail'])->name('sprofile.enquirydetail');
 
     Route::get('client-notes/ask-for-password/{id}', [ClientNoteController::class, 'askForPassword'])->name('client_notes.ask_for_password');
     Route::post('client-notes/check-password', [ClientNoteController::class, 'checkPassword'])->name('client_notes.check_password');

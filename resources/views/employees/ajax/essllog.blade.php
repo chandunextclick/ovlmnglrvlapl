@@ -31,6 +31,21 @@ input[type="date"] {
     <input type="date" name="start_date" id="start_date" value="{{ $date1 }}">
     <label for="end_date">End Date:</label>
     <input type="date" name="end_date" id="end_date" value="{{ $date2 }}">
+    <label for="userid">users:</label>
+    <select  name="userid" style="height:30px;width:150px;">
+        <option selected disabled value='0'>Select User</option>
+        <?php 
+        foreach($userquery as $uservalue) 
+        { 
+
+        ?>
+                <option <?= ($userid==$uservalue->id)?'selected':'' ?> value=<?=$uservalue->id?>><?=$uservalue->name?></option>
+
+        <?php
+
+        }
+        ?>
+    </select>
     <button type="submit" class="btn btn-primary ml-2">Apply</button>
 
 </form>
@@ -73,7 +88,8 @@ input[type="date"] {
             ?>
         </tbody>   
     </table>
-    
+    <p>Total Working Hours:<?=$totalTimeFormatted?></p>
+    <p>Average Working Hours:<?=$avgTimeFormatted?></p>
 </div>
 
         </div>

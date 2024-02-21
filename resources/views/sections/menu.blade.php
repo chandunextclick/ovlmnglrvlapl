@@ -90,9 +90,9 @@
                     <x-sub-menu-item :link="route('awards.index')" :text="__('app.menu.appreciation')" />
                 @endif
 
-                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 && 1==0)
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4)
 
-                <x-sub-menu-item :link="route('sprofile.index')" :text="__('app.menu.enquiry')" />
+                <x-sub-menu-item :link="route('sprofile.enquiry')" :text="__('app.menu.enquiry')" />
 
                 @endif
 

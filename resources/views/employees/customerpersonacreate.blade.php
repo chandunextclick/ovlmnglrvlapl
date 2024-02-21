@@ -62,10 +62,59 @@ color:white;
                 </div>
                 <div class="col-md-4">
                         <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_course">COURSE
+                        <sup class="f-14 mr-1">*</sup>
+                        </label>
+                        <input list="courselist" type="text" class="form-control height-35 f-14" placeholder="Course"  name="persona_course" id="persona_course"  required>
+                        <datalist id="courselist">
+
+                            @foreach($courses as $course) 
+    
+                            <option value="{{$course['course_name']}}"></option>
+
+                            @endforeach
+                        </datalist> 
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
                         <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_age">AGE
                         <sup class="f-14 mr-1">*</sup>
                         </label>
-                        <input type="text" class="form-control height-35 f-14" placeholder="AGE" value="" name="persona_age" id="persona_age" autocomplete="off" required>
+                        <input type="text" class="form-control height-35 f-14" placeholder="AGE" value="" name="persona_age" id="persona_age" autocomplete="off" required >
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education">Qualification
+                        <sup class="f-14 mr-1">*</sup>    
+                    </label>
+                        <select class="form-control height-35 f-14" placeholder="Education" name="persona_education" id="persona_education" autocomplete="off" required>
+                            <option selected disabled>Select Qualification</option>
+                            <option value="Primary education">Primary education</option>
+                            <option value="Secondary education">Secondary education or high school</option>
+                            <option value="Bachelor Degree">Bachelor's Degree</option>
+                            <option value="Master Degree">Master's Degree</option>
+                        </select> 
+                        
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education">Subject 
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Subject" value="" name="persona_education_subject" id="persona_education_subject" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education">Specialization   
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Specialization" value="" name="persona_education_specification" id="persona_education_specification" autocomplete="off">
                     </div>
                     
                 </div>
@@ -209,9 +258,7 @@ $(document).ready(function() {
 
     @endif
 
-
 });
-
 
 
 </script>

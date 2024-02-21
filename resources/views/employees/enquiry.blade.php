@@ -26,7 +26,7 @@ input[type="date"] {
 
     <div class="m-4">
 
-<form method="POST" action="{{ route('sprofile.index') }}">
+<form method="POST" action="{{ route('sprofile.enquiry') }}">
     @csrf
     <label for="start_date">Start Date:</label>
     <input type="date" name="start_date" id="start_date" value="{{ $date1 }}">
@@ -61,9 +61,9 @@ input[type="date"] {
                 
         ?>
             <tr>
-                <td><a href="{{ route('sprofile.show', ['sprofile' => $value['lm_enquiry_id']]) }}" style="color:black;"><?=$value['lm_enquiry_id']?></a></td>
-                <td><a href="{{ route('sprofile.show', ['sprofile' => $value['lm_enquiry_id']]) }}" style="color:black;"><?=$value['lm_enquiry_type']?></a></td>
-                <td><a href="{{ route('sprofile.show', ['sprofile' => $value['lm_enquiry_id']]) }}" style="color:black;"><?=$value['name']?></a></td>
+                <td><a href="{{ route('sprofile.enquirydetail',$value['lm_enquiry_id']) }}" style="color:black;"><?=$value['lm_enquiry_id']?></a></td>
+                <td><a href="{{ route('sprofile.enquirydetail',$value['lm_enquiry_id']) }}" style="color:black;"><?=$value['lm_enquiry_type']?></a></td>
+                <td><a href="{{ route('sprofile.enquirydetail',$value['lm_enquiry_id']) }}" style="color:black;"><?=$value['name']?></a></td>
                 <td><?=$value['mobile']?></td>
                 <td><?=$value['email']?></td>
             </tr>
