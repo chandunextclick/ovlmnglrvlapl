@@ -13,6 +13,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\ProjectTemplateMember;
 use App\Models\ProjectTemplateTask;
+use Illuminate\Support\Facades\DB;
 
 class ProjectTemplateMemberController extends AccountBaseController
 {
@@ -91,6 +92,11 @@ class ProjectTemplateMemberController extends AccountBaseController
         
         ProjectTemplateMember::where('project_template_id', $request->project_id)->delete();
 
+
+        DB::table('project_template_department')->where('project_template_id', '=', $request->project_id)->delete();
+
+
+
         $allTasks = ProjectTemplateTask::where('project_template_id', $request->project_id)->get();
 
         foreach ($allTasks as $task) {
@@ -99,6 +105,10 @@ class ProjectTemplateMemberController extends AccountBaseController
         }
 
         foreach ($groups as $group) {
+
+            DB::table('project_template_department')->insert(
+                ['team_id' => $group, 'project_template_id' => $request->project_id]
+            );
 
             $members = EmployeeDetails::join('users', 'users.id', '=', 'employee_details.user_id')
                 ->where('employee_details.department_id', $group)

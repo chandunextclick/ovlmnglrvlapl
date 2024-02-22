@@ -119,7 +119,7 @@ return array (
         'enquiry' => 'Enquiries',
         'essldata' => 'Essl Data',
         'writeforus' => 'Write For Us',
-        'personal' => 'Customer Personal',
+        'persona' => 'Customer Persona',
         'child_id' => 'Child',
         'home' => 'Home',
         'myCalendar' => 'My Calendar',
