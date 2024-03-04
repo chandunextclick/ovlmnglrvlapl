@@ -946,6 +946,7 @@ class EmployeeController extends AccountBaseController
         $employee->guardian = $request->guardianname;
         $employee->aadhar = $request->aadhar;
         $employee->accountno = $request->accno;
+        $employee->ifscno = $request->ifscno;
         $employee->panno = $request->panno;
         $employee->esino = $request->esino;
         $employee->nominee = $request->nominee;
@@ -974,32 +975,32 @@ class EmployeeController extends AccountBaseController
    
         $employee->save();
 
-        $names = $request->member;
-        $relations = $request->mbrelation;
-        $dateOfBirths = $request->mbdate_of_birth;
-        $mobiles = $request->mbmobile;
+        // $names = $request->member;
+        // $relations = $request->mbrelation;
+        // $dateOfBirths = $request->mbdate_of_birth;
+        // $mobiles = $request->mbmobile;
 
 
-        $existingData = DB::table('employee_member_details')->where('emp_id', $employee->id)->exists();
+        // $existingData = DB::table('employee_member_details')->where('emp_id', $employee->id)->exists();
 
-        if ($existingData) {
+        // if ($existingData) {
             
-            DB::table('employee_member_details')->where('emp_id', $employee->id)->delete();
+        //     DB::table('employee_member_details')->where('emp_id', $employee->id)->delete();
            
-        }
+        // }
 
-        $memberdata = array_map(null, $names, $relations, $dateOfBirths, $mobiles);
+        // $memberdata = array_map(null, $names, $relations, $dateOfBirths, $mobiles);
 
 
-        foreach ($memberdata as $item) {
-            DB::table('employee_member_details')->insert([
-                'emp_id' => $employee->id,
-                'name' => $item[0],
-                'relation' => $item[1],
-                'dob' => $item[2],
-                'mobile' => $item[3],
-            ]);
-        }
+        // foreach ($memberdata as $item) {
+        //     DB::table('employee_member_details')->insert([
+        //         'emp_id' => $employee->id,
+        //         'name' => $item[0],
+        //         'relation' => $item[1],
+        //         'dob' => $item[2],
+        //         'mobile' => $item[3],
+        //     ]);
+        // }
 
 
         

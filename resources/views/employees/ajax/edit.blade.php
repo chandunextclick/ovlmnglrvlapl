@@ -203,6 +203,11 @@ $changeEmployeeRolePermission = user()->permission('change_employee_role');
                                 </x-forms.text>
                     </div>
                     <div class="col-lg-4 col-md-6">
+                                <x-forms.text fieldId="ifscno" :fieldLabel="__('modules.employees.ifscno')"
+                                :fieldValue="$employee->employeeDetail->ifscno"    fieldName="ifscno" fieldRequired="true" :fieldPlaceholder="__('placeholders.ifscno')">
+                                </x-forms.text>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
                                 <x-forms.text fieldId="panno" :fieldLabel="__('modules.employees.panNo')"
                                 :fieldValue="$employee->employeeDetail->panno"    fieldName="panno" fieldRequired="false" :fieldPlaceholder="__('placeholders.panno')">
                                 </x-forms.text>
@@ -221,63 +226,63 @@ $changeEmployeeRolePermission = user()->permission('change_employee_role');
                             
                             <div class="col-lg-4 col-md-6">
                                 <x-forms.text fieldId="nominee" :fieldLabel="__('modules.employees.nomineeName')"
-                                :fieldValue="$employee->employeeDetail->nominee"    fieldName="nominee" fieldRequired="true" :fieldPlaceholder="__('placeholders.name')">
+                                :fieldValue="$employee->employeeDetail->nominee"    fieldName="nominee"  :fieldPlaceholder="__('placeholders.name')">
                                 </x-forms.text>
                             </div>
                             <div class="col-lg-4 col-md-6">
                                 <x-forms.text fieldId="relation" :fieldLabel="__('modules.employees.relationEmployee')"
-                                :fieldValue="$employee->employeeDetail->nomineerelation"    fieldName="relation" fieldRequired="true" :fieldPlaceholder="__('placeholders.relation')">
+                                :fieldValue="$employee->employeeDetail->nomineerelation"    fieldName="relation"  :fieldPlaceholder="__('placeholders.relation')">
                                 </x-forms.text>
                             </div>
                            
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
-                        <x-forms.tel fieldId="guardianmobile" :fieldLabel="__('app.mobile')" fieldName="guardianmobile" fieldRequired="true"
+                        <x-forms.tel fieldId="guardianmobile" :fieldLabel="__('app.mobile')" fieldName="guardianmobile" 
                         :fieldValue="$employee->employeeDetail->nomineemobile"   :fieldPlaceholder="__('placeholders.mobile')"></x-forms.tel>
                     </div>
                 
                     <div class="col-md-12">
                         <div class="form-group my-3">
                             <x-forms.textarea class="mr-0 mr-lg-2 mr-md-2" :fieldLabel="__('app.address')"
-                            :fieldValue="$employee->employeeDetail->nomineeaddress"    fieldName="guardianaddress" fieldId="guardianaddress" fieldRequired="true" :fieldPlaceholder="__('placeholders.address')">
+                            :fieldValue="$employee->employeeDetail->nomineeaddress"    fieldName="guardianaddress" fieldId="guardianaddress"  :fieldPlaceholder="__('placeholders.address')">
                             </x-forms.textarea>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6">
                                 <x-forms.text fieldId="guardianaadhar" :fieldLabel="__('modules.employees.aadhar')"
-                                :fieldValue="$employee->employeeDetail->nomineeaadhar"    fieldName="guardianaadhar" fieldRequired="true" :fieldPlaceholder="__('placeholders.aadhar')">
+                                :fieldValue="$employee->employeeDetail->nomineeaadhar"    fieldName="guardianaadhar"  :fieldPlaceholder="__('placeholders.aadhar')">
                                 </x-forms.text>
                     </div>
                 </div>      
-                <h4 class="mb-0 p-20 f-21 font-weight-normal text-capitalize border-bottom-grey">
+                <h4 class="mb-0 p-20 f-21 font-weight-normal text-capitalize border-bottom-grey d-none">
                     @lang('modules.employees.familyMembers')</h4>
-                <div class="row p-20" id="memberDetails">
+                <div class="row p-20 d-none" id="memberDetails">
 
                         <div class="row member-row m-2 d-none" data-row-id="1">
                             
                             <div class="col-lg-3 col-md-6">
                                 <x-forms.text fieldId="member1" :fieldLabel="__('modules.employees.name')"
-                                    fieldName="member[]" fieldRequired="true" :fieldPlaceholder="__('placeholders.name')">
+                                    fieldName="member[]"  :fieldPlaceholder="__('placeholders.name')">
                                 </x-forms.text>
                             </div>
                             <div class="col-lg-3 col-md-6">
                                 <x-forms.text fieldId="mbrelation1" :fieldLabel="__('modules.employees.relationEmployee')"
-                                    fieldName="mbrelation[]" fieldRequired="true" :fieldPlaceholder="__('placeholders.relation')">
+                                    fieldName="mbrelation[]"  :fieldPlaceholder="__('placeholders.relation')">
                                 </x-forms.text>
                             </div>
                             <div class="col-lg-3 col-md-6">
                             <x-forms.datepicker fieldId="date_of_birth1" :fieldLabel="__('modules.employees.dateOfBirth')"
-                                    fieldName="mbdate_of_birth[]" fieldRequired="true" :fieldPlaceholder="__('placeholders.date')" />
+                                    fieldName="mbdate_of_birth[]"  :fieldPlaceholder="__('placeholders.date')" />
                             </div>
                             <div class="col-lg-3 col-md-6">
-                            <x-forms.tel fieldId="mbmobile1" :fieldLabel="__('app.mobile')" fieldName="mbmobile[]" fieldRequired="true"
+                            <x-forms.tel fieldId="mbmobile1" :fieldLabel="__('app.mobile')" fieldName="mbmobile[]" 
                            :fieldPlaceholder="__('placeholders.mobile')"></x-forms.tel>
                             </div>     
                         </div>
                     
                 </div>
-                <button type="button" class="btn btn-secondary m-3" id="addMore">@lang('app.AddMore')</button>   
+                <button type="button" class="btn btn-secondary m-3 d-none" id="addMore">@lang('app.AddMore')</button>   
 
                 <h4 class="mb-0 p-20 f-21 font-weight-normal text-capitalize border-top-grey">
                     @lang('modules.client.clientOtherDetails')</h4>

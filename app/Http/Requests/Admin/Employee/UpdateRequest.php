@@ -51,13 +51,14 @@ class UpdateRequest extends CoreRequest
             'guardianname' => 'required|max:50',
             'aadhar' => 'required|digits:12',
             'accno' => 'required|numeric',
+            'ifscno' => 'required',
             'panno' => 'nullable',
             'esino' => 'nullable',
-            'nominee' => 'required|max:50',
-            'relation' => 'required|max:50',
-            'guardianmobile' => 'required|regex:/^[0-9]{10}$/',
-            'guardianaddress' => 'required', 
-            'guardianaadhar' => 'required|digits:12'   
+            'nominee' => 'max:50',
+            'relation' => 'max:50',
+            'guardianmobile' => 'nullable|regex:/^[0-9]{10}$/',
+            'guardianaddress' => 'nullable', 
+            'guardianaadhar' => 'nullable|digits:12'   
         ];
 
         if ($detailID) {

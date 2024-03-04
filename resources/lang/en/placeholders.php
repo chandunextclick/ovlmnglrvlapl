@@ -15,6 +15,7 @@ return array(
     'relation' => 'child',
     'aadhar' => '123456789012',
     'accountno' => '14789632574123',
+    'ifscno' => 'UBIN0000',
     'panno' => 'ABCDE1234F',
     'esino' => '31–53-******-***-****',
     'skills' => 'e.g. communication, ReactJS',

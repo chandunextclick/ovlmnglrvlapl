@@ -46,14 +46,15 @@ class StoreRequest extends CoreRequest
             'contract_end_date' => 'nullable|date_format:"' . $setting->date_format . '"|after_or_equal:joining_date',
             'guardianname' => 'required|max:50',
             'aadhar' => 'required|digits:12',
+            'ifscno' => 'required',
             'accno' => 'required|numeric',
             'panno' => 'nullable',
             'esino' => 'nullable',
-            'nominee' => 'required|max:50',
-            'relation' => 'required|max:50',
-            'guardianmobile' => 'required|regex:/^[0-9]{10}$/',
-            'guardianaddress' => 'required', 
-            'guardianaadhar' => 'required|digits:12'    
+            'nominee' => 'max:50',
+            'relation' => 'max:50',
+            'guardianmobile' => 'nullable|regex:/^[0-9]{10}$/',
+            'guardianaddress' => 'nullable', 
+            'guardianaadhar' => 'nullable|digits:12'    
 
         ];
 

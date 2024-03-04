@@ -137,7 +137,7 @@ class ProjectTemplate extends BaseModel
     public function projectDepartments(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'project_template_department');
-    }
+    }   
 
     
 

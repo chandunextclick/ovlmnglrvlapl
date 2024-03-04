@@ -228,6 +228,7 @@ return array (
         'nameGuardian'=>'Name of Father/Husband',
         'aadhar'=>'Aadhar',
         'accountNo'=>'Bank Account NO',
+        'ifscno'=>'Bank IFSC NO',
         'panNo'=>'PAN Card NO',
         'esiNo'=>'ESI NO',
         'employeeEmail' => 'Employee Email',
