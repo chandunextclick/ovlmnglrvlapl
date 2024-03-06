@@ -16,5 +16,4 @@ use Illuminate\Support\Facades\Route;
 
 ApiRoute::group(['namespace' => 'App\Http\Controllers'], function () {
     ApiRoute::get('purchased-module', ['as' => 'api.purchasedModule', 'uses' => 'HomeController@installedModule']);
-    ApiRoute::post('tasks/salestasksdata', [TaskController::class, 'salestasksdata'])->name('tasks.salestasksdata');
 });

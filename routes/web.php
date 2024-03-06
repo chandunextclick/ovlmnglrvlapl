@@ -455,7 +455,7 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::resource('event-files', EventFileController::class);
 
     /* TASKS */
-    
+    Route::post('tasks/salestasksdata', [TaskController::class, 'salestasksdata'])->name('tasks.salestasksdata');
     Route::get('tasks/salestasks', [TaskController::class, 'salestasks'])->name('tasks.salestasks');
     Route::get('tasks/client-detail', [TaskController::class, 'clientDetail'])->name('tasks.clientDetail');
     Route::post('tasks/change-status', [TaskController::class, 'changeStatus'])->name('tasks.change_status');
