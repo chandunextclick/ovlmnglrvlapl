@@ -15,7 +15,7 @@ use App\Http\Controllers\TaskController;
 |
 */
 
-Route::post('tasks/salestasksdata', [TaskController::class, 'salestasksdata'])->name('tasks.salestasksdata');
+Route::post('tasks/salestasksdata',[App\Http\Controllers\TaskController::class, 'salestasksdata']);
 
 ApiRoute::group(['namespace' => 'App\Http\Controllers'], function () {
     ApiRoute::get('purchased-module', ['as' => 'api.purchasedModule', 'uses' => 'HomeController@installedModule']);
