@@ -119,7 +119,7 @@ use App\Http\Controllers\RankingsController;
 use App\Http\Controllers\ProjectReportController;
 
 
-Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified','auth:api'], 'prefix' => 'account'], function () {
+Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified'], 'prefix' => 'account'], function () {
     Route::post('image/upload', [ImageController::class, 'store'])->name('image.store');
     Route::get('account-unverified', [DashboardController::class, 'accountUnverified'])->name('account_unverified');
     Route::get('checklist', [DashboardController::class, 'checklist'])->name('checklist');
@@ -455,7 +455,7 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified',
     Route::resource('event-files', EventFileController::class);
 
     /* TASKS */
-    Route::post('tasks/salestasksdata', [TaskController::class, 'salestasksdata'])->name('tasks.salestasksdata');
+    
     Route::get('tasks/salestasks', [TaskController::class, 'salestasks'])->name('tasks.salestasks');
     Route::get('tasks/client-detail', [TaskController::class, 'clientDetail'])->name('tasks.clientDetail');
     Route::post('tasks/change-status', [TaskController::class, 'changeStatus'])->name('tasks.change_status');
