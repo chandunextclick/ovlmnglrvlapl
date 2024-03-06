@@ -119,7 +119,7 @@ use App\Http\Controllers\RankingsController;
 use App\Http\Controllers\ProjectReportController;
 
 
-Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified'], 'prefix' => 'account'], function () {
+Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified','auth:api'], 'prefix' => 'account'], function () {
     Route::post('image/upload', [ImageController::class, 'store'])->name('image.store');
     Route::get('account-unverified', [DashboardController::class, 'accountUnverified'])->name('account_unverified');
     Route::get('checklist', [DashboardController::class, 'checklist'])->name('checklist');
