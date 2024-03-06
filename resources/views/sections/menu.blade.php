@@ -135,6 +135,12 @@
                 @if (in_array('timelogs', user_modules()) && $sidebarUserPermissions['view_timelogs'] != 5 && $sidebarUserPermissions['view_timelogs'] != 'none')
                     <x-sub-menu-item :link="route('timelogs.index')" :text="__('app.menu.timeLogs')" />
                 @endif
+    
+                @if (in_array('tasks', user_modules()) && $sidebarUserPermissions['view_tasks'] != 5 && $sidebarUserPermissions['view_tasks'] != 'none')
+                    <x-sub-menu-item :link="route('tasks.salestasks')" :text="__('app.salestasks')" />
+                @endif
+
+                  
                 {{-- @endif --}}
             </div>
         </x-menu-item>
@@ -361,6 +367,39 @@
             </div>
         </x-menu-item>
 @endif
+<x-menu-item icon="bar-chart" :text="__('app.menu.rankingmaster')">
+            <x-slot name="iconPath">
+                <path
+                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
+            </x-slot>
+            <div class="accordionItemContent pb-2">
+
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+                    <x-sub-menu-item :link="route('rankings.rankingcourseview')" :text="__('app.menu.rankingcourse')" />
+                @endif
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+                    <x-sub-menu-item :link="route('rankings.rankingkeywordview')" :text="__('app.menu.rankingkeyword')" />
+                @endif
+
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+                    <x-sub-menu-item :link="route('rankings.rankingelementview')" :text="__('app.menu.rankingelement')" />
+                @endif
+
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+                    <x-sub-menu-item :link="route('rankings.rankingcountryview')" :text="__('app.menu.rankingcountry')" />
+                @endif
+
+                    <x-sub-menu-item :link="route('rankings.monthlykeywordranking')" :text="__('app.menu.monthlykeywordranking')" />
+
+                    <x-sub-menu-item :link="route('rankings.monthlyelementranking')" :text="__('app.menu.monthlyelementranking')" />
+
+                    <x-sub-menu-item :link="route('rankings.monthlycountryranking')" :text="__('app.menu.monthlycountryranking')" />
+
+                    <x-sub-menu-item :link="route('rankings.monthlyrankingreport')" :text="__('app.menu.rankingreport')" />
+              
+                {{-- @endif --}}
+            </div>
+        </x-menu-item>
 
 <!-- NAV ITEM - REPORTS COLLAPASE MENU -->
     <!-- NAV ITEM - SETTINGS -->

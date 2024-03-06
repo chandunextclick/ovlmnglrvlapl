@@ -361,4 +361,18 @@ class DepartmentController extends AccountBaseController
         return Reply::dataOnly(['status' => 'success', 'data' => $options]);
     }
 
+    public function getEmployees(Request $request)
+    {
+
+        $members = User::allEmployees();
+      
+        // echo json_encode($members);
+
+        return Reply::dataOnly(['status' => 'success', 'members' => $members]);
+
+       
+
+    }
+
+
 }

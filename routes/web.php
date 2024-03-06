@@ -115,6 +115,7 @@ use App\Http\Controllers\EstimateTemplateController;
 use App\Http\Controllers\LeaveFileController;
 use App\Http\Controllers\QuickbookController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\RankingsController;
 use App\Http\Controllers\ProjectReportController;
 
 
@@ -166,6 +167,79 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::get('sprofile/customerpersonaview', [StudentProfileController::class, 'customerpersonaview'])->name('sprofile.customerpersonaview');
 
     Route::resource('sprofile', StudentProfileController::class);
+
+
+    Route::match(['get', 'post'], 'rankings/rankingelementcreate', [RankingsController::class, 'rankingelementcreate'])->name('rankings.rankingelementcreate');
+
+    Route::get('rankings/rankinelementedit/{id}', [RankingsController::class, 'rankinelementedit'])->name('rankings.rankinelementedit');
+
+    Route::post('rankings/rankinelementupdate', [RankingsController::class, 'rankinelementupdate'])->name('rankings.rankinelementupdate');
+
+    Route::post('rankings/rankinelementdelete/{id}', [RankingsController::class, 'rankinelementdelete'])->name('rankings.rankinelementdelete');
+
+    Route::post('rankings/rankinelementstore', [RankingsController::class, 'rankinelementstore'])->name('rankings.rankinelementstore');
+    
+    Route::get('rankings/rankingelementview', [RankingsController::class, 'rankingelementview'])->name('rankings.rankingelementview');
+    
+
+    Route::match(['get', 'post'], 'rankings/rankingcountrycreate', [RankingsController::class, 'rankingcountrycreate'])->name('rankings.rankingcountrycreate');
+
+    Route::get('rankings/rankincountryedit/{id}', [RankingsController::class, 'rankincountryedit'])->name('rankings.rankincountryedit');
+
+    Route::post('rankings/rankincountryupdate', [RankingsController::class, 'rankincountryupdate'])->name('rankings.rankincountryupdate');
+
+    Route::post('rankings/rankincountrydelete/{id}', [RankingsController::class, 'rankincountrydelete'])->name('rankings.rankincountrydelete');
+
+    Route::post('rankings/rankincountrystore', [RankingsController::class, 'rankincountrystore'])->name('rankings.rankincountrystore');
+    
+    Route::get('rankings/rankingcountryview', [RankingsController::class, 'rankingcountryview'])->name('rankings.rankingcountryview');
+    
+
+
+    Route::match(['get', 'post'], 'rankings/rankingcoursecreate', [RankingsController::class, 'rankingcoursecreate'])->name('rankings.rankingcoursecreate');
+
+    Route::get('rankings/rankincourseedit/{id}', [RankingsController::class, 'rankincourseedit'])->name('rankings.rankincourseedit');
+
+    Route::post('rankings/rankincourseupdate', [RankingsController::class, 'rankincourseupdate'])->name('rankings.rankincourseupdate');
+
+    Route::post('rankings/rankincoursedelete/{id}', [RankingsController::class, 'rankincoursedelete'])->name('rankings.rankincoursedelete');
+
+    Route::post('rankings/rankincoursestore', [RankingsController::class, 'rankincoursestore'])->name('rankings.rankincoursestore');
+    
+    Route::get('rankings/rankingcourseview', [RankingsController::class, 'rankingcourseview'])->name('rankings.rankingcourseview');
+    
+    
+    Route::match(['get', 'post'], 'rankings/rankingkeywordcreate', [RankingsController::class, 'rankingkeywordcreate'])->name('rankings.rankingkeywordcreate');
+
+    Route::get('rankings/rankinkeywordedit/{id}', [RankingsController::class, 'rankinkeywordedit'])->name('rankings.rankinkeywordedit');
+
+    Route::post('rankings/rankinkeywordupdate', [RankingsController::class, 'rankinkeywordupdate'])->name('rankings.rankinkeywordupdate');
+
+    Route::post('rankings/rankinkeyworddelete/{id}', [RankingsController::class, 'rankinkeyworddelete'])->name('rankings.rankinkeyworddelete');
+
+    Route::post('rankings/rankinkeywordstore', [RankingsController::class, 'rankinkeywordstore'])->name('rankings.rankinkeywordstore');
+
+    Route::get('rankings/rankingkeywordview', [RankingsController::class, 'rankingkeywordview'])->name('rankings.rankingkeywordview');
+   
+
+    Route::post('rankings/updaterankings', [RankingsController::class, 'updaterankings'])->name('rankings.updaterankings');
+    
+    Route::match(['get', 'post'],'rankings/monthlykeywordranking', [RankingsController::class, 'monthlykeywordranking'])->name('rankings.monthlykeywordranking');
+
+    Route::post('rankings/updateelementrankings', [RankingsController::class, 'updateelementrankings'])->name('rankings.updateelementrankings');
+    
+    Route::match(['get', 'post'],'rankings/monthlyelementranking', [RankingsController::class, 'monthlyelementranking'])->name('rankings.monthlyelementranking');
+   
+    Route::post('rankings/updatecountryrankings', [RankingsController::class, 'updatecountryrankings'])->name('rankings.updatecountryrankings');
+    
+    Route::match(['get', 'post'],'rankings/monthlycountryranking', [RankingsController::class, 'monthlycountryranking'])->name('rankings.monthlycountryranking');
+   
+
+    Route::match(['get', 'post'],'rankings/monthlyrankingreport', [RankingsController::class, 'monthlyrankingreport'])->name('rankings.monthlyrankingreport');
+
+    Route::post('rankings/getelementrankings', [RankingsController::class, 'getelementrankings'])->name('rankings.getelementrankings');
+
+    Route::resource('rankings', RankingsController::class);
 
 
 
@@ -222,6 +296,7 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::post('department/changeParent', [DepartmentController::class, 'changeParent'])->name('department.changeParent');
     Route::get('department/search', [DepartmentController::class, 'searchDepartment'])->name('departments.search');
     Route::get('department/{id}', [DepartmentController::class, 'getMembers'])->name('departments.members');
+    Route::post('department/getemployees/', [DepartmentController::class, 'getEmployees'])->name('departments.getEmployees');
     Route::resource('departments', DepartmentController::class);
 
     Route::post('user-permissions/customPermissions/{id}', [UserPermissionController::class, 'customPermissions'])->name('user-permissions.custom_permissions');
@@ -380,6 +455,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::resource('event-files', EventFileController::class);
 
     /* TASKS */
+    Route::post('tasks/salestasksdata', [TaskController::class, 'salestasksdata'])->name('tasks.salestasksdata');
+    Route::get('tasks/salestasks', [TaskController::class, 'salestasks'])->name('tasks.salestasks');
     Route::get('tasks/client-detail', [TaskController::class, 'clientDetail'])->name('tasks.clientDetail');
     Route::post('tasks/change-status', [TaskController::class, 'changeStatus'])->name('tasks.change_status');
     Route::post('tasks/apply-quick-action', [TaskController::class, 'applyQuickAction'])->name('tasks.apply_quick_action');
