@@ -120,7 +120,9 @@ use App\Http\Controllers\ProjectReportController;
 use App\Http\Controllers\SalesapiController;
 
 
-Route::post('account/tasks/salestasksdata', [SalesapiController::class, 'salestasksdata']);
+
+
+// Route::post('account/tasks/salestasksdata', [SalesapiController::class, 'salestasksdata']);
 
 Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified'], 'prefix' => 'account'], function () {
     Route::post('image/upload', [ImageController::class, 'store'])->name('image.store');
@@ -845,3 +847,4 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::get('quickbooks', [QuickbookController::class, 'index'])->name('quickbooks.index');
 
 });
+

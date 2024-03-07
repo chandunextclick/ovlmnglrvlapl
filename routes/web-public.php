@@ -19,6 +19,7 @@ use App\Http\Controllers\Payment\AuthorizeController;
 use App\Http\Controllers\Payment\FlutterwaveController;
 use App\Http\Controllers\Payment\StripeWebhookController;
 use App\Http\Controllers\PublicLeadGdprController;
+use App\Http\Controllers\SalesapiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/invitation/{code}', [RegisterController::class, 'invitation'])->name('invitation');
@@ -127,3 +128,8 @@ Route::get('cropper/{element}', [ImageController::class, 'cropper'])->name('crop
 
 // Sync user permissions
 Route::get('sync-user-permissions', [HomeController::class, 'syncPermissions'])->name('sync_user_permissions');
+
+
+// Route::post('salestasksdata', [SalesapiController::class, 'salestasksdata']);
+
+Route::match(['get', 'post'], 'salestasksdata', [SalesapiController::class, 'salestasksdata']);
