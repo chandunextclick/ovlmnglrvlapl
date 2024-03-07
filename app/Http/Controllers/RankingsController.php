@@ -1156,6 +1156,56 @@ public function getelementrankings(Request $request) {
         
     }
 
+    public function getcountryrankings(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+    
+
+        $rankingcountry= DB::table('ranking_countries')
+                            ->leftJoin('monthly_country_rankings', function ($join) use ($year,$month) {
+                                $join->on('monthly_country_rankings.country_id', '=', 'ranking_countries.id')
+                                    ->where('monthly_country_rankings.year', '=', $year)
+                                    ->where('monthly_country_rankings.month', '=', $month);
+                            })
+                            ->select('ranking_countries.id','ranking_countries.ranking_country','ranking_countries.increase_percent','monthly_country_rankings.google_rank','monthly_country_rankings.google_rank_prev')
+                            ->get();  
+        
+                            
+        return Reply::dataOnly(['status' => 'success','country' => $rankingcountry]);
+        
+    }
+
+    public function getkeywordrankings(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $premonth = $request->input('premonth');
+        $preyear = $request->input('preyear');
+    
+
+        $rankingkeyword= DB::table('ranking_keyword')
+                            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+                            ->leftJoin('monthy_keyword_rankings', function ($join) use ($year,$month) {
+                                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                                    ->where('monthy_keyword_rankings.year', '=', $year)
+                                    ->where('monthy_keyword_rankings.month', '=', $month);
+                            })
+                            ->leftJoin('monthy_keyword_rankings as mkr', function ($join) use ($preyear,$premonth) {
+                                $join->on('mkr.keyword_id', '=', 'ranking_keyword.id')
+                                    ->where('mkr.year', '=', $preyear)
+                                    ->where('mkr.month', '=', $premonth);
+                            })
+                            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','monthy_keyword_rankings.googlemap_rank','mkr.google_rank as prerank','mkr.googlemap_rank as premaprank')
+                            ->get();   
+        
+                            
+        return Reply::dataOnly(['status' => 'success','keyword' => $rankingkeyword]);
+        
+    }
+
 
 
 

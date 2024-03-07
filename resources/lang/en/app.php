@@ -120,7 +120,7 @@ return array (
         'enquiry' => 'Enquiries',
         'essldata' => 'Essl Data',
         'writeforus' => 'Write For Us',
-        'persona' => 'Customer Persona',
+        'personal' => 'Customer Persona',
         'rankingcourse' => 'Ranking Course',
         'rankingkeyword' => 'Ranking Keyword',
         'rankingelement' => 'Ranking Element',

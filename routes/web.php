@@ -244,6 +244,10 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::post('rankings/getelementrankings', [RankingsController::class, 'getelementrankings'])->name('rankings.getelementrankings');
 
+    Route::post('rankings/getcountryrankings', [RankingsController::class, 'getcountryrankings'])->name('rankings.getcountryrankings');
+
+    Route::post('rankings/getkeywordrankings', [RankingsController::class, 'getkeywordrankings'])->name('rankings.getkeywordrankings');
+
     Route::resource('rankings', RankingsController::class);
 
 

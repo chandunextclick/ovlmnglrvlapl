@@ -105,7 +105,7 @@
 
                 @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
 
-                <x-sub-menu-item :link="route('sprofile.customerpersonaview')" :text="__('app.menu.persona')" /> 
+                <x-sub-menu-item :link="route('sprofile.customerpersonaview')" :text="__('app.menu.personal')" /> 
                 
                 @endif
                 
