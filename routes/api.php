@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TaskController;
+use App\Http\Controllers\SalesapiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +15,7 @@ use App\Http\Controllers\TaskController;
 |
 */
 
-Route::post('tasks/salestasksdata',[App\Http\Controllers\TaskController::class, 'salestasksdata']);
+// Route::get('account/tasks/salestasksdata', [SalesapiController::class, 'salestasksdata']);
 
 ApiRoute::group(['namespace' => 'App\Http\Controllers'], function () {
     ApiRoute::get('purchased-module', ['as' => 'api.purchasedModule', 'uses' => 'HomeController@installedModule']);

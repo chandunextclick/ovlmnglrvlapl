@@ -117,7 +117,10 @@ use App\Http\Controllers\QuickbookController;
 use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\RankingsController;
 use App\Http\Controllers\ProjectReportController;
+use App\Http\Controllers\SalesapiController;
 
+
+Route::post('account/tasks/salestasksdata', [SalesapiController::class, 'salestasksdata']);
 
 Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified'], 'prefix' => 'account'], function () {
     Route::post('image/upload', [ImageController::class, 'store'])->name('image.store');

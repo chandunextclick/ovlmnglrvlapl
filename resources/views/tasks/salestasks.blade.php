@@ -37,12 +37,11 @@ input[type="date"] {
     <table id="example" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
-                <th>Keyword ID</th>
-                <th>Course Name</th>
-                <th>Keyword Name</th>
-                <th>Search Volume</th>
-                <th>Google</th>
-                <th>Google Map</th>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Task Title</th>
+                <th>Desc</th>
+                <th>Deadline</th>
             </tr>
         </thead>
         <tbody>
