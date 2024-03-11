@@ -22,4 +22,6 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers'], function () {
     
 });
 
+Route::post('salestasksdata', [SalesapiController::class, 'salestasksdata']);
+
 

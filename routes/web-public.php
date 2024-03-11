@@ -130,6 +130,6 @@ Route::get('cropper/{element}', [ImageController::class, 'cropper'])->name('crop
 Route::get('sync-user-permissions', [HomeController::class, 'syncPermissions'])->name('sync_user_permissions');
 
 
-Route::post('salestasksdata', [SalesapiController::class, 'salestasksdata']);
+// Route::post('salestasksdata', [SalesapiController::class, 'salestasksdata']);
 
 // Route::match(['get', 'post'], 'salestasksdata', [SalesapiController::class, 'salestasksdata']);

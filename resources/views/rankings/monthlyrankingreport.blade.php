@@ -106,7 +106,7 @@ input[type="date"] {
     <div class="col-md-12 card">
     <h4 class="mt-4">Keyword Monthly Rankings</h4>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
         <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="kewordyearmonth" id="keywordyearmonth"  required>
                             
                             <?php
@@ -127,10 +127,20 @@ input[type="date"] {
                             ?>
     </select> 
         </div>     
-        <div class="col-md-6"> 
+        <div class="col-md-4"> 
         <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
             <input type="text" id="myInputTextField" class="form-control height-35 f-14" placeholder="Search" autocomplete="off">
             </div>
+        </div>  
+        <div class="col-md-4">
+        <select class="form-control height-35 f-14 mt-4" placeholder="Course"  name="course_name" id="course_name">
+                            <option selected disabled>Select Course</option>
+                            @foreach($courses as $course) 
+    
+                            <option value="{{$course->ranking_course}}">{{ $course->ranking_course }}</option>
+
+                            @endforeach
+                        </select> 
         </div>                  
     </div>
 
@@ -139,6 +149,7 @@ input[type="date"] {
         <thead>
             <tr>
                 <th>Keyword ID</th>
+                <th>Course Name</th>
                 <th>Keyword Name</th>
                 <th>Search Volume</th>
                 <th>Rank</th>
@@ -299,6 +310,23 @@ if($(this).val()==null){
 
     keytable.search($(this).val()).draw();
     
+}
+
+
+
+});
+
+$("#course_name").change(function(){
+
+    console.log($(this).val());
+
+if($(this).val()==null){
+
+    keytable.search("").draw();
+
+}else{
+
+    keytable.column(2).search($(this).val()).draw();
 }
 
 
@@ -467,7 +495,7 @@ $.easyAjax({
 
                     // console.log(item.ranking_element);
 
-                    keytable.row.add([item.id,item.ranking_keyword,item.search_volume,item.google_rank,item.prerank,item.googlemap_rank,item.premaprank]).draw();
+                    keytable.row.add([item.id,item.ranking_course,item.ranking_keyword,item.search_volume,item.google_rank,item.prerank,item.googlemap_rank,item.premaprank]).draw();
 
                 });
 

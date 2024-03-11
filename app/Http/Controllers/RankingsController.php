@@ -1126,7 +1126,10 @@ public function monthlyelementranking(Request $request)
     
         $data['monthdata']=$monthdata;
     
+        $query = "SELECT * FROM `ranking_course`";
 
+
+        $data['courses'] = DB::select($query);
                                 
     
     
