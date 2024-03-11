@@ -371,9 +371,15 @@ class LeaveController extends AccountBaseController
             return Reply::error(__('messages.multipleRemainingLeaveError', ['leaves' => $remainingLeave]));
         }
 
-        if ($userTotalLeaves >= $employeeLeaveQuota->no_of_leaves && $request->duration == 'single') {
-            return Reply::error(__('messages.leaveLimitError'));
+        if($leaveType->type_name!="Optional"){
+
+            if ($userTotalLeaves >= $employeeLeaveQuota->no_of_leaves && $request->duration == 'single') {
+            
+                return Reply::error(__('messages.leaveLimitError'));
+            }
+
         }
+        
 
         /* check leave limit for the selected leave type end */
 
