@@ -116,6 +116,44 @@ input[type="date"] {
     </table>
     </div>
     <div class="col-md-12 card mt-4">
+    <h4 class="mt-4">Keyword Rankings <span id="span-country"><?=$yearmonth?></span></h4>
+    <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="keywordyearmonth" id="keywordyearmonth"  required>
+                            
+                            <?php
+                            
+                            $month = strtotime(date('Y').'-'.date('m').'-'.date('j').' - 4 months');
+                            $end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 1 months');
+                            while($month < $end){
+                
+                                $selected = (date('F Y', $month)==$yearmonth)? ' selected' :'';
+                
+                            ?>
+                
+                                            <option <?= $selected ?> value="<?= date('F Y', $month) ?>"><?=date('F Y', $month)?></option>
+                
+                            <?php
+                            $month = strtotime("+1 month", $month);
+                            }
+                            ?>
+    </select> 
+    <table id="keywordrankings" class="table table-striped table-responsive" style="min-height:100px;">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>1 to 5</th>
+                <th>6 to 10</th>
+                <th>11 to 20</th>
+                <th>21 to 30</th>
+                <th>Above 31</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+        
+    </table>
+    </div>
+    <div class="col-md-12 card mt-4">
     <h4 class="mt-4">Top Pages By Clicks <span id="span-toppages"><?=$yearmonth?></span></h4>
     <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="toppagesyearmonth" id="toppagesyearmonth"  required>
                             
@@ -152,67 +190,6 @@ input[type="date"] {
     <div class="col-md-10 card m-5 ">
         <button class="bg-primary"><a href="<?=route('rankings.monthlydetailedrankingreport')?>" class="text-black">Detailed Report</a></button>
     <div>
-    <div class="col-md-12 card d-none">
-    <h4 class="mt-4">Keyword Monthly Rankings</h4>
-    <div class="row">
-        <div class="col-md-4">
-        <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="kewordyearmonth" id="keywordyearmonth"  required>
-                            
-                            <?php
-                            
-                            $month = strtotime(date('Y').'-'.date('m').'-'.date('j').' - 4 months');
-                            $end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 1 months');
-                            while($month < $end){
-                
-                                $selected = (date('F Y', $month)==$yearmonth)? ' selected' :'';
-                
-                            ?>
-                
-                                            <option <?= $selected ?> value="<?= date('F Y', $month) ?>"><?=date('F Y', $month)?></option>
-                
-                            <?php
-                            $month = strtotime("+1 month", $month);
-                            }
-                            ?>
-    </select> 
-        </div>     
-        <div class="col-md-4"> 
-        <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
-            <input type="text" id="myInputTextField" class="form-control height-35 f-14" placeholder="Search" autocomplete="off">
-            </div>
-        </div>  
-        <div class="col-md-4">
-        <select class="form-control height-35 f-14 mt-4" placeholder="Course"  name="course_name" id="course_name">
-                            <option selected disabled>Select Course</option>
-                            @foreach($courses as $course) 
-    
-                            <option value="{{$course->ranking_course}}">{{ $course->ranking_course }}</option>
-
-                            @endforeach
-                        </select> 
-        </div>                  
-    </div>
-
-   
-    <table id="keyword" class="table table-striped table-responsive" style="min-height:100px;">
-        <thead>
-            <tr>
-                <th>Keyword ID</th>
-                <th>Course Name</th>
-                <th>Keyword Name</th>
-                <th>Search Volume</th>
-                <th>Rank</th>
-                <th>Previous Rank</th>
-                <th>Google Map Rank</th>
-                <th>Google Map Previous Rank</th>
-            </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-        
-    </table>
-    </div>
   </div>
 </div>
 
@@ -351,7 +328,7 @@ $("#toppagesyearmonth").change(function(){
 // keyword data
 // -------------------------------------------------------------------
 
-keytable=new DataTable('#keyword');
+keytable=new DataTable('#keywordrankings');
 
 var keywordyearmonth = $('#keywordyearmonth').val()
 
@@ -391,6 +368,9 @@ $("#keywordyearmonth").change(function(){
     var keywordpremonth = keywordprear[0];
 
     var keywordpreyear = keywordprear[1];
+
+    $("#th-kwyearmonth").html($('#keywordyearmonth').val())
+    $("#th-kwprevyearmonth").html(getPreviousMonth(keywordmonth))
 
     console.log(keywordpremonth,keywordpreyear);
 
@@ -628,7 +608,7 @@ $.easyAjax({
 function updatekeyworddata(month,year,premonth,preyear){
 
 
-let url = "{{ route('rankings.getkeywordrankings') }}";
+let url = "{{ route('rankings.getkeywordrangerankings') }}";
 
 console.log(url);
 
@@ -660,11 +640,11 @@ $.easyAjax({
                 
                 // console.log(response.element);
                 keytable.clear().draw();
-                response.keyword.forEach((item) => {
+                response.keywordrange.forEach((item) => {
 
                     // console.log(item.ranking_element);
 
-                    keytable.row.add([item.id,item.ranking_course,item.ranking_keyword,item.search_volume,item.google_rank,item.prerank,item.googlemap_rank,item.premaprank]).draw();
+                    keytable.row.add([item.month,item.count_1_to_5,item.count_6_to_10,item.count_11_to_20,item.count_21_to_30,item.count_31greater]).draw();
 
                 });
 

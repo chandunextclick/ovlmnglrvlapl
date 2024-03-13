@@ -462,7 +462,7 @@
                 
                 $('.optional_date_div').removeClass('d-none');
 
-                // $('.single_date_div').addClass('d-none');
+                $('.single_date_div').addClass('d-none');
 
                 $('.multi_date_div').addClass('d-none');
 

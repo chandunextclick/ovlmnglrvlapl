@@ -1349,6 +1349,54 @@ public function getelementrankings(Request $request) {
         
     }
 
+    public function getkeywordrangerankings(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $premonth = $request->input('premonth');
+        $preyear = $request->input('preyear');
+    
+
+        
+        $januaryQuery = DB::table('ranking_keyword')
+                ->leftJoin('ranking_course as rc', 'rc.id', '=', 'ranking_keyword.ranking_course')
+                ->leftJoin('monthy_keyword_rankings as mkr', function ($join) use ($premonth,$preyear){
+                    $join->on('mkr.keyword_id', '=', 'ranking_keyword.id')
+                        ->where('mkr.month', '=', $premonth)
+                        ->where('mkr.year', '=', $preyear);
+                })
+                ->selectRaw('mkr.month,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 1 AND 5 THEN 1 ELSE 0 END) AS count_1_to_5,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 6 AND 10 THEN 1 ELSE 0 END) AS count_6_to_10,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 11 AND 20 THEN 1 ELSE 0 END) AS count_11_to_20,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 21 AND 30 THEN 1 ELSE 0 END) AS count_21_to_30,
+                    SUM(CASE WHEN mkr.google_rank > 30 THEN 1 ELSE 0 END) AS count_31greater
+                ');
+
+        $februaryQuery = DB::table('ranking_keyword')
+                ->leftJoin('ranking_course as rc', 'rc.id', '=', 'ranking_keyword.ranking_course')
+                ->leftJoin('monthy_keyword_rankings as mkr', function ($join) use ($month,$year){
+                    $join->on('mkr.keyword_id', '=', 'ranking_keyword.id')
+                        ->where('mkr.month', '=', $month)
+                        ->where('mkr.year', '=', $year);
+                })
+                ->selectRaw('mkr.month,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 1 AND 5 THEN 1 ELSE 0 END) AS count_1_to_5,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 6 AND 10 THEN 1 ELSE 0 END) AS count_6_to_10,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 11 AND 15 THEN 1 ELSE 0 END) AS count_11_to_15,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 21 AND 30 THEN 1 ELSE 0 END) AS count_21_to_30,
+                    SUM(CASE WHEN mkr.google_rank > 30 THEN 1 ELSE 0 END) AS count_31greater
+                '); 
+
+
+        $results = $januaryQuery->unionAll($februaryQuery)->get();
+        
+                            
+        return Reply::dataOnly(['status' => 'success','keywordrange' => $results]);
+        
+    }
+
     public function getdropedniche(Request $request) {
     
         

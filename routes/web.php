@@ -254,6 +254,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::post('rankings/getkeywordrankings', [RankingsController::class, 'getkeywordrankings'])->name('rankings.getkeywordrankings');
 
+    Route::post('rankings/getkeywordrangerankings', [RankingsController::class, 'getkeywordrangerankings'])->name('rankings.getkeywordrangerankings');
+    
     Route::post('rankings/getdropedniche', [RankingsController::class, 'getdropedniche'])->name('rankings.getdropedniche');
 
     Route::post('rankings/getdropednooneword', [RankingsController::class, 'getdropednooneword'])->name('rankings.getdropednooneword');
