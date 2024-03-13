@@ -29,8 +29,8 @@ input[type="date"] {
 
 <div class="container pt-5">
   <div class="row">
-    <div class="col-md-6 card">
-    <h4 class="mt-4">Element Monthly Rankings</h4>
+    <div class="col-md-12 card">
+    <h4 class="mt-4">SEO Brief Report <span id="span-brief"><?=$yearmonth?></span></h4>
     <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="elementyearmonth" id="elementyearmonth"  required>
                             
                             <?php
@@ -50,14 +50,27 @@ input[type="date"] {
                             }
                             ?>
     </select> 
-    <table id="element" class="table table-striped table-responsive" style="min-height:100px;">
+    <table id="elementimp" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
-                <th>Element ID</th>
-                <th>Element Name</th>
-                <th>Search Volume</th>
-                <th>Rank</th>
-                <th>Previous Rank</th>
+                <th>Elements</th>
+                <th>Target<br>(Increase percent)</th>
+                <th id="th-elyearmonth"><?= $yearmonth ?></th>
+                <th id="th-elprevyearmonth"><?= $prevyearmonth ?></th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+        
+    </table>
+    <table id="elementtr" class="table table-striped table-responsive" style="min-height:100px;">
+        <thead>
+            <tr>
+                <th>Elements</th>
+                <th>Target<br>(Increase percent)</th>
+                <th id="th-eltryearmonth"><?= $yearmonth ?></th>
+                <th id="th-eltrprevyearmonth"><?= $prevyearmonth ?></th>
             </tr>
         </thead>
         <tbody>
@@ -66,8 +79,8 @@ input[type="date"] {
         
     </table>
     </div>
-    <div class="col-md-6 card">
-    <h4 class="mt-4">Coutry Monthly Rankings</h4>
+    <div class="col-md-12 card mt-4">
+    <h4 class="mt-4">Country Wise Traffic Report <span id="span-country"><?=$yearmonth?></span></h4>
     <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="countryyearmonth" id="countryyearmonth"  required>
                             
                             <?php
@@ -90,11 +103,10 @@ input[type="date"] {
     <table id="country" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
-                <th>Country ID</th>
                 <th>Country Name</th>
-                <th>Search Volume</th>
-                <th>Rank</th>
-                <th>Previous Rank</th>
+                <th>Target<br>(Increase percent)</th>
+                <th id="th-ctyearmonth"><?= $yearmonth ?></th>
+                <th id="th-ctprevyearmonth"><?= $prevyearmonth ?></th>
             </tr>
         </thead>
         <tbody>
@@ -103,7 +115,44 @@ input[type="date"] {
         
     </table>
     </div>
-    <div class="col-md-12 card">
+    <div class="col-md-12 card mt-4">
+    <h4 class="mt-4">Top Pages By Clicks <span id="span-toppages"><?=$yearmonth?></span></h4>
+    <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="toppagesyearmonth" id="toppagesyearmonth"  required>
+                            
+                            <?php
+                            
+                            $month = strtotime(date('Y').'-'.date('m').'-'.date('j').' - 4 months');
+                            $end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 1 months');
+                            while($month < $end){
+                
+                                $selected = (date('F Y', $month)==$yearmonth)? ' selected' :'';
+                
+                            ?>
+                
+                                            <option <?= $selected ?> value="<?= date('F Y', $month) ?>"><?=date('F Y', $month)?></option>
+                
+                            <?php
+                            $month = strtotime("+1 month", $month);
+                            }
+                            ?>
+    </select> 
+    <table id="toppage" class="table table-striped table-responsive" style="min-height:100px;">
+        <thead>
+            <tr>
+                <th>URL</th>
+                <th>Clicks</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+        
+    </table>
+    </div>
+    <div class="col-md-10 card m-5 ">
+        <button class="bg-primary"><a href="<?=route('rankings.monthlydetailedrankingreport')?>" class="text-black">Detailed Report</a></button>
+    <div>
+    <div class="col-md-12 card d-none">
     <h4 class="mt-4">Keyword Monthly Rankings</h4>
     <div class="row">
         <div class="col-md-4">
@@ -190,7 +239,9 @@ $(document).ready(function() {
 // element data
 // -------------------------------------------------------------------
 
-    eltable=new DataTable('#element');
+    elimptable=new DataTable('#elementimp');
+
+    eltrtable=new DataTable('#elementtr');
 
 
     var elementyearmonth = $('#elementyearmonth').val()
@@ -205,6 +256,7 @@ $(document).ready(function() {
 
     $("#elementyearmonth").change(function(){
 
+
     var elementyearmonth = $('#elementyearmonth').val()
 
     const elementar = elementyearmonth.split(" ");
@@ -212,6 +264,13 @@ $(document).ready(function() {
     var elementmonth = elementar[0];
 
     var elementyear = elementar[1];
+
+    $("#th-elyearmonth").html($('#elementyearmonth').val())
+    $("#th-elprevyearmonth").html(getPreviousMonth(elementmonth))
+    $("#th-eltryearmonth").html($('#elementyearmonth').val())
+    $("#th-eltrprevyearmonth").html(getPreviousMonth(elementmonth))
+
+    $("#span-brief").html($('#elementyearmonth').val())
 
     updateelementdata(elementmonth,elementyear);
 
@@ -244,9 +303,49 @@ $(document).ready(function() {
 
         var countryyear = countryar[1];
 
+        $("#th-ctyearmonth").html($('#countryyearmonth').val())
+        $("#th-ctprevyearmonth").html(getPreviousMonth(countrymonth))
+
+        $("#span-country").html($('#countryyearmonth').val())
+
         updatecountrydata(countrymonth,countryyear);
 
     });
+
+
+    // ------------------------------------------------------------------
+// Top pages data
+// -------------------------------------------------------------------
+
+toppagetable=new DataTable('#toppage');
+
+var toppageyearmonth = $('#toppagesyearmonth').val()
+
+
+const toppagear = toppageyearmonth.split(" ");
+
+var toppagemonth = toppagear[0];
+
+var toppageyear = toppagear[1];
+
+updatetoppagedata(toppagemonth,toppageyear);
+
+$("#toppagesyearmonth").change(function(){
+
+    var toppageyearmonth = $('#toppagesyearmonth').val()
+
+
+    const toppagear = toppageyearmonth.split(" ");
+
+    var toppagemonth = toppagear[0];
+
+    var toppageyear = toppagear[1];
+
+    $("#span-toppages").html($('#toppagesyearmonth').val())
+
+    updatetoppagedata(toppagemonth,toppageyear);
+
+});
 
 // ------------------------------------------------------------------
 // keyword data
@@ -326,6 +425,10 @@ if($(this).val()==null){
 
 }else{
 
+    var value=$(this).val();
+
+    valregex="";
+
     keytable.column(2).search($(this).val()).draw();
 }
 
@@ -381,16 +484,29 @@ $.easyAjax({
         success: function(response) {
 
             if (response.status == 'success') {
-                
+                console.log(response);
                 // console.log(response.element);
-                eltable.clear().draw();
-                response.element.forEach((item) => {
+                elimptable.clear().draw();
+                eltrtable.clear().draw();
+                response.impressionelement.forEach((item) => {
 
                     // console.log(item.ranking_element);
 
-                    eltable.row.add([item.id,item.ranking_element,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
+                    elimptable.row.add([item.ranking_element,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
 
                 });
+
+           
+                
+                
+
+                response.trafficelement.forEach((item) => {
+
+
+                eltrtable.row.add([item.ranking_element,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
+
+                });
+
 
             
 
@@ -440,7 +556,60 @@ $.easyAjax({
 
                     // console.log(item.ranking_element);
 
-                    cttable.row.add([item.id,item.ranking_country,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
+                    cttable.row.add([item.ranking_country,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
+
+                });
+
+            
+
+
+            }
+        }
+ 
+    })
+
+
+}
+
+
+function updatetoppagedata(month,year){
+
+
+let url = "{{ route('rankings.gettoppages') }}";
+
+console.log(url);
+
+// Get CSRF token value
+var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+console.log(csrfToken);
+
+$.ajaxSetup({
+headers: {
+    'X-CSRF-TOKEN': csrfToken
+}
+});
+
+
+$.easyAjax({
+        url: url,
+        type: "POST",
+        data: {
+            _token: csrfToken,
+            month:month,
+            year:year,
+        },
+        success: function(response) {
+
+            if (response.status == 'success') {
+                
+                // console.log(response.element);
+                toppagetable.clear().draw();
+                response.toppages.forEach((item) => {
+
+                    // console.log(item.ranking_element);
+
+                    toppagetable.row.add(['<a href='+item.url+' target="_blank">'+item.url+'</a>',item.clicks]).draw();
 
                 });
 

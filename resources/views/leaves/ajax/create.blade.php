@@ -115,7 +115,7 @@
                                 <option value="">--</option>
                                 @if (isset($optionaldates))
                                     @foreach ($optionaldates as $optionaldate)
-                                        <option value="{{ $optionaldate->date }}" data-custom="{{ $optionaldate->occassion }}" data-chkid="0">{{ mb_ucwords($optionaldate->occassion) }} ( {{ mb_ucwords($optionaldate->date->format('Y-m-d')) }} )
+                                        <option value="{{ $optionaldate->date->format('d-m-Y') }}" data-custom="{{ $optionaldate->occassion }}" data-chkid="0">{{ mb_ucwords($optionaldate->occassion) }} ( {{ mb_ucwords($optionaldate->date->format('d-m-Y')) }} )
                                         </option>
                                     @endforeach
                                 @endif
@@ -304,7 +304,7 @@
 
                         var day = ('0' + birthdate.getDate()).slice(-2);
 
-                        var birthday = year + '-' + month + '-' + day;
+                        var birthday = day + '-' + month + '-' + year;
 
                         console.log(birthdate);
 
@@ -342,7 +342,7 @@
 
                     var day = ('0' + mrandate.getDate()).slice(-2);
 
-                    var mranday = year + '-' + month + '-' + day;
+                    var mranday = day + '-' + month + '-' + year;
 
 
                     if (mrandate > currentDate) {
@@ -462,7 +462,7 @@
                 
                 $('.optional_date_div').removeClass('d-none');
 
-                $('.single_date_div').addClass('d-none');
+                // $('.single_date_div').addClass('d-none');
 
                 $('.multi_date_div').addClass('d-none');
 
@@ -526,6 +526,13 @@
 
             // Get the value of the 'data-custom' attribute
             var customAttributeValue = selectedOption.data('custom');
+
+            var optionaldate = $('#optional_type_id').val();
+
+            const optionaldatear = optionaldate.split(" ");
+
+            $('#single_date').val(optionaldatear[0]);
+
 
             // Display the value
             $('#reason').val(customAttributeValue);

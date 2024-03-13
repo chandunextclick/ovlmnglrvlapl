@@ -242,12 +242,32 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::match(['get', 'post'],'rankings/monthlyrankingreport', [RankingsController::class, 'monthlyrankingreport'])->name('rankings.monthlyrankingreport');
 
+    Route::match(['get', 'post'],'rankings/monthlydetailedrankingreport', [RankingsController::class, 'monthlydetailedrankingreport'])->name('rankings.monthlydetailedrankingreport');
+
+    Route::get('rankings/monthlydetailedseoreport/{yearmonth}', [RankingsController::class, 'monthlydetailedseoreport'])->name('rankings.monthlydetailedseoreport');
+
     Route::post('rankings/getelementrankings', [RankingsController::class, 'getelementrankings'])->name('rankings.getelementrankings');
 
     Route::post('rankings/getcountryrankings', [RankingsController::class, 'getcountryrankings'])->name('rankings.getcountryrankings');
 
+    Route::post('rankings/gettoppages', [RankingsController::class, 'gettoppages'])->name('rankings.gettoppages');
+
     Route::post('rankings/getkeywordrankings', [RankingsController::class, 'getkeywordrankings'])->name('rankings.getkeywordrankings');
 
+    Route::post('rankings/getdropedniche', [RankingsController::class, 'getdropedniche'])->name('rankings.getdropedniche');
+
+    Route::post('rankings/getdropednooneword', [RankingsController::class, 'getdropednooneword'])->name('rankings.getdropednooneword');
+    
+    Route::post('rankings/getupnooneword', [RankingsController::class, 'getupnooneword'])->name('rankings.getupnooneword');
+
+    Route::post('rankings/getuptwotofiveword', [RankingsController::class, 'getuptwotofiveword'])->name('rankings.getuptwotofiveword');
+    
+    Route::post('rankings/getdropedfromtwoword', [RankingsController::class, 'getdropedfromtwoword'])->name('rankings.getdropedfromtwoword');
+
+    Route::match(['get', 'post'],'rankings/toppagesbyclick', [RankingsController::class, 'toppagesbyclick'])->name('rankings.toppagesbyclick');
+    
+    Route::post('rankings/storetoppages', [RankingsController::class, 'storetoppages'])->name('rankings.storetoppages');
+    
     Route::resource('rankings', RankingsController::class);
 
 

@@ -121,6 +121,8 @@ return array (
         'essldata' => 'Essl Data',
         'writeforus' => 'Write For Us',
         'personal' => 'Customer Persona',
+        'digitalmarketing' => 'Digital Marketing Report',
+        'toppagesbyclick' => 'Top Pages By Clicks',
         'rankingcourse' => 'Ranking Course',
         'rankingkeyword' => 'Ranking Keyword',
         'rankingelement' => 'Ranking Element',

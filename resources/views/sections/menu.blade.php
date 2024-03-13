@@ -102,12 +102,6 @@
                 <x-sub-menu-item :link="route('sprofile.essldata')" :text="__('app.menu.essldata')" /> 
                 
                 @endif
-
-                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
-
-                <x-sub-menu-item :link="route('sprofile.customerpersonaview')" :text="__('app.menu.personal')" /> 
-                
-                @endif
                 
                 
             </div>
@@ -138,6 +132,12 @@
     
                 @if (in_array('tasks', user_modules()) && $sidebarUserPermissions['view_tasks'] != 5 && $sidebarUserPermissions['view_tasks'] != 'none')
                     <x-sub-menu-item :link="route('tasks.salestasks')" :text="__('app.salestasks')" />
+                @endif
+
+                @if (isset($sidebarUserPermissions['view_customer_persona']) && $sidebarUserPermissions['view_customer_persona'] == 4 )
+
+                <x-sub-menu-item :link="route('sprofile.customerpersonaview')" :text="__('app.menu.personal')" /> 
+
                 @endif
 
                   
@@ -364,9 +364,30 @@
                     <x-sub-menu-item :link="route('expense-report.index')"
                                      :text="__('app.menu.expenseReport')" />
                 @endif
+
+                <x-sub-menu-item :link="route('rankings.monthlyrankingreport')" :text="__('app.menu.digitalmarketing')" />
+
             </div>
         </x-menu-item>
 @endif
+
+@if (in_array('reports', user_modules()) && ($sidebarUserPermissions['view_digitalmarketing_report'] == 4  ))
+
+
+<x-menu-item icon="graph-up" :text="__('app.menu.digitalmarketing')" :link="route('rankings.monthlyrankingreport')">
+            <x-slot name="iconPath">
+                <path
+                    d="M7.5 1.018a7 7 0 0 0-4.79 11.566L7.5 7.793V1.018zm1 0V7.5h6.482A7.001 7.001 0 0 0 8.5 1.018zM14.982 8.5H8.207l-4.79 4.79A7 7 0 0 0 14.982 8.5zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z" />
+            </x-slot>
+</x-menu-item>
+
+@endif
+
+
+
+
+
+@if (in_array('reports', user_modules()) && ($sidebarUserPermissions['view_task_report'] == 4 || $sidebarUserPermissions['view_time_log_report'] == 4 || (isset($sidebarUserPermissions['view_expense_report']) && $sidebarUserPermissions['view_expense_report'] == 4) || $sidebarUserPermissions['view_finance_report'] != 5 || $sidebarUserPermissions['view_income_expense_report'] == 4 || $sidebarUserPermissions['view_leave_report'] == 4 || $sidebarUserPermissions['view_attendance_report'] == 4) && ($sidebarUserPermissions['view_task_report'] != 'none' || $sidebarUserPermissions['view_time_log_report'] != 'none' || $sidebarUserPermissions['view_finance_report'] != 'none' || $sidebarUserPermissions['view_income_expense_report'] != 'none' || $sidebarUserPermissions['view_leave_report'] != 'none' || $sidebarUserPermissions['view_attendance_report'] != 'none' || (isset($sidebarUserPermissions['view_expense_report']) && $sidebarUserPermissions['view_expense_report'] != 'none')))
 <x-menu-item icon="bar-chart" :text="__('app.menu.rankingmaster')">
             <x-slot name="iconPath">
                 <path
@@ -374,33 +395,28 @@
             </x-slot>
             <div class="accordionItemContent pb-2">
 
-                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
-                    <x-sub-menu-item :link="route('rankings.rankingcourseview')" :text="__('app.menu.rankingcourse')" />
-                @endif
-                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
-                    <x-sub-menu-item :link="route('rankings.rankingkeywordview')" :text="__('app.menu.rankingkeyword')" />
-                @endif
+                <x-sub-menu-item :link="route('rankings.rankingcourseview')" :text="__('app.menu.rankingcourse')" />
+         
+                <x-sub-menu-item :link="route('rankings.rankingkeywordview')" :text="__('app.menu.rankingkeyword')" />
+                
 
-                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
-                    <x-sub-menu-item :link="route('rankings.rankingelementview')" :text="__('app.menu.rankingelement')" />
-                @endif
+                <x-sub-menu-item :link="route('rankings.rankingelementview')" :text="__('app.menu.rankingelement')" />
+                
 
-                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
-                    <x-sub-menu-item :link="route('rankings.rankingcountryview')" :text="__('app.menu.rankingcountry')" />
-                @endif
+                <x-sub-menu-item :link="route('rankings.rankingcountryview')" :text="__('app.menu.rankingcountry')" />
+                
 
-                    <x-sub-menu-item :link="route('rankings.monthlykeywordranking')" :text="__('app.menu.monthlykeywordranking')" />
+                <x-sub-menu-item :link="route('rankings.monthlykeywordranking')" :text="__('app.menu.monthlykeywordranking')" />
 
-                    <x-sub-menu-item :link="route('rankings.monthlyelementranking')" :text="__('app.menu.monthlyelementranking')" />
+                <x-sub-menu-item :link="route('rankings.monthlyelementranking')" :text="__('app.menu.monthlyelementranking')" />
 
-                    <x-sub-menu-item :link="route('rankings.monthlycountryranking')" :text="__('app.menu.monthlycountryranking')" />
+                <x-sub-menu-item :link="route('rankings.monthlycountryranking')" :text="__('app.menu.monthlycountryranking')" />
 
-                    <x-sub-menu-item :link="route('rankings.monthlyrankingreport')" :text="__('app.menu.rankingreport')" />
-              
-                {{-- @endif --}}
+                <x-sub-menu-item :link="route('rankings.toppagesbyclick')" :text="__('app.menu.toppagesbyclick')" />
+                    
             </div>
         </x-menu-item>
-
+@endif
 <!-- NAV ITEM - REPORTS COLLAPASE MENU -->
     <!-- NAV ITEM - SETTINGS -->
     <x-menu-item icon="gear" :text="__('app.menu.settings')"

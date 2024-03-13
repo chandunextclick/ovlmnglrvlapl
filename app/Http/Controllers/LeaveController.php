@@ -347,7 +347,7 @@ class LeaveController extends AccountBaseController
 
         $dateInsert = Carbon::createFromFormat($this->company->date_format, $request->leave_date)->format('Y-m-d');
         $leaveApplied = Leave::where('user_id', $request->user_id)->where('status', '!=', 'rejected')->whereDate('leave_date', $dateInsert)->first();
-        $holiday = Holiday::select(DB::raw('DATE_FORMAT(date, "%Y-%m-%d") as holiday_date'))->where('date', $dateInsert)->first();
+        $holiday = Holiday::select(DB::raw('DATE_FORMAT(date, "%Y-%m-%d") as holiday_date'))->where('date', $dateInsert)->where('optional','=','0')->first();
 
         if (!empty($leaveApplied) && $leaveApplied->duration != 'half day') {
             return Reply::error(__('messages.leaveApplyError'));

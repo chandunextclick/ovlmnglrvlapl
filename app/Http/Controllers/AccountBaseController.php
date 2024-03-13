@@ -129,6 +129,8 @@ class AccountBaseController extends Controller
         }
 
         $this->sidebarUserPermissions = sidebar_user_perms();
+
+        // var_dump($this->sidebarUserPermissions);
     }
 
     public function logProjectActivity($projectId, $text)

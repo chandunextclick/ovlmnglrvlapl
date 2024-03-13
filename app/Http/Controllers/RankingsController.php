@@ -104,6 +104,7 @@ class RankingsController extends AccountBaseController
         $data['worksuitePlugins']=$this->worksuitePlugins;
         $data['company']=$this->company;
         
+        
     
         $data['rankingelement']= DB::table('ranking_element')->get();
         
@@ -1074,7 +1075,7 @@ public function monthlyelementranking(Request $request)
     public function monthlyrankingreport(Request $request)
     {
     
-        $data['pageTitle']= 'Ranking Report';
+        $data['pageTitle']= 'Digital Marketing Dashboard';
         $data['pushSetting']= $this->pushSetting;
         $data['pusherSettings']= $this->pusherSettings;
         if (in_array('admin', user_roles())){
@@ -1103,6 +1104,8 @@ public function monthlyelementranking(Request $request)
         $monthdata = date('F',strtotime('-1 month'));
     
         $yearmonth = date('F Y',strtotime('-1 month'));
+
+        $prevyearmonth = date('F Y',strtotime('-2 month'));
         
     
         if ($request->isMethod('post')) {
@@ -1121,6 +1124,8 @@ public function monthlyelementranking(Request $request)
     
         
         $data['yearmonth']=$yearmonth;
+
+        $data['prevyearmonth']=$prevyearmonth;
     
         $data['yeardata']=$yeardata;
     
@@ -1138,6 +1143,110 @@ public function monthlyelementranking(Request $request)
     }
 
 
+
+    public function monthlydetailedrankingreport(Request $request)
+    {
+    
+        $data['pageTitle']= 'Digital Marketing Dashboard';
+        $data['pushSetting']= $this->pushSetting;
+        $data['pusherSettings']= $this->pusherSettings;
+        if (in_array('admin', user_roles())){
+    
+            $data['checkListCompleted']= $this->checkListCompleted;
+        }
+        
+        $data['checkListTotal']= $this->checkListTotal;
+        $data['activeTimerCount']= $this->activeTimerCount;
+        $data['unreadNotificationCount']= $this->unreadNotificationCount;
+        $data['appTheme']= $this->appTheme;
+        $data['appName']= $this->appName;
+        $data['user']= $this->user;
+        $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+        $data['companyName']=$this->companyName;
+        $data['userCompanies']=$this->userCompanies;
+        $data['currentRouteName']=$this->currentRouteName;
+        $data['unreadMessagesCount']=$this->unreadMessagesCount;
+        $data['worksuitePlugins']=$this->worksuitePlugins;
+        $data['company']=$this->company;
+    
+    
+    
+        $yeardata = date('Y',strtotime('-1 month'));
+    
+        $monthdata = date('F',strtotime('-1 month'));
+    
+        $yearmonth = date('F Y',strtotime('-1 month'));
+
+        $prevyearmonth = date('F Y',strtotime('-2 month'));
+        
+    
+        if ($request->isMethod('post')) {
+    
+            // Handle POST request
+    
+            $yearmonth = $request->input('yearmonth');
+    
+            $arr = explode(" ",$yearmonth);
+    
+            $yeardata = $arr[1];
+            $monthdata = $arr[0];
+            
+            // Retrieve and display data based on the POST data
+        }
+    
+        
+        $data['yearmonth']=$yearmonth;
+
+        $data['prevyearmonth']=$prevyearmonth;
+    
+        $data['yeardata']=$yeardata;
+    
+        $data['monthdata']=$monthdata;
+    
+        $query = "SELECT * FROM `ranking_course`";
+
+
+        $data['courses'] = DB::select($query);
+                                
+    
+    
+        return view('rankings.monthlyrankingdetailedreport',$data);
+    
+    }
+
+
+    public function monthlydetailedseoreport($yearmonth)
+    {
+    
+        $data['pageTitle']= 'Seo Report';
+        $data['pushSetting']= $this->pushSetting;
+        $data['pusherSettings']= $this->pusherSettings;
+        $data['checkListCompleted']= $this->checkListCompleted;
+        $data['checkListTotal']= $this->checkListTotal;
+        $data['activeTimerCount']= $this->activeTimerCount;
+        $data['unreadNotificationCount']= $this->unreadNotificationCount;
+        $data['appTheme']= $this->appTheme;
+        $data['appName']= $this->appName;
+        $data['user']= $this->user;
+        $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+        $data['companyName']=$this->companyName;
+        $data['userCompanies']=$this->userCompanies;
+        $data['currentRouteName']=$this->currentRouteName;
+        $data['unreadMessagesCount']=$this->unreadMessagesCount;
+        $data['worksuitePlugins']=$this->worksuitePlugins;
+        $data['company']=$this->company;
+        
+
+        $yearmonthar = explode(" ",$yearmonth);
+
+        $data['month'] = $yearmonthar[0];
+
+        $data['year'] = $yearmonthar[1];
+
+        return view('rankings.monthlyseodetailedreport',$data);
+    }
+
+
 public function getelementrankings(Request $request) {
     
         
@@ -1145,17 +1254,30 @@ public function getelementrankings(Request $request) {
         $year = $request->input('year');
     
 
-        $rankingelement= DB::table('ranking_element')
+        $impressionelement= DB::table('ranking_element')
                             ->leftJoin('monthly_element_rankings', function ($join) use ($year,$month) {
                                 $join->on('monthly_element_rankings.element_id', '=', 'ranking_element.id')
                                     ->where('monthly_element_rankings.year', '=', $year)
                                     ->where('monthly_element_rankings.month', '=', $month);
                             })
                             ->select('ranking_element.id','ranking_element.ranking_element','ranking_element.increase_percent','monthly_element_rankings.google_rank','monthly_element_rankings.google_rank_prev')
+                            ->where('ranking_element.elements_type', '=',0)
+                            ->orderBy('ranking_element.elements_type')
+                            ->get();  
+
+        $trafficelement= DB::table('ranking_element')
+                            ->leftJoin('monthly_element_rankings', function ($join) use ($year,$month) {
+                                $join->on('monthly_element_rankings.element_id', '=', 'ranking_element.id')
+                                    ->where('monthly_element_rankings.year', '=', $year)
+                                    ->where('monthly_element_rankings.month', '=', $month);
+                            })
+                            ->select('ranking_element.id','ranking_element.ranking_element','ranking_element.increase_percent','monthly_element_rankings.google_rank','monthly_element_rankings.google_rank_prev')
+                            ->where('ranking_element.elements_type', '=',1)
+                            ->orderBy('ranking_element.elements_type')
                             ->get();  
         
                             
-        return Reply::dataOnly(['status' => 'success','element' => $rankingelement]);
+        return Reply::dataOnly(['status' => 'success','impressionelement' => $impressionelement,'trafficelement' => $trafficelement]);
         
     }
 
@@ -1177,6 +1299,24 @@ public function getelementrankings(Request $request) {
         
                             
         return Reply::dataOnly(['status' => 'success','country' => $rankingcountry]);
+        
+    }
+
+    public function gettoppages(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+    
+
+        $toppages= DB::table('monthly_toppages')
+                            ->where('monthly_toppages.year', '=', $year)
+                            ->where('monthly_toppages.month', '=', $month)
+                            ->select('monthly_toppages.id','monthly_toppages.url','monthly_toppages.clicks','monthly_toppages.month','monthly_toppages.year')
+                            ->get();  
+        
+                            
+        return Reply::dataOnly(['status' => 'success','toppages' => $toppages]);
         
     }
 
@@ -1208,6 +1348,267 @@ public function getelementrankings(Request $request) {
         return Reply::dataOnly(['status' => 'success','keyword' => $rankingkeyword]);
         
     }
+
+    public function getdropedniche(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $premonth = $request->input('premonth');
+        $preyear = $request->input('preyear');
+    
+
+        $droppedniche = DB::table('ranking_keyword')
+                        ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+                        ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                            $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                                ->where('monthy_keyword_rankings.year', '=', $preyear)
+                                ->where('monthy_keyword_rankings.month', '=', $premonth);
+                        })
+                        ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                            $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                                ->where('mkr.year', '=', $year)
+                                ->where('mkr.month', '=', $month)
+                                ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
+                        })
+                        ->select('ranking_course.ranking_course')
+                            ->groupBy('ranking_course.ranking_course')
+                            ->havingRaw('COUNT(ranking_course.ranking_course) > 1')
+                            ->get();  
+
+        
+                            
+        return Reply::dataOnly(['status' => 'success','droppedniche' => $droppedniche]);
+        
+    }
+
+
+    public function getdropednooneword(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $premonth = $request->input('premonth');
+        $preyear = $request->input('preyear');
+    
+
+        $droppednonone = DB::table('ranking_keyword')
+                            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+                            ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                                    ->where('monthy_keyword_rankings.year', '=', $preyear)
+                                    ->where('monthy_keyword_rankings.month', '=', $premonth)
+                                    ->where('monthy_keyword_rankings.google_rank', '=',1);
+                            })
+                            ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                                $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                                    ->where('mkr.year', '=', $year)
+                                    ->where('mkr.month', '=', $month)
+                                    ->where('mkr.google_rank', '>', 1);
+                            })
+                            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
+                            ->get();   
+        
+                            
+        return Reply::dataOnly(['status' => 'success','droppednonone' => $droppednonone]);
+        
+    }
+
+    public function getupnooneword(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $premonth = $request->input('premonth');
+        $preyear = $request->input('preyear');
+    
+
+        $upnonone = DB::table('ranking_keyword')
+                            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+                            ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                                    ->where('monthy_keyword_rankings.year', '=', $preyear)
+                                    ->where('monthy_keyword_rankings.month', '=', $premonth)
+                                    ->where('monthy_keyword_rankings.google_rank', '>',1);
+                            })
+                            ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                                $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                                    ->where('mkr.year', '=', $year)
+                                    ->where('mkr.month', '=', $month)
+                                    ->where('mkr.google_rank', '=', 1);
+                            })
+                            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as prevposition','mkr.google_rank as upposition')
+                            ->get();   
+        
+                            
+        return Reply::dataOnly(['status' => 'success','upnonone' => $upnonone]);
+        
+    }
+
+    public function getuptwotofiveword(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $premonth = $request->input('premonth');
+        $preyear = $request->input('preyear');
+    
+
+        $uptotwotofive = DB::table('ranking_keyword')
+                        ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+                        ->Join('monthy_keyword_rankings', function ($join) use ($year,$month) {
+                            $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                                ->where('monthy_keyword_rankings.year', '=', $year)
+                                ->where('monthy_keyword_rankings.month', '=', $month)
+                                ->whereIn('monthy_keyword_rankings.google_rank',array(2,3,4,5));
+                        })
+                        ->Join('monthy_keyword_rankings as mkr', function ($join) use ($preyear,$premonth) {
+                            $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                                ->where('mkr.year', '=', $preyear)
+                                ->where('mkr.month', '=', $premonth)
+                                ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
+                        })
+                        ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as currentposition','mkr.google_rank as prevposition')
+                        ->get();   
+        
+                            
+        return Reply::dataOnly(['status' => 'success','uptotwotofive' => $uptotwotofive]);
+        
+    }
+
+
+    public function getdropedfromtwoword(Request $request) {
+    
+        
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $premonth = $request->input('premonth');
+        $preyear = $request->input('preyear');
+    
+
+        $dropfromtwo = DB::table('ranking_keyword')
+                        ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+                        ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                            $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                                ->where('monthy_keyword_rankings.year', '=', $preyear)
+                                ->where('monthy_keyword_rankings.month', '=', $premonth)
+                                ->whereIn('monthy_keyword_rankings.google_rank',array(2,3,4,5));
+                        })
+                        ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                            $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                                ->where('mkr.year', '=', $year)
+                                ->where('mkr.month', '=', $month)
+                                ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
+                        })
+                        ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
+                        ->get();     
+
+
+
+        
+                            
+        return Reply::dataOnly(['status' => 'success','dropfromtwo' => $dropfromtwo]);
+        
+    }
+
+
+public function toppagesbyclick(Request $request)
+{
+
+    $data['pageTitle']= 'Top Pages By Clicks';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
+    
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+
+
+    $yeardata = date('Y',strtotime('-1 month'));
+
+    $monthdata = date('F',strtotime('-1 month'));
+
+    $yearmonth = date('F Y',strtotime('-1 month'));
+    
+
+    if ($request->isMethod('post')) {
+
+        // Handle POST request
+
+        $yearmonth = $request->input('yearmonth');
+
+        $arr = explode(" ",$yearmonth);
+
+        $yeardata = $arr[1];
+        $monthdata = $arr[0];
+        
+        // Retrieve and display data based on the POST data
+    }
+
+    
+    $data['yearmonth']=$yearmonth;
+
+    $data['yeardata']=$yeardata;
+
+    $data['monthdata']=$monthdata;
+
+                      
+    return view('rankings.monthlytoppages',$data);
+
+}
+
+
+public function storetoppages(Request $request)
+{
+   
+
+    $yearmonths = $request->yearmonth;
+    $urls = $request->url;
+    $clicks = $request->clicks;
+
+
+    foreach ($yearmonths as $index => $value) {
+        if ($value != '') {
+
+        
+            $yearmontharray= explode(" ",$yearmonths[$index]);
+
+            $data['toppages'] = [
+        
+                'url' => $urls[$index],
+                'clicks' => $clicks[$index],
+                'month' => $yearmontharray[0],
+                'year' => $yearmontharray[1]
+            
+            ];
+
+            DB::table('monthly_toppages')->insert($data['toppages']);
+ 
+        }
+    }
+
+    $redirectUrl = route('rankings.toppagesbyclick');
+ 
+    return Reply::successWithData(__('messages.recordSaved'), ['redirectUrl' => $redirectUrl]);
+        
+        
+
+}
 
 
 

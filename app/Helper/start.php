@@ -824,6 +824,8 @@ if (!function_exists('sidebar_user_perms')) {
                 'view_leave_report',
                 'view_lead_proposals',
                 'view_attendance_report',
+                'view_digitalmarketing_report',
+                'view_customer_persona',
                 'manage_company_setting',
                 'add_employees',
                 'view_knowledgebase',
