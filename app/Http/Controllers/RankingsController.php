@@ -1221,7 +1221,12 @@ public function monthlyelementranking(Request $request)
         $data['pageTitle']= 'Seo Report';
         $data['pushSetting']= $this->pushSetting;
         $data['pusherSettings']= $this->pusherSettings;
-        $data['checkListCompleted']= $this->checkListCompleted;
+
+        if (in_array('admin', user_roles())){
+    
+            $data['checkListCompleted']= $this->checkListCompleted;
+        }
+        
         $data['checkListTotal']= $this->checkListTotal;
         $data['activeTimerCount']= $this->activeTimerCount;
         $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -1384,7 +1389,7 @@ public function getelementrankings(Request $request) {
                 ->selectRaw('mkr.month,
                     SUM(CASE WHEN mkr.google_rank BETWEEN 1 AND 5 THEN 1 ELSE 0 END) AS count_1_to_5,
                     SUM(CASE WHEN mkr.google_rank BETWEEN 6 AND 10 THEN 1 ELSE 0 END) AS count_6_to_10,
-                    SUM(CASE WHEN mkr.google_rank BETWEEN 11 AND 15 THEN 1 ELSE 0 END) AS count_11_to_15,
+                    SUM(CASE WHEN mkr.google_rank BETWEEN 11 AND 20 THEN 1 ELSE 0 END) AS count_11_to_20,
                     SUM(CASE WHEN mkr.google_rank BETWEEN 21 AND 30 THEN 1 ELSE 0 END) AS count_21_to_30,
                     SUM(CASE WHEN mkr.google_rank > 30 THEN 1 ELSE 0 END) AS count_31greater
                 '); 

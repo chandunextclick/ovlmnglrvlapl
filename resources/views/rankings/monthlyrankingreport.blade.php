@@ -19,6 +19,11 @@ input[type="date"] {
         
         ol li {list-style-type: disc;}
 
+        .dataTables_length{
+
+            display:none;
+}
+
 
 </style>
 
