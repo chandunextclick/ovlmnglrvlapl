@@ -588,6 +588,7 @@ class TasksDataTable extends BaseDataTable
                 $query->where('tasks.heading', 'like', '%' . request('searchText') . '%')
                     ->orWhere('member.name', 'like', '%' . request('searchText') . '%')
                     ->orWhere('projects.project_name', 'like', '%' . request('searchText') . '%')
+                    ->orWhere('project_category.category_name', 'like', '%' . request('searchText') . '%')
                     ->orWhere('projects.project_short_code', 'like', '%' . request('searchText') . '%')
                     ->orWhere('tasks.task_short_code', 'like', '%' . request('searchText') . '%');
             });
