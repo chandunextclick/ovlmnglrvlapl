@@ -109,12 +109,12 @@ if (response.ok) {
 })
 .then(data => {
 // Handle the response data here
-console.log(data);
 
 data.forEach((item) => {
 
 console.log(item.lm_course_name);
 
+enqtable.row.add([item.lm_course_name,item.totalenq,item.totalsales]).draw();
 
 });
 
