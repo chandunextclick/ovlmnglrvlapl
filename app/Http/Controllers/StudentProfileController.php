@@ -47,12 +47,7 @@ public function enquiry(Request $request)
     
     $url = 'https://nextclickonline.cyradrive.com/testenqapplication/enquiry'; // Replace with the URL you want to fetch data from
 
-    // $ch = curl_init($url);
-    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // $response = curl_exec($ch);
-    // $data['enquiry'] = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
-    // $this->env=$data['enquiry'];
-    // curl_close($ch);
+
 
     $data['date2'] = date("Y-m-d"); // Get the current date in "YYYY-MM-DD" format
 
@@ -151,7 +146,62 @@ public function customerpersonacreate(Request $request)
     return view('employees.customerpersonacreate',$data);
 }
 
-public function customerpersonaview()
+
+
+public function customerpersonaedit($id)
+{
+
+    $data['pageTitle']= 'Customer Persona';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    $data['checkListCompleted']= $this->checkListCompleted;
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+    $url="https://api.edoxi.com/api/master-course-list";
+
+    $ch = curl_init($url);
+    
+    // Set the request type to GET
+    curl_setopt($ch, CURLOPT_HTTPGET, true);
+
+    // Set other cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+
+    // Execute the cURL session
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+
+
+    // Process the response
+    $data['response'] = json_decode($response, true);
+
+    $data['courses'] = $data['response']["list"];
+
+    $data['persona'] =  DB::table('customer_persona')->where('id', $id)->first();
+    
+
+    return view('employees.customerpersonaedit',$data);
+}
+
+public function customerpersonaview(Request $request)
 {
 
     $data['pageTitle']= 'Customer Persona';
@@ -193,13 +243,31 @@ public function customerpersonaview()
 
     curl_close($ch);
 
+    $data['date2'] = date("Y-m-d"); // Get the current date in "YYYY-MM-DD" format
+
+    // Calculate one month before the current date
+    
+    $data['date1'] = date("Y-m-d", strtotime("-1 month", strtotime($data['date2'])));
+
+    // dd($request->input('start_date'));    
+
+
+    if ($request->isMethod('post')) {
+
+        // Handle POST request
+        $data['date1'] = $request->input('start_date');
+        $data['date2'] = $request->input('end_date');
+        
+        // Retrieve and display data based on the POST data
+    }
+
 
     // Process the response
     $data['response'] = json_decode($response, true);
 
     $data['courses'] = $data['response']["list"];
 
-    $data['customerpersona']= DB::table('customer_persona')->get();
+    $data['customerpersona']= DB::table('customer_persona')->whereBetween('added_datetime',[$data['date1'],$data['date2']])->get();
     
 
     return view('employees.customerpersonaview',$data);
@@ -476,39 +544,36 @@ return view('employees.ajax.essllog',$data);
 
 public function store(Request $request) {
 
-// Validation rules
-$rules = [
-    'persona_age' => 'digits:2|numeric', // Validate age as a numeric value with exactly 2 digits
-    // Add other validation rules for other fields as needed
-];
-
-// Custom validation messages
-$messages = [
-    'persona_age.digits' => 'The age must be exactly two digits.',
-    'persona_age.numeric' => 'The age must be a number.',
-    // Add custom messages for other validation rules as needed
-];
-
-
-   // Validate the request data
-   $validator = Validator::make($request->all(), $rules, $messages);
-
-
-      // Check if validation fails
-      if ($validator->fails()) {
-        
-        dd($validator->errors()->all());
-    }
 
    
 $data['persona'] = [
     'name' => $request->input('persona_name'),
     'course' => $request->input('persona_course'),
-    'age' => $request->input('persona_age'),
+    'dob' => $request->input('persona_dob'),
+    'gender' => $request->input('persona_gender'),
+    'email' => $request->input('persona_email'),
+    'phone' => $request->input('persona_phone'),
+    'linkedin' => $request->input('persona_linkedin'),
+    'mother_togue' => $request->input('persona_mothertongue'),
+    'bloodgroup' => $request->input('persona_bloodgroup'),
+    'nationality' => $request->input('persona_nationality'),
+    'state' => $request->input('persona_state'),
+    'district' => $request->input('persona_district'),
+    'martial_status' => $request->input('persona_martial'),
+    'religion' => $request->input('persona_religion'),
+    'spec_category' => $request->input('persona_categories'),
+    'address' => $request->input('persona_user_address'),
+    'parent_name' => $request->input('persona_parentname'),
+    'parent_phone' => $request->input('persona_parent_contact'),
+    'parent_occupation' => $request->input('persona_parent_occupation'),
+    'parent_relation' => $request->input('persona_parent_relation'),
     'education' => $request->input('persona_education'),
-    'subject' => $request->input('persona_education_subject'),
+    'universityname' => $request->input('persona_education_university'),
     'specialization' => $request->input('persona_education_specification'),
+    'ug_completion_year' => $request->input('persona_ug_completion'),
     'occupation' => $request->input('persona_occupation'),
+    'company_name' => $request->input('persona_companyname'),
+    'company_email' => $request->input('persona_companyemail'),
     'experience' => $request->input('persona_experience'),
     'location' => $request->input('persona_location'),
     'user_description' => $request->input('persona_user_description'),
@@ -535,6 +600,66 @@ return back()->with('message','The Data Inserted');
 
 
 }
+
+
+public function personaupdate(Request $request) {
+
+    $id = $request->input('persona_id');
+   
+    $data['persona'] = [
+        'name' => $request->input('persona_name'),
+        'course' => $request->input('persona_course'),
+        'dob' => $request->input('persona_dob'),
+        'gender' => $request->input('persona_gender'),
+        'email' => $request->input('persona_email'),
+        'phone' => $request->input('persona_phone'),
+        'linkedin' => $request->input('persona_linkedin'),
+        'mother_togue' => $request->input('persona_mothertongue'),
+        'bloodgroup' => $request->input('persona_bloodgroup'),
+        'nationality' => $request->input('persona_nationality'),
+        'state' => $request->input('persona_state'),
+        'district' => $request->input('persona_district'),
+        'martial_status' => $request->input('persona_martial'),
+        'religion' => $request->input('persona_religion'),
+        'spec_category' => $request->input('persona_categories'),
+        'address' => $request->input('persona_user_address'),
+        'parent_name' => $request->input('persona_parentname'),
+        'parent_phone' => $request->input('persona_parent_contact'),
+        'parent_occupation' => $request->input('persona_parent_occupation'),
+        'parent_relation' => $request->input('persona_parent_relation'),
+        'education' => $request->input('persona_education'),
+        'universityname' => $request->input('persona_education_university'),
+        'specialization' => $request->input('persona_education_specification'),
+        'ug_completion_year' => $request->input('persona_ug_completion'),
+        'occupation' => $request->input('persona_occupation'),
+        'company_name' => $request->input('persona_companyname'),
+        'company_email' => $request->input('persona_companyemail'),
+        'experience' => $request->input('persona_experience'),
+        'location' => $request->input('persona_location'),
+        'user_description' => $request->input('persona_user_description'),
+        'personal_characteristics' => $request->input('persona_Characteristics'),
+        'goals' => $request->input('persona_goals'),
+        'needs' => $request->input('persona_needs'),
+        'hobbies_and_interest' => $request->input('persona_interest'),
+        'challenges' => $request->input('persona_Challenges'),
+        'source_info' => $request->input('persona_source'),
+    ];
+    
+    try{
+    // Insert data into the persona table
+    
+    DB::table('customer_persona')->where('id',$id)->update($data['persona']);
+    
+    return redirect()->route('sprofile.customerpersonaview');
+    
+    }catch(\Exception $e) {
+    
+        return back()->with('message',$e->getMessage());
+    
+    }
+    
+    
+    }
 
 
 

@@ -79,19 +79,166 @@ color:white;
                 </div>
                 <div class="col-md-4">
                         <div class="form-group">
-                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_age">AGE
-                        <sup class="f-14 mr-1">*</sup>
-                        </label>
-                        <input type="text" class="form-control height-35 f-14" placeholder="AGE" value="" name="persona_age" id="persona_age" autocomplete="off" required >
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_dob">Date of Birth
+                    </label>
+                        <input type="date" class="form-control height-35 f-14" placeholder="" value="" name="persona_dob" id="persona_dob" autocomplete="off">
                     </div>
                     
                 </div>
                 <div class="col-md-4">
                         <div class="form-group">
-                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education">Qualification
-                        <sup class="f-14 mr-1">*</sup>    
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_gender">Gender 
                     </label>
-                        <select class="form-control height-35 f-14" placeholder="Education" name="persona_education" id="persona_education" autocomplete="off" required>
+                        <select class="form-control height-35 f-14"  name="persona_gender">
+                        <option selected disabled>Select Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Others</option>
+                        </select>
+                    </div>
+                    
+                </div>
+                
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_email">Email
+                    </label>
+                        <input type="email" class="form-control height-35 f-14" placeholder="Email" value="" name="persona_email" id="persona_email" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_phone">Phone
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Phone" value="" name="persona_phone" id="persona_phone" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_linkedin">Linkedin Url
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="LinkedIn" value="" name="persona_linkedin" id="persona_linkedin" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_mothertongue">Mother Tongue
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Mother Tongue" value="" name="persona_mothertongue" id="persona_mothertongue" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_bloodgroup">Blood Group
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Blood Group" value="" name="persona_bloodgroup" id="persona_bloodgroup" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_nationality">Nationality 
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Nationality" value="" name="persona_nationality" id="persona_nationality" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_state">State 
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="State" value="" name="persona_state" id="persona_state" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_district">District 
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="District" value="" name="persona_district" id="persona_district" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_martial">Martail Status 
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Martial Status" value="" name="persona_martial" id="persona_martial" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_religion">Religion
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Religion" value="" name="persona_religion" id="persona_religion" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_categories">Specific Categories
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Specific Categories" value="" name="persona_categories" id="persona_categories" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-12">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_user_address">Address
+                        </label>
+                        <textarea class="form-control f-14 pt-2" rows="3" placeholder="User Address" name="persona_user_address" id="persona_user_address"></textarea>
+                    </div>
+                    
+                </div>
+
+                <hr>
+                <h4>Parent Details</h4>
+                <hr>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_parentname">Parent/Guardian Name
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Parent/Guardian Name" value="" name="persona_parentname" id="persona_parentname" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_parent_contact">Parent Contact No
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Parent Contact No" value="" name="persona_parent_contact" id="persona_parent_contact" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_parent_occupation">Parent Occupation
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Parent Occupation" value="" name="persona_parent_occupation" id="persona_parent_occupation" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_parent_relation">Relation with parent
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Relation With Parent" value="" name="persona_parent_relation" id="persona_parent_relation" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <hr>
+                <h4>Academic Details</h4>
+                <hr>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education">Qualification   
+                    </label>
+                        <select class="form-control height-35 f-14" placeholder="Education" name="persona_education" id="persona_education" autocomplete="off">
                             <option selected disabled>Select Qualification</option>
                             <option value="Primary education">Primary education</option>
                             <option value="Secondary education">Secondary education or high school</option>
@@ -104,20 +251,31 @@ color:white;
                 </div>
                 <div class="col-md-4">
                         <div class="form-group">
-                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education">Subject 
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education_university">Studied University
                     </label>
-                        <input type="text" class="form-control height-35 f-14" placeholder="Subject" value="" name="persona_education_subject" id="persona_education_subject" autocomplete="off">
+                        <input type="text" class="form-control height-35 f-14" placeholder="Studied University" value="" name="persona_education_university" id="persona_education_university" autocomplete="off">
                     </div>
                     
                 </div>
                 <div class="col-md-4">
                         <div class="form-group">
-                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education">Specialization   
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_education_specification">Specialization   
                     </label>
                         <input type="text" class="form-control height-35 f-14" placeholder="Specialization" value="" name="persona_education_specification" id="persona_education_specification" autocomplete="off">
                     </div>
                     
                 </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_ug_completion">UG Year of Completion
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Year of Completion" value="" name="persona_ug_completion" id="persona_ug_completion" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <hr>
+                <h4>Job Record Details</h4>
+                <hr>
                 <div class="col-md-4">
                         <div class="form-group">
                         <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_occupation">Occupation
@@ -137,18 +295,36 @@ color:white;
                 </div>
                 <div class="col-md-4">
                         <div class="form-group">
-                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="designation_name">Location
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_companyname">Company Name
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Company Name" value="" name="persona_companyname" id="persona_companyname" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_companyemail">Company Email
+                    </label>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Company Email" value="" name="persona_companyemail" id="persona_companyemail" autocomplete="off">
+                    </div>
+                    
+                </div>
+                <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_location">Location
                         </label>
                         <input type="text" class="form-control height-35 f-14" placeholder="Location" value="" name="persona_location" id="persona_location" autocomplete="off">
                     </div>
                     
                 </div>
+                <hr>
+                <h4>Others</h4>
+                <hr>
                 <div class="col-md-12">
                         <div class="form-group">
                         <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_user_description">User Description
-                        <sup class="f-14 mr-1">*</sup>
                         </label>
-                        <textarea class="form-control f-14 pt-2" rows="3" placeholder="User Description" name="persona_user_description" id="persona_user_description" required></textarea>
+                        <textarea class="form-control f-14 pt-2" rows="3" placeholder="User Description" name="persona_user_description" id="persona_user_description"></textarea>
                     </div>
                     
                 </div>
@@ -196,9 +372,9 @@ color:white;
                 <div class="col-md-6">
                         <div class="form-group">
                         <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_source">Source Info
-                        <sup class="f-14 mr-1">*</sup>
+                       
                         </label><br>
-                        <input type="text" class="form-control height-35 f-14" placeholder="Source Info" value="" name="persona_source" id="persona_source" data-role="tagsinput" autocomplete="off"  required>
+                        <input type="text" class="form-control height-35 f-14" placeholder="Source Info" value="" name="persona_source" id="persona_source" data-role="tagsinput" autocomplete="off" >
                     </div>
                 </div>   
              

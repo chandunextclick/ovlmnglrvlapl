@@ -123,6 +123,7 @@ return array (
         'personal' => 'Customer Persona',
         'digitalmarketing' => 'Digital Marketing Report',
         'toppagesbyclick' => 'Top Pages By Clicks',
+        'monthlyenquiryreport' => 'Monthly Enquiry Report',
         'rankingcourse' => 'Ranking Course',
         'rankingkeyword' => 'Ranking Keyword',
         'rankingelement' => 'Ranking Element',

@@ -169,7 +169,11 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::post('sprofile/store', [StudentProfileController::class, 'store'])->name('sprofile.store');
 
-    Route::get('sprofile/customerpersonaview', [StudentProfileController::class, 'customerpersonaview'])->name('sprofile.customerpersonaview');
+    Route::post('sprofile/personaupdate', [StudentProfileController::class, 'personaupdate'])->name('sprofile.personaupdate');
+
+    Route::get('sprofile/edit/{id}', [StudentProfileController::class, 'customerpersonaedit'])->name('sprofile.customerpersonaedit');
+
+    Route::match(['get', 'post'],'sprofile/customerpersonaview', [StudentProfileController::class, 'customerpersonaview'])->name('sprofile.customerpersonaview');
 
     Route::resource('sprofile', StudentProfileController::class);
 
@@ -242,12 +246,16 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::match(['get', 'post'],'rankings/monthlyrankingreport', [RankingsController::class, 'monthlyrankingreport'])->name('rankings.monthlyrankingreport');
 
+    Route::match(['get', 'post'],'rankings/monthlyenquiryreport', [RankingsController::class, 'monthlyenquiryreport'])->name('rankings.monthlyenquiryreport');
+
     Route::match(['get', 'post'],'rankings/monthlydetailedrankingreport', [RankingsController::class, 'monthlydetailedrankingreport'])->name('rankings.monthlydetailedrankingreport');
 
     Route::get('rankings/monthlydetailedseoreport/{yearmonth}', [RankingsController::class, 'monthlydetailedseoreport'])->name('rankings.monthlydetailedseoreport');
 
     Route::post('rankings/getelementrankings', [RankingsController::class, 'getelementrankings'])->name('rankings.getelementrankings');
 
+    Route::post('rankings/getenqgendata', [RankingsController::class, 'getenqgendata'])->name('rankings.getenqgendata');
+   
     Route::post('rankings/getcountryrankings', [RankingsController::class, 'getcountryrankings'])->name('rankings.getcountryrankings');
 
     Route::post('rankings/gettoppages', [RankingsController::class, 'gettoppages'])->name('rankings.gettoppages');

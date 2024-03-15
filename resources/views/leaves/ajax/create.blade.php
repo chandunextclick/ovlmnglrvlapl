@@ -270,9 +270,14 @@
 
         function setMinDate(employeeID) {
             var employees = @json($employees);
+
+            
+
             var employee = employees.filter(function(item) {
                 return item.id == employeeID;
             });
+
+            console.log(employee);
 
             $('#optional_type_id').find('option[data-chkid="1"]').remove();
 
@@ -284,11 +289,7 @@
                 var currentDate = new Date();
 
                 var minDate = new Date(employee[0].employee_detail.joining_date);
-
-                console.log(employee[0].employee_detail.date_of_birth);
-
-                            
-                    
+    
 
                 if(employee[0].employee_detail.date_of_birth){
 
@@ -332,7 +333,11 @@
                 }  
                 if(employee[0].employee_detail.marriage_anniversary_date){
 
+                    
+
                     var mrandate = new Date(employee[0].employee_detail.marriage_anniversary_date);
+
+                    
 
                     var year = currentDate.getFullYear();
 
@@ -344,8 +349,11 @@
 
                     var mranday = day + '-' + month + '-' + year;
 
+                    console.log(mrandate,currentDate);
 
                     if (mrandate > currentDate) {
+
+                        console.log("mrentrytest");
 
                         $('#optional_type_id').append($('<option>', {
                             value: mranday,

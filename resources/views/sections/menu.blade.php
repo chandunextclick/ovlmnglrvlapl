@@ -134,11 +134,11 @@
                     <x-sub-menu-item :link="route('tasks.salestasks')" :text="__('app.salestasks')" />
                 @endif
 
-                @if (isset($sidebarUserPermissions['view_customer_persona']) && $sidebarUserPermissions['view_customer_persona'] == 4 )
+
 
                 <x-sub-menu-item :link="route('sprofile.customerpersonaview')" :text="__('app.menu.personal')" /> 
 
-                @endif
+       
 
                   
                 {{-- @endif --}}
@@ -366,6 +366,8 @@
                 @endif
 
                 <x-sub-menu-item :link="route('rankings.monthlyrankingreport')" :text="__('app.menu.digitalmarketing')" />
+
+                <x-sub-menu-item :link="route('rankings.monthlyenquiryreport')" :text="__('app.menu.monthlyenquiryreport')" />
 
             </div>
         </x-menu-item>

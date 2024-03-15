@@ -27,8 +27,22 @@ input[type="date"] {
 
 @section('content')
 
-    <!-- CONTENT WRAPPER START -->
+
     <div class="content-wrapper">
+
+    <div class="m-4">
+
+<form method="POST" action="{{ route('sprofile.customerpersonaview') }}">
+    @csrf
+    <label for="start_date">Start Date:</label>
+    <input type="date" name="start_date" id="start_date" value="{{ $date1 }}">
+    <label for="end_date">End Date:</label>
+    <input type="date" name="end_date" id="end_date" value="{{ $date2 }}">
+    <button type="submit" class="btn btn-primary ml-2">Apply</button>
+
+</form>
+
+</div>
         <div class="d-block d-lg-flex d-md-flex justify-content-between action-bar">
             <div id="table-actions" class="flex-grow-1 align-items-center">
 
@@ -52,7 +66,9 @@ input[type="date"] {
                         </datalist> 
             </div>
         </div>
-    <!-- Task Box Start -->
+
+
+
     <div class="d-flex flex-column w-tables rounded mt-3 bg-white">
 
     <div class="container">
@@ -60,8 +76,11 @@ input[type="date"] {
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Mobile</th>
                 <th>Course</th>
-                <th>Age</th>
+                <th>Date of Birth</th>
                 <th>Education</th>
                 <th>Occupation</th>
                 <th>Experience</th>
@@ -73,6 +92,7 @@ input[type="date"] {
                 <th>Hobbies/Interest</th>
                 <th>Challenges</th>
                 <th>Source Info</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -85,12 +105,15 @@ input[type="date"] {
             <tr>
                 
                 <td><?=$value->name?></td>
+                <td><?=$value->gender?></td>
+                <td><?=$value->email?></td>
+                <td><?=$value->phone?></td>
                 <td><?=$value->course?></td>
-                <td><?=$value->age?></td>
+                <td><?=$value->dob?></td>
                 <td><?=$value->education?></td>
                 <td><?=$value->occupation?></td>
                 <td><?=$value->experience?></td>
-                <td><?=$value->location?></td>-
+                <td><?=$value->location?></td>
                 <td><?=$value->user_description?></td>
                 <td>
                     <ol>
@@ -185,7 +208,14 @@ input[type="date"] {
                         
                         ?>
                     </ol>
-                </td>    
+                </td> 
+                <td><div class="dropdown">
+                <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="{{ route('sprofile.customerpersonaedit',['id' => $value->id])}}">Edit</a>
+                </div>
+                </div>
+                </td>   
             </tr>
 
             <?php
@@ -200,9 +230,8 @@ input[type="date"] {
 </div>
 
         </div>
-        <!-- Task Box End -->
     </div>
-    <!-- CONTENT WRAPPER END -->
+
 
 
 @endsection
@@ -226,7 +255,7 @@ $(document).ready(function() {
 
     otable=new DataTable('#example');
 
-    
+
 
     var val =  $("#myInputTextField").val();
 

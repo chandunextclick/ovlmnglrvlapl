@@ -1665,6 +1665,88 @@ public function storetoppages(Request $request)
 
 
 
+public function monthlyenquiryreport(Request $request)
+{
+
+    $data['pageTitle']= 'Enquiry Report';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
+    
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+
+
+    $data['date2'] = date("Y-m-d"); 
+
+    
+    $data['date1'] = date("Y-m-d", strtotime("-1 month", strtotime($data['date2'])));
+    
+
+    return view('rankings.monthlyenquiryreport',$data);
+
+}
+
+
+public function getenqgendata(Request $request) {
+    
+        
+    $startdate = $request->input('startdate');
+    $enddate = $request->input('enddate');
+
+        // Convert to timestamp
+    $start_timestamp = strtotime($startdate);
+    $end_timestamp = strtotime($enddate);
+
+    // Format to 'Y-m-d'
+    $formatted_startdate = date('Y-m-d', $start_timestamp);
+    $formatted_enddate = date('Y-m-d', $end_timestamp);
+    
+
+
+    $url = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirygeneraldata'; // Replace with the URL you want to fetch data from
+
+
+ 
+    $dateparam = array(
+        'param1' => $formatted_startdate,
+        'param2' => $formatted_enddate,
+    );
+    
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dateparam)); // Set POST data
+    $response = curl_exec($ch);
+
+    $enquirygeneraldata = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+
+    curl_close($ch);
+  
+                        
+    return Reply::dataOnly(['status' => 'success','enqdata' => $enquirygeneraldata]);
+    
+}
+
+
+
+
+
 
 
 
