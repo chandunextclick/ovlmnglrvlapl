@@ -47,7 +47,7 @@ input[type="date"] {
                 <tr>
                     <th>Course Name</th>
                     <th>Keyword Name</th>
-                    <th>Dropped Position</th>
+                    <th>Current Position</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,8 +59,8 @@ input[type="date"] {
                 <tr>
                     <th>Course Name</th>
                     <th>Keyword Name</th>
-                    <th>Dropped From</th>
-                    <th>Dropped Position</th>
+                    <th>Previous Position</th>
+                    <th>Current Position</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,8 +89,9 @@ input[type="date"] {
                 <tr>
                     <th>Course Name</th>
                     <th>Keyword Name</th>
-                    <th>Current Position</th>
                     <th>Previous Position</th>
+                    <th>Current Position</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -466,7 +467,7 @@ $.easyAjax({
 
                     // console.log(item.ranking_element);
 
-                    upfromtwotofivekeytable.row.add([item.ranking_course,item.ranking_keyword,item.currentposition,item.prevposition]).draw();
+                    upfromtwotofivekeytable.row.add([item.ranking_course,item.ranking_keyword,item.prevposition,item.currentposition]).draw();
 
                 });
 
