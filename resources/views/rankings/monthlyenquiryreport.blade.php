@@ -100,7 +100,9 @@ body: new URLSearchParams(data),
 })
 .then(response => {
 if (response.ok) {
+
   return response.json(); // Parse the response as JSON
+
 } else {
   throw new Error('Request failed');
 }
@@ -108,6 +110,14 @@ if (response.ok) {
 .then(data => {
 // Handle the response data here
 console.log(data);
+
+data.forEach((item) => {
+
+console.log(item.lm_course_name);
+
+
+});
+
 
 
 })
