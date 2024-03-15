@@ -88,8 +88,8 @@ const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/enquiry
 
 // Create the data to send as JSON
 const data = {
-    startdate: startdate,
-    enddate: enddate
+    param1: startdate,
+    param2: enddate
 };
 
 
