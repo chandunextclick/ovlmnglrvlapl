@@ -358,10 +358,11 @@
                         $('#optional_type_id').append($('<option>', {
                             value: mranday,
                             text: 'Marriage Anniversary(' +mranday+' )',
-                            'data-custom': 'MarriageAnniversary'
+                            'data-custom': 'MarriageAnniversary',
+                            'data-chkid':'1'
                         }));
                         
-
+                        $('#optional_type_id').selectpicker('refresh');
 
                     }
 

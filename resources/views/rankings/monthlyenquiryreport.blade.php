@@ -2,55 +2,76 @@
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker@2.1.25/daterangepicker.css" />
 
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-<style>
-
-input[type="date"] {
-            /* Add a border with a shadow effect */
-            border: 1px solid #ccc;
-            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 5px; /* Add some padding for better appearance */
-            width:180px;
-        }
-        
-        ol li {list-style-type: disc;}
-
-        .dataTables_length{
-
-            display:none;
-}
-
-
-</style>
-
-
-
-
 @section('content')
+
 
 <div class="container pt-5">
     <div class="p-4">
-
-    
     <div class="row">
-        <div class="col-md-3"><input type="date" class="form-control enqdate" name="start_date" id="start_date" value="{{$date1}}"></div>
+        <div class="col-md-3"><input type="text" id="date-range" class="form-control height-35 f-14" placeholder="Date-range" autocomplete="off" style="width:350px;"></div>
         
-        <div class="col-md-3"><input type="date" class="form-control enqdate" name="end_date" id="end_date" value="{{$date2}}"></div>
     </div>
     </div>
   <div class="row m-2">
     <div class="col-md-12 card">
     <h4 class="mt-4">General Enquiry Report</h4>
+    <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
+            <input type="text" id="gensearch" class="form-control height-35 f-14" placeholder="Search" autocomplete="off" style="width:350px;">
+    </div>
     <table id="enqtable" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
                 <th>Course</th>
                 <th>Enquiry</th>
                 <th>Sales</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+        
+    </table>
+
+    </div>
+
+    <div class="col-md-12 card">
+    <h4 class="mt-4">Enquiry Report</h4>
+    <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
+            <input type="text" id="detsearch" class="form-control height-35 f-14" placeholder="Search" autocomplete="off" style="width:350px;">
+    </div>
+    <table id="enqtabledet" class="table table-striped table-responsive" style="min-height:100px;">
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>ADS</th>
+                <th>Organic</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+        
+    </table>
+
+    </div>
+
+
+    <div class="col-md-12 card">
+    <h4 class="mt-4">Sales Report</h4>
+    <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
+            <input type="text" id="consearch" class="form-control height-35 f-14" placeholder="Search" autocomplete="off" style="width:350px;">
+    </div>
+    <table id="enqtablecon" class="table table-striped table-responsive" style="min-height:100px;">
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>ADS</th>
+                <th>Organic</th>
             </tr>
         </thead>
         <tbody>
@@ -68,20 +89,19 @@ input[type="date"] {
 
 
 
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 
 <script>
 
 
-function updateenqdata(startdate,enddate) {
+function updateenqdata(startdate,enddate){
 
 const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirygeneraldata'; // Replace with your server's endpoint URL
 
@@ -110,11 +130,34 @@ if (response.ok) {
 .then(data => {
 // Handle the response data here
 
-data.forEach((item) => {
 
-console.log(item.lm_course_name);
+enqtable.clear().draw();
+
+enqtabledet.clear().draw();
+
+enqtablecon.clear().draw();
+
+data.enquiry_general.forEach((item) => {
+
 
 enqtable.row.add([item.lm_course_name,item.totalenq,item.totalsales]).draw();
+
+});
+
+data.enquiry_detailed.forEach((item) => {
+
+
+
+    enqtabledet.row.add([item.lm_course_name,item.ads,item.organic]).draw();
+
+
+});
+
+data.enquiry_converted.forEach((item) => {
+
+
+enqtablecon.row.add([item.lm_course_name,item.ads,item.organic]).draw();
+
 
 });
 
@@ -130,84 +173,140 @@ console.error('Error:', error);
 }
 
 
-
 $(document).ready(function() {
 
 
+
+    var rangepicker = $('#date-range').daterangepicker({
+    startDate: new Date("{{ $date1 }}"), // Assuming $date1 is in a format parsable by JavaScript Date
+    endDate: new Date("{{ $date2 }}"), // Assuming $date2 is in a format parsable by JavaScript Date
+    locale: {
+            format: 'YYYY-MM-DD'
+        }
+    });
+
+    $('#date-range').on('apply.daterangepicker', function(ev, picker) {
+
+        var dateRange = $('#date-range').data('daterangepicker');
+
+        startDate = dateRange.startDate.format('YYYY-MM-DD');
+
+        endDate = dateRange.endDate.format('YYYY-MM-DD');
+
+        updateenqdata(startDate,endDate)
+
+
+    });
+    
+
     enqtable=new DataTable('#enqtable');
+
+    enqtabledet=new DataTable('#enqtabledet');
+
+    enqtablecon=new DataTable('#enqtablecon');
+    
    
 
-    var startdate = $('#start_date').val()
-
-    var enddate = $('#end_date').val()
+    // var startdate = $('#start_date').val()
 
 
+    // var enddate = $('#end_date').val()
 
-    updateenqdata(startdate,enddate);
+    // document.getElementById('end_date').setAttribute("min",startdate);
 
+    var dateRange = $('#date-range').data('daterangepicker');
 
+    startDate = dateRange.startDate.format('YYYY-MM-DD');
 
-// function updateenqdata(startdate,enddate){
-
-// let url = "{{ route('rankings.getenqgendata') }}";
-
-// console.log(url);
-
-// // Get CSRF token value
-// var csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-// console.log(csrfToken);
-
-// $.ajaxSetup({
-// headers: {
-//     'X-CSRF-TOKEN': csrfToken
-// }
-// });
+    endDate = dateRange.endDate.format('YYYY-MM-DD');
 
 
-// $.easyAjax({
-//         url: url,
-//         type: "POST",
-//         data: {
-//             _token: csrfToken,
-//             startdate:startdate,
-//             enddate:enddate,
-//         },
-//         success: function(response) {
-
-//             if (response.status == 'success') {
-//                 console.log(response);
-
-//                 enqtable.clear().draw();
-//                 response.enqdata.forEach((item) => {
-
-//                     // console.log(item.ranking_element);
-
-//                     enqtable.row.add([item.ranking_element,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
-
-//                 });
+    updateenqdata(startDate,endDate);
 
 
-//             }
-//         }
- 
-//     })
+
+    
+$("#gensearch").keyup(function(){
+
+if($(this).val()==null){
+
+    enqtable.search("").draw();
+
+}else{
+
+    enqtable.search($(this).val()).draw();
+    
+}
 
 
-// }
 
+});
+
+
+$("#detsearch").keyup(function(){
+
+if($(this).val()==null){
+
+    enqtabledet.search("").draw();
+
+}else{
+
+    enqtabledet.search($(this).val()).draw();
+    
+}
+
+
+
+});
+
+
+$("#consearch").keyup(function(){
+
+if($(this).val()==null){
+
+    enqtablecon.search("").draw();
+
+}else{
+
+    enqtablecon.search($(this).val()).draw();
+    
+}
+
+
+
+});
+
+
+
+
+$(".enqdate").change(function(){
+
+
+var startdate = $('#start_date').val();
+
+var enddate = $('#end_date').val()
+
+
+updateenqdata(startdate,enddate);
+
+});
+
+
+$('#start_date').on('change',function(){
+
+  
+    var startdate = $('#start_date').val();
+
+    document.getElementById('end_date').setAttribute("min",startdate);
+
+    
+});
 
 
   
 });
 
 
-</script>
-
-<script>
-    if (window.history.replaceState) {
-        window.history.replaceState(null, null, window.location.href);
-    }
 </script>
 
 
