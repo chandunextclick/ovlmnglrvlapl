@@ -124,6 +124,7 @@ return array (
         'digitalmarketing' => 'Digital Marketing Report',
         'toppagesbyclick' => 'Top Pages By Clicks',
         'monthlyenquiryreport' => 'Monthly Enquiry Report',
+        'monthlyadcampaign' => 'Monthly AD Campaign',
         'rankingcourse' => 'Ranking Course',
         'rankingkeyword' => 'Ranking Keyword',
         'rankingelement' => 'Ranking Element',

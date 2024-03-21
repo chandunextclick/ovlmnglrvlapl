@@ -134,12 +134,6 @@
                     <x-sub-menu-item :link="route('tasks.salestasks')" :text="__('app.salestasks')" />
                 @endif
 
-
-
-                <x-sub-menu-item :link="route('sprofile.customerpersonaview')" :text="__('app.menu.personal')" /> 
-
-       
-
                   
                 {{-- @endif --}}
             </div>
@@ -369,6 +363,8 @@
 
                 <x-sub-menu-item :link="route('rankings.monthlyenquiryreport')" :text="__('app.menu.monthlyenquiryreport')" />
 
+                <x-sub-menu-item :link="route('rankings.monthlyadcampaignreport')" :text="__('app.menu.monthlyadcampaign')" />
+
             </div>
         </x-menu-item>
 @endif
@@ -383,7 +379,48 @@
             </x-slot>
 </x-menu-item>
 
+<x-menu-item icon="bar-chart" :text="__('app.menu.monthlykeywordranking')" :link="route('rankings.monthlykeywordranking')">
+            <x-slot name="iconPath">
+                <path
+                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
+            </x-slot>
+</x-menu-item>
+
+<x-menu-item icon="bar-chart" :text="__('app.menu.monthlyelementranking')" :link="route('rankings.monthlyelementranking')">
+            <x-slot name="iconPath">
+                <path
+                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
+            </x-slot>
+</x-menu-item>
+
+<x-menu-item icon="bar-chart" :text="__('app.menu.monthlycountryranking')" :link="route('rankings.monthlycountryranking')">
+            <x-slot name="iconPath">
+                <path
+                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
+            </x-slot>
+</x-menu-item>
+
+<x-menu-item icon="bar-chart" :text="__('app.menu.toppagesbyclick')" :link="route('rankings.toppagesbyclick')">
+            <x-slot name="iconPath">
+                <path
+                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
+            </x-slot>
+</x-menu-item>
+
 @endif
+
+@if (in_array('reports', user_modules()) && ($sidebarUserPermissions['view_customer_persona'] == 4  ))
+
+<x-menu-item icon="people" :text="__('app.menu.personal')" :link="route('sprofile.customerpersonaview')">
+            <x-slot name="iconPath">
+                <path
+                    d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+            </x-slot>
+</x-menu-item>
+
+
+@endif
+
 
 
 
@@ -415,6 +452,8 @@
                 <x-sub-menu-item :link="route('rankings.monthlycountryranking')" :text="__('app.menu.monthlycountryranking')" />
 
                 <x-sub-menu-item :link="route('rankings.toppagesbyclick')" :text="__('app.menu.toppagesbyclick')" />
+
+                <x-sub-menu-item :link="route('rankings.monthlyadcampaign')" :text="__('app.menu.monthlyadcampaign')" />
                     
             </div>
         </x-menu-item>

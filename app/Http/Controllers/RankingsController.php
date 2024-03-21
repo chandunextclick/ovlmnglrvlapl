@@ -1703,29 +1703,69 @@ public function monthlyenquiryreport(Request $request)
 }
 
 
-public function getenqgendata(Request $request) {
+
+public function monthlyadcampaign(Request $request)
+{
+
+    $data['pageTitle']= 'AD Campaign';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     
-        
-    $startdate = $request->input('startdate');
-    $enddate = $request->input('enddate');
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
 
-        // Convert to timestamp
-    $start_timestamp = strtotime($startdate);
-    $end_timestamp = strtotime($enddate);
 
-    // Format to 'Y-m-d'
-    $formatted_startdate = date('Y-m-d', $start_timestamp);
-    $formatted_enddate = date('Y-m-d', $end_timestamp);
+    $url="https://nextclickonline.cyradrive.com/testenqapplication/getadcampaign";
+
+
+    $yeardata = date('Y',strtotime('-1 month'));
+
+    $monthdata = date('F',strtotime('-1 month'));
+
+    $yearmonth = date('F Y',strtotime('-1 month'));
+
+    $monthfirst = date('Y-m-01',strtotime('-1 month')); 
+
+    $monthlast = date('Y-m-t',strtotime('-1 month')); 
+
     
 
+    if ($request->isMethod('post')) {
 
-    $url = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirygeneraldata'; // Replace with the URL you want to fetch data from
+        // Handle POST request
+
+        $yearmonth = $request->input('yearmonth');
+
+        $arr = explode(" ",$yearmonth);
+
+        $yeardata = $arr[1];
+        $monthdata = $arr[0];
+
+        $monthfirst = date('Y-m-01',strtotime($monthdata.'01,'.$yeardata)); 
+
+        $monthlast = date('Y-m-t',strtotime($monthdata.'01,'.$yeardata)); 
+
+    }
 
 
- 
     $dateparam = array(
-        'param1' => $formatted_startdate,
-        'param2' => $formatted_enddate,
+        'param1' => $monthfirst,
+        'param2' => $monthlast
     );
     
     $ch = curl_init($url);
@@ -1733,18 +1773,248 @@ public function getenqgendata(Request $request) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dateparam)); // Set POST data
     $response = curl_exec($ch);
-
-    $enquirygeneraldata = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
-
+    $data['response'] = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
     curl_close($ch);
-  
-                        
-    return Reply::dataOnly(['status' => 'success','enqdata' => $enquirygeneraldata]);
+
+    $data['campaign'] = $data['response']['campaign'];
+
+    $campaign = $data['campaign'];
+
+    $campaignarray = array();
+
+foreach ($campaign as $value) { 
+
+    $query = "SELECT * FROM `monthly_adcampaign` WHERE month='$monthdata' AND year='$yeardata' AND campaign='{$value['utm_campaign']}'";
+
+    $result = DB::select($query);
+
+
+    if (count($result) == 0) {
+
+        $campaignarray[] = array(
+            "campaign" => $value['utm_campaign'],
+            "budget" => "",
+            "impr" => "",
+            "cost" => "",
+            "clicks" => "",
+            "month" => $monthdata,
+            "year" => $yeardata,
+            "upd" => "0",
+            "id" => "0"
+        );
+
+    } else {
+
+        $row = $result[0];
+
+        $campaignarray[] = array(
+            "campaign" => $value['utm_campaign'],
+            "budget" => $row->budget,
+            "impr" => $row->impr,
+            "cost" => $row->cost,
+            "clicks" => $row->clicks,
+            "month" => $monthdata,
+            "year" => $yeardata,
+            "upd" => "1",
+            "id" => $row->id
+        );
+
+    }
+
+}
+
+
+    $data['campaignarray'] = $campaignarray;
+
+    $data['yearmonth']=$yearmonth;
+
+    $data['yeardata']=$yeardata;
+
+    $data['monthdata']=$monthdata;
+
+
+    return view('rankings.monthlyadcampaign',$data);
+
+}
+
+
+public function updateadcampaigns(Request $request) {
+
+    
+    $id = $request->input('id');
+    $val = $request->input('val');
+    $campaign = $request->input('campaign');
+    $budget = $request->input('budget');
+    $impr = $request->input('impr');
+    $cost = $request->input('cost');
+    $clicks = $request->input('clicks');
+    $month = $request->input('month');
+    $year = $request->input('year');
+    $dataid = $request->input('dataid');
+
+
+    if($val == "insert"){
+
+        DB::table('monthly_adcampaign')->insert(['campaign' => $campaign,'budget' => $budget,'impr' => $impr,'cost' => $cost,'clicks' => $clicks,'month' => $month,'year' => $year]);
+
+        $query = "SELECT max(id) as maxid from monthly_adcampaign";
+
+        $result = DB::select($query);
+
+        $row = $result[0];
+
+        return Reply::dataOnly(['status' => 'success','maxid' => $row->maxid]);
+
+    }else{
+
+        DB::table('monthly_adcampaign')->where([
+            ['id', '=', $dataid ]
+        ])->update(['campaign' => $campaign,'budget' => $budget,'impr' => $impr,'cost' => $cost,'clicks' => $clicks,'month' => $month,'year' => $year]);
+
+        return Reply::dataOnly(['status' => 'success']);
+    
+    }
+
+    
+
     
 }
 
 
+public function monthlyadcampaignreport(Request $request)
+{
 
+    $data['pageTitle']= 'AD Campaign Report';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
+    
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+
+    $url="https://nextclickonline.cyradrive.com/testenqapplication/getadcampaignreport";
+
+
+    $yeardata = date('Y',strtotime('-1 month'));
+
+    $monthdata = date('F',strtotime('-1 month'));
+
+    $yearmonth = date('F Y',strtotime('-1 month'));
+
+    $monthfirst = date('Y-m-01',strtotime('-1 month')); 
+
+    $monthlast = date('Y-m-t',strtotime('-1 month')); 
+
+    
+
+    if ($request->isMethod('post')) {
+
+        // Handle POST request
+
+        $yearmonth = $request->input('yearmonth');
+
+        $arr = explode(" ",$yearmonth);
+
+        $yeardata = $arr[1];
+        $monthdata = $arr[0];
+
+        $monthfirst = date('Y-m-01',strtotime($monthdata.'01,'.$yeardata)); 
+
+        $monthlast = date('Y-m-t',strtotime($monthdata.'01,'.$yeardata)); 
+
+    }
+
+
+    $dateparam = array(
+        'param1' => $monthfirst,
+        'param2' => $monthlast
+    );
+    
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dateparam)); // Set POST data
+    $response = curl_exec($ch);
+    $data['response'] = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+    curl_close($ch);
+
+    $data['campaign'] = $data['response']['campaign'];
+
+    $campaign = $data['campaign'];
+
+    $campaignarray = array();
+
+    foreach ($campaign as $value) { 
+
+    // $query = "SELECT * FROM `monthly_adcampaign` WHERE month='$monthdata' AND year='$yeardata' AND campaign='{$value['utm_campaign']}'";
+
+    $result = DB::select("SELECT * FROM monthly_adcampaign WHERE month = ? AND year = ? AND campaign = ?", [$monthdata, $yeardata, $value['utm_campaign']]);
+
+
+    if (count($result) == 0) {
+
+        $campaignarray[] = array(
+            "campaign" => $value['utm_campaign'],
+            "budget" => "",
+            "impr" => "",
+            "cost" => "",
+            "clicks" => "",
+            "month" => $monthdata,
+            "year" => $yeardata,
+            "enquiry" => $value['count'],
+            "converted" => $value['sales'],
+            "trashed" => $value['trashed']
+        );
+
+    } else {
+
+        $row = $result[0];
+
+        $campaignarray[] = array(
+            "campaign" => $value['utm_campaign'],
+            "budget" => $row->budget,
+            "impr" => $row->impr,
+            "cost" => $row->cost,
+            "clicks" => $row->clicks,
+            "month" => $monthdata,
+            "year" => $yeardata,
+            "enquiry" => $value['count'],
+            "converted" => $value['sales'],
+            "trashed" => $value['trashed']
+        );
+
+    }
+
+}
+
+
+    $data['campaignarray'] = $campaignarray;
+
+    $data['yearmonth']=$yearmonth;
+
+    $data['yeardata']=$yeardata;
+
+    $data['monthdata']=$monthdata;
+
+
+    return view('rankings.monthlyadcampaignreport',$data);
+
+}
 
 
 

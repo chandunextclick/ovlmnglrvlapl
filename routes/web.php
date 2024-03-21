@@ -233,8 +233,14 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::post('rankings/updaterankings', [RankingsController::class, 'updaterankings'])->name('rankings.updaterankings');
     
+    Route::post('rankings/updateadcampaigns', [RankingsController::class, 'updateadcampaigns'])->name('rankings.updateadcampaigns');
+    
     Route::match(['get', 'post'],'rankings/monthlykeywordranking', [RankingsController::class, 'monthlykeywordranking'])->name('rankings.monthlykeywordranking');
 
+    Route::match(['get', 'post'],'rankings/monthlyadcampaign', [RankingsController::class, 'monthlyadcampaign'])->name('rankings.monthlyadcampaign');
+
+    Route::match(['get', 'post'],'rankings/monthlyadcampaignreport', [RankingsController::class, 'monthlyadcampaignreport'])->name('rankings.monthlyadcampaignreport');
+    
     Route::post('rankings/updateelementrankings', [RankingsController::class, 'updateelementrankings'])->name('rankings.updateelementrankings');
     
     Route::match(['get', 'post'],'rankings/monthlyelementranking', [RankingsController::class, 'monthlyelementranking'])->name('rankings.monthlyelementranking');
@@ -253,8 +259,6 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::get('rankings/monthlydetailedseoreport/{yearmonth}', [RankingsController::class, 'monthlydetailedseoreport'])->name('rankings.monthlydetailedseoreport');
 
     Route::post('rankings/getelementrankings', [RankingsController::class, 'getelementrankings'])->name('rankings.getelementrankings');
-
-    Route::post('rankings/getenqgendata', [RankingsController::class, 'getenqgendata'])->name('rankings.getenqgendata');
    
     Route::post('rankings/getcountryrankings', [RankingsController::class, 'getcountryrankings'])->name('rankings.getcountryrankings');
 
