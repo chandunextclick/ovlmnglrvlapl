@@ -38,7 +38,7 @@ input[type="date"] {
 <div class="container pt-5">
   <div class="row">
     <div class="col-md-12 card">
-    <h4 class="mt-4">Keyword Monthly Rankings</h4>
+    <h4 class="mt-4">Marketing Sales Report</h4>
     <div class="row">
         <div class="col-md-4">
         <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="kewordyearmonth" id="keywordyearmonth"  required>
@@ -82,14 +82,14 @@ input[type="date"] {
     <table id="keyword" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
-                <th>Keyword ID</th>
-                <th>Course Name</th>
                 <th>Keyword Name</th>
-                <th>Search Volume</th>
+                <th>Course Name</th>
                 <th id="th-yearmonth"><?= $yearmonth ?></th>
                 <th id="th-prevyearmonth"><?= $prevyearmonth ?></th>
-                <th>Google Map Rank</th>
-                <th>Google Map Previous Rank</th>
+                <th>Enquiry</th>
+                <th>Ads</th>
+                <th>Organic</th>
+                <th>Call</th>
             </tr>
         </thead>
         <tbody>
@@ -99,8 +99,6 @@ input[type="date"] {
     </div>
   </div>
 </div>
-
-<button class="btn btn-success" id="observ-btn"><a href="<?=route('rankings.monthlydetailedseoreport',['yearmonth' => $yearmonth])?>" class="text-white">observation</a></button>
 
 @endsection
 
@@ -128,6 +126,8 @@ $(document).ready(function() {
 // -------------------------------------------------------------------
 
 keytable=new DataTable('#keyword');
+
+keytable.order([[0, 'asc'], [4, 'desc']]).draw();
 
 var keywordyearmonth = $('#keywordyearmonth').val()
 
@@ -166,6 +166,10 @@ $("#keywordyearmonth").change(function(){
 
     var keywordyear = keywordar[1];
 
+    $("#th-yearmonth").html($('#keywordyearmonth').val())
+
+    $("#th-prevyearmonth").html(getPreviousMonth(keywordmonth,keywordyear))
+
     var keywordpreviousmonth = getPreviousMonth(keywordmonth,keywordyear);
 
     const keywordprear = keywordpreviousmonth.split(" ");
@@ -174,11 +178,6 @@ $("#keywordyearmonth").change(function(){
 
     var keywordpreyear = keywordprear[1];
 
-    $("#th-yearmonth").html($('#keywordyearmonth').val())
-
-    $("#th-prevyearmonth").html(getPreviousMonth(keywordmonth,keywordyear))
-
-    console.log(keywordpremonth,keywordpreyear);
 
     updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
 
@@ -193,6 +192,8 @@ if($(this).val()==null){
     keytable.search("").draw();
 
 }else{
+
+    console.log($(this).val());
 
     keytable.search($(this).val()).draw();
     
@@ -214,9 +215,7 @@ if($(this).val()==null){
 
     var value=$(this).val();
 
-    valregex="";
-
-    keytable.column(2).search($(this).val()).draw();
+    keytable.column(0).search($(this).val()).draw();
 }
 
 
@@ -229,7 +228,8 @@ function getPreviousMonth(currentMonthString,currentYearString) {
 
     // Create a Date object for the current month
     var currentDate = new Date(currentMonthString + ' 1,' + currentYearString);
-    
+
+
     // Move the date to the previous month
     currentDate.setMonth(currentDate.getMonth() - 1);
     
@@ -237,6 +237,7 @@ function getPreviousMonth(currentMonthString,currentYearString) {
     var previousMonthString = currentDate.toLocaleString('default', { month: 'long' }) + ' ' + currentDate.getFullYear();
     
     return previousMonthString;
+    
 }
 
 
@@ -272,15 +273,35 @@ $.easyAjax({
         success: function(response) {
 
             if (response.status == 'success') {
+
                 
-                // console.log(response.element);
                 keytable.clear().draw();
+
+                var coursename ="";
+
+                var coursecount = 0;
+
+                // console.log(response.keyword);
+
                 response.keyword.forEach((item) => {
 
-                    // console.log(item.ranking_element);
+                    if(coursename !== item.ranking_course){
 
-                    keytable.row.add([item.id,item.ranking_course,item.ranking_keyword,item.search_volume,item.google_rank,item.prerank,item.googlemap_rank,item.premaprank]).draw();
+                        updatesalesdata(month,year,item.ranking_course,item,coursecount);
 
+                        coursename = item.ranking_course;
+
+                    }else{
+
+                        keytable.row.add([item.ranking_keyword,"",item.google_rank,item.prerank,"","","",""]).draw();
+
+
+
+                    }
+    
+                    
+                
+                
                 });
 
             
@@ -290,6 +311,52 @@ $.easyAjax({
         }
  
     })
+
+
+}
+
+
+function updatesalesdata(month,year,course,item,coursecount){
+
+const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/getsalesddata'; // Replace with your server's endpoint URL
+
+
+
+// Create the data to send as JSON
+const data = {
+    month: month,
+    year: year,
+    course: course
+};
+
+
+// Send the POST request
+fetch(apiUrl,{
+method: 'POST',
+body: new URLSearchParams(data),
+})
+.then(response => {
+if (response.ok) {
+
+  return response.json(); // Parse the response as JSON
+
+} else {
+  throw new Error('Request failed');
+}
+})
+.then(data => {
+// Handle the response data here
+
+
+keytable.row.add([item.ranking_keyword,item.ranking_course,item.google_rank,item.prerank,data.salesdata[0].totalenq,data.salesdata[0].ads,data.salesdata[0].organic,data.salesdata[0].callback]).draw();
+
+
+
+})
+.catch(error => {
+// Handle any errors that occurred during the fetch
+console.error('Error:', error);
+});
 
 
 }

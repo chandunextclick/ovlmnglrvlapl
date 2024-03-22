@@ -1347,6 +1347,7 @@ public function getelementrankings(Request $request) {
                                     ->where('mkr.month', '=', $premonth);
                             })
                             ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','monthy_keyword_rankings.googlemap_rank','mkr.google_rank as prerank','mkr.googlemap_rank as premaprank')
+                            ->orderby('ranking_keyword.ranking_keyword')
                             ->get();   
         
                             
@@ -1970,6 +1971,7 @@ public function monthlyadcampaignreport(Request $request)
 
         $campaignarray[] = array(
             "campaign" => $value['utm_campaign'],
+            "medium" => $value['utm_medium'],
             "budget" => "",
             "impr" => "",
             "cost" => "",
@@ -1987,6 +1989,7 @@ public function monthlyadcampaignreport(Request $request)
 
         $campaignarray[] = array(
             "campaign" => $value['utm_campaign'],
+            "medium" => $value['utm_medium'],
             "budget" => $row->budget,
             "impr" => $row->impr,
             "cost" => $row->cost,
@@ -2016,6 +2019,84 @@ public function monthlyadcampaignreport(Request $request)
 
 }
 
+
+public function monthlymarketingsalesreport(Request $request)
+{
+
+    $data['pageTitle']= 'Marketing Sales Dashboard';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
+    
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+
+
+    $yeardata = date('Y',strtotime('-1 month'));
+
+    $monthdata = date('F',strtotime('-1 month'));
+
+    $yearmonth = date('F Y',strtotime('-1 month'));
+
+    $prevyearmonth = date('F Y',strtotime('-2 month'));
+
+    $monthfirst = date('Y-m-01',strtotime('-1 month')); 
+
+    $monthlast = date('Y-m-t',strtotime('-1 month')); 
+    
+
+    if ($request->isMethod('post')) {
+
+        // Handle POST request
+
+        $yearmonth = $request->input('yearmonth');
+
+        $arr = explode(" ",$yearmonth);
+
+        $yeardata = $arr[1];
+        $monthdata = $arr[0];
+
+        $monthfirst = date('Y-m-01',strtotime($monthdata.'01,'.$yeardata)); 
+
+        $monthlast = date('Y-m-t',strtotime($monthdata.'01,'.$yeardata)); 
+        
+        // Retrieve and display data based on the POST data
+    }
+
+    
+    $data['yearmonth']=$yearmonth;
+
+    $data['prevyearmonth']=$prevyearmonth;
+
+    $data['yeardata']=$yeardata;
+
+    $data['monthdata']=$monthdata;
+
+    $query = "SELECT * FROM `ranking_course`";
+
+
+    $data['courses'] = DB::select($query);
+                            
+
+
+    return view('rankings.marketingsalesreport',$data);
+
+}
 
 
 

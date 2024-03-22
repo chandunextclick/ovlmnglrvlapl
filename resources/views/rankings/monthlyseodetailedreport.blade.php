@@ -155,7 +155,7 @@ var keywordyear = '<?php echo $year; ?>';
 
 console.log(keywordmonth,keywordyear);
 
-var keywordpreviousmonth = getPreviousMonth(keywordmonth);
+var keywordpreviousmonth = getPreviousMonth(keywordmonth,keywordyear);
 
 const keywordprear = keywordpreviousmonth.split(" ");
 
@@ -174,10 +174,10 @@ updatetwotofivekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
 
 updatedroppedniche(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
 
-function getPreviousMonth(currentMonthString) {
+function getPreviousMonth(currentMonthString,currentYearString) {
 
     // Create a Date object for the current month
-    var currentDate = new Date(currentMonthString + ' 1, 2024');
+    var currentDate = new Date(currentMonthString + ' 1,' + currentYearString);
     
     // Move the date to the previous month
     currentDate.setMonth(currentDate.getMonth() - 1);

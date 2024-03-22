@@ -125,6 +125,8 @@ return array (
         'toppagesbyclick' => 'Top Pages By Clicks',
         'monthlyenquiryreport' => 'Monthly Enquiry Report',
         'monthlyadcampaign' => 'Monthly AD Campaign',
+        'monthlyadcampaignreport' => 'Monthly AD Campaign Report',
+        'monthlymarketingsalesreport' => 'Marketing Sales Report',
         'rankingcourse' => 'Ranking Course',
         'rankingkeyword' => 'Ranking Keyword',
         'rankingelement' => 'Ranking Element',

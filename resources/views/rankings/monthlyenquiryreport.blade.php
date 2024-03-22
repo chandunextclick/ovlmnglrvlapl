@@ -11,17 +11,18 @@
 
 
 <div class="container pt-5">
-    <div class="p-4">
-    <div class="row">
-        <div class="col-md-3"><input type="text" id="date-range" class="form-control height-35 f-14" placeholder="Date-range" autocomplete="off" style="width:350px;"></div>
-        
-    </div>
-    </div>
+    
   <div class="row m-2">
     <div class="col-md-12 card">
     <h4 class="mt-4">General Enquiry Report</h4>
-    <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
+    <div class="row">
+    
+    <div id="table-actions" class="flex-grow-1 align-items-center mt-4 col-md-4"> 
             <input type="text" id="gensearch" class="form-control height-35 f-14" placeholder="Search" autocomplete="off" style="width:350px;">
+    </div>
+   
+    <div class="col-md-3 mt-4"><input type="text" id="date-range" class="form-control height-35 f-14" placeholder="Date-range" autocomplete="off" style="width:350px;"></div>
+ 
     </div>
     <table id="enqtable" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
@@ -41,8 +42,11 @@
 
     <div class="col-md-12 card">
     <h4 class="mt-4">Enquiry Report</h4>
-    <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
+    <div class="row">
+    <div id="table-actions" class="flex-grow-1 align-items-center mt-4 col-md-4"> 
             <input type="text" id="detsearch" class="form-control height-35 f-14" placeholder="Search" autocomplete="off" style="width:350px;">
+    </div>
+    <div class="col-md-3 mt-4"><input type="text" id="date-range-enq" class="form-control height-35 f-14" placeholder="Date-range" autocomplete="off" style="width:350px;"></div>
     </div>
     <table id="enqtabledet" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
@@ -63,8 +67,12 @@
 
     <div class="col-md-12 card">
     <h4 class="mt-4">Sales Report</h4>
-    <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
+    <div class="row">
+    <div id="table-actions" class="flex-grow-1 align-items-center mt-4 col-md-4"> 
             <input type="text" id="consearch" class="form-control height-35 f-14" placeholder="Search" autocomplete="off" style="width:350px;">
+    </div>
+    <div class="col-md-3 mt-4"><input type="text" id="date-range-sale" class="form-control height-35 f-14" placeholder="Date-range" autocomplete="off" style="width:350px;"></div>
+    
     </div>
     <table id="enqtablecon" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
@@ -101,7 +109,7 @@
 <script>
 
 
-function updateenqdata(startdate,enddate){
+function updateenqdata(startdate,enddate,enqtype){
 
 const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirygeneraldata'; // Replace with your server's endpoint URL
 
@@ -109,7 +117,8 @@ const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/enquiry
 // Create the data to send as JSON
 const data = {
     param1: startdate,
-    param2: enddate
+    param2: enddate,
+    enqtype: enqtype
 };
 
 
@@ -130,36 +139,46 @@ if (response.ok) {
 .then(data => {
 // Handle the response data here
 
+console.log(enqtype);
 
-enqtable.clear().draw();
+if(enqtype == "gen"){
 
-enqtabledet.clear().draw();
+    enqtable.clear().draw();
 
-enqtablecon.clear().draw();
-
-data.enquiry_general.forEach((item) => {
-
-
-enqtable.row.add([item.lm_course_name,item.totalenq,item.totalsales]).draw();
-
-});
-
-data.enquiry_detailed.forEach((item) => {
+    data.enquiry_general.forEach((item) => {
 
 
+        enqtable.row.add([item.lm_course_name,item.totalenq,item.totalsales]).draw();
 
-    enqtabledet.row.add([item.lm_course_name,item.ads,item.organic]).draw();
-
-
-});
-
-data.enquiry_converted.forEach((item) => {
+    });
 
 
-enqtablecon.row.add([item.lm_course_name,item.ads,item.organic]).draw();
+}else if(enqtype == "enq"){
+
+    enqtabledet.clear().draw();
+
+    data.enquiry_detailed.forEach((item) => {
 
 
-});
+        enqtabledet.row.add([item.lm_course_name,item.ads,item.organic]).draw();
+
+
+    });
+
+}else if(enqtype == "sale"){
+
+    enqtablecon.clear().draw();
+
+    data.enquiry_converted.forEach((item) => {
+
+
+    enqtablecon.row.add([item.lm_course_name,item.ads,item.organic]).draw();
+
+
+    });
+
+
+}
 
 
 
@@ -185,6 +204,22 @@ $(document).ready(function() {
         }
     });
 
+    var rangepickerenq = $('#date-range-enq').daterangepicker({
+    startDate: new Date("{{ $date1 }}"), // Assuming $date1 is in a format parsable by JavaScript Date
+    endDate: new Date("{{ $date2 }}"), // Assuming $date2 is in a format parsable by JavaScript Date
+    locale: {
+            format: 'YYYY-MM-DD'
+        }
+    });
+
+    var rangepickersale = $('#date-range-sale').daterangepicker({
+    startDate: new Date("{{ $date1 }}"), // Assuming $date1 is in a format parsable by JavaScript Date
+    endDate: new Date("{{ $date2 }}"), // Assuming $date2 is in a format parsable by JavaScript Date
+    locale: {
+            format: 'YYYY-MM-DD'
+        }
+    });
+
     $('#date-range').on('apply.daterangepicker', function(ev, picker) {
 
         var dateRange = $('#date-range').data('daterangepicker');
@@ -193,7 +228,33 @@ $(document).ready(function() {
 
         endDate = dateRange.endDate.format('YYYY-MM-DD');
 
-        updateenqdata(startDate,endDate)
+        updateenqdata(startDate,endDate,"gen")
+
+
+    });
+
+    $('#date-range-enq').on('apply.daterangepicker', function(ev, picker) {
+
+        var dateRange = $('#date-range-enq').data('daterangepicker');
+
+        startDate = dateRange.startDate.format('YYYY-MM-DD');
+
+        endDate = dateRange.endDate.format('YYYY-MM-DD');
+
+        updateenqdata(startDate,endDate,"enq")
+
+
+    });
+
+$('#date-range-sale').on('apply.daterangepicker', function(ev, picker) {
+
+        var dateRange = $('#date-range-sale').data('daterangepicker');
+
+        startDate = dateRange.startDate.format('YYYY-MM-DD');
+
+        endDate = dateRange.endDate.format('YYYY-MM-DD');
+
+        updateenqdata(startDate,endDate,"sale")
 
 
     });
@@ -207,22 +268,30 @@ $(document).ready(function() {
     
    
 
-    // var startdate = $('#start_date').val()
-
-
-    // var enddate = $('#end_date').val()
-
-    // document.getElementById('end_date').setAttribute("min",startdate);
-
     var dateRange = $('#date-range').data('daterangepicker');
 
     startDate = dateRange.startDate.format('YYYY-MM-DD');
 
     endDate = dateRange.endDate.format('YYYY-MM-DD');
 
+    var dateRangeenq = $('#date-range-enq').data('daterangepicker');
 
-    updateenqdata(startDate,endDate);
+    startDateenq = dateRangeenq.startDate.format('YYYY-MM-DD');
 
+    endDateenq = dateRangeenq.endDate.format('YYYY-MM-DD');
+
+    var dateRangesale = $('#date-range-sale').data('daterangepicker');
+
+    startDatesale = dateRangesale.startDate.format('YYYY-MM-DD');
+
+    endDatesale = dateRangesale.endDate.format('YYYY-MM-DD');
+
+
+    updateenqdata(startDate,endDate,"gen");
+
+    updateenqdata(startDateenq,endDateenq,"enq");
+
+    updateenqdata(startDatesale,endDatesale,"sale")
 
 
     
@@ -277,30 +346,6 @@ if($(this).val()==null){
 });
 
 
-
-
-$(".enqdate").change(function(){
-
-
-var startdate = $('#start_date').val();
-
-var enddate = $('#end_date').val()
-
-
-updateenqdata(startdate,enddate);
-
-});
-
-
-$('#start_date').on('change',function(){
-
-  
-    var startdate = $('#start_date').val();
-
-    document.getElementById('end_date').setAttribute("min",startdate);
-
-    
-});
 
 
   

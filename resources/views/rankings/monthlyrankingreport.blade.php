@@ -248,9 +248,9 @@ $(document).ready(function() {
     var elementyear = elementar[1];
 
     $("#th-elyearmonth").html($('#elementyearmonth').val())
-    $("#th-elprevyearmonth").html(getPreviousMonth(elementmonth))
+    $("#th-elprevyearmonth").html(getPreviousMonth(elementmonth,elementyear))
     $("#th-eltryearmonth").html($('#elementyearmonth').val())
-    $("#th-eltrprevyearmonth").html(getPreviousMonth(elementmonth))
+    $("#th-eltrprevyearmonth").html(getPreviousMonth(elementmonth,elementyear))
 
     $("#span-brief").html($('#elementyearmonth').val())
 
@@ -286,7 +286,7 @@ $(document).ready(function() {
         var countryyear = countryar[1];
 
         $("#th-ctyearmonth").html($('#countryyearmonth').val())
-        $("#th-ctprevyearmonth").html(getPreviousMonth(countrymonth))
+        $("#th-ctprevyearmonth").html(getPreviousMonth(countrymonth,countryyear))
 
         $("#span-country").html($('#countryyearmonth').val())
 
@@ -344,7 +344,7 @@ var keywordmonth = keywordar[0];
 
 var keywordyear = keywordar[1];
 
-var keywordpreviousmonth = getPreviousMonth(keywordmonth);
+var keywordpreviousmonth = getPreviousMonth(keywordmonth,keywordyear);
 
 const keywordprear = keywordpreviousmonth.split(" ");
 
@@ -366,7 +366,7 @@ $("#keywordyearmonth").change(function(){
 
     var keywordyear = keywordar[1];
 
-    var keywordpreviousmonth = getPreviousMonth(keywordmonth);
+    var keywordpreviousmonth = getPreviousMonth(keywordmonth,keywordyear);
 
     const keywordprear = keywordpreviousmonth.split(" ");
 
@@ -375,7 +375,7 @@ $("#keywordyearmonth").change(function(){
     var keywordpreyear = keywordprear[1];
 
     $("#th-kwyearmonth").html($('#keywordyearmonth').val())
-    $("#th-kwprevyearmonth").html(getPreviousMonth(keywordmonth))
+    $("#th-kwprevyearmonth").html(getPreviousMonth(keywordmonth,keywordyear))
 
     console.log(keywordpremonth,keywordpreyear);
 
@@ -423,10 +423,10 @@ if($(this).val()==null){
 
 
 
-function getPreviousMonth(currentMonthString) {
+function getPreviousMonth(currentMonthString,currentYearString) {
 
     // Create a Date object for the current month
-    var currentDate = new Date(currentMonthString + ' 1, 2024');
+    var currentDate = new Date(currentMonthString + ' 1,' + currentYearString);
     
     // Move the date to the previous month
     currentDate.setMonth(currentDate.getMonth() - 1);

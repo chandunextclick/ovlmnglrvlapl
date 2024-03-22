@@ -74,6 +74,7 @@ input[type="date"] {
         <thead>
             <tr>
                 <th>Campaign Name</th>
+                <th>Medium</th>
                 <th>Budget</th>
                 <th>Impr</th>
                 <th>Cost</th>
@@ -92,6 +93,7 @@ input[type="date"] {
         ?>
             <tr>
                 <td><?= $value['campaign'] ?></td>
+                <td><?= $value['medium'] ?></td>
                 <td><?=$value['budget']?></td>
                 <td><?=$value['impr']?></td>
                 <td><?=$value['cost']?></td>
