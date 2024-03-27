@@ -57,6 +57,11 @@ input[type="date"] {
             }
             ?>
             </select>  
+            <select class="form-control height-35 f-14" placeholder="client"  name="client" id="client"  required>                 
+            <option <?= ($client == "EDOXI")? 'selected':'' ?> value="EDOXI">EDOXI</option>
+            <option <?= ($client == "TIMEMASTER")? 'selected':'' ?> value="TIMEMASTER">TIME MASTER</option>
+            <option <?= ($client == "TIMETRAINING")? 'selected':'' ?> value="TIMETRAINING">TIME TRAINING</option>                
+            </select> 
             <button type="submit" class="btn btn-primary ml-2">Apply</button>
             </div>
             </form>
@@ -77,7 +82,7 @@ input[type="date"] {
             <tr>
                 <th>Element ID</th>
                 <th>Element Name</th>
-                <th>Search Volume</th>
+                <th>Target(percent)</th>
                 <th>Rank</th>
                 <th>Previous Rank</th>
             </tr>

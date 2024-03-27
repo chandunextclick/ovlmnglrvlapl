@@ -46,7 +46,7 @@ input[type="date"] {
             $end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 1 months');
             while($month < $end){
 
-                $selected = (date('F Y', $month)==$yearmonth)? ' selected' :'';
+                $selected = (date('F Y', $month)==$yearmonth)? 'selected' :'';
 
             ?>
 
@@ -56,6 +56,11 @@ input[type="date"] {
             $month = strtotime("+1 month", $month);
             }
             ?>
+            </select> 
+            <select class="form-control height-35 f-14" placeholder="client"  name="client" id="client"  required>                 
+            <option <?= ($client == "EDOXI")? 'selected':'' ?> value="EDOXI">EDOXI</option>
+            <option <?= ($client == "TIMEMASTER")? 'selected':'' ?> value="TIMEMASTER">TIME MASTER</option>
+            <option <?= ($client == "TIMETRAINING")? 'selected':'' ?> value="TIMETRAINING">TIME TRAINING</option>                
             </select>  
             <button type="submit" class="btn btn-primary ml-2">Apply</button>
             </div>
@@ -148,7 +153,7 @@ $(document).ready(function() {
 
         var inputvalue = $(this).val();
 
-        var yearmonth = $('#yearmonth').val()
+        var yearmonth = $('#yearmonth').val();
 
         const ar = yearmonth.split(" ");
 

@@ -39,6 +39,33 @@ input[type="date"] {
             </div>
         </div>
     <!-- Task Box Start -->
+    <div class="row mt-4">
+    <div class="col-md-3">
+                        <div class="form-group">
+                        
+                        <select class="form-control height-35 f-14" placeholder="Course"  name="course_name" id="course_name"  required>
+                            <option selected disabled>Select Course</option>
+                            @foreach($courses as $course) 
+    
+                            <option value="{{$course->ranking_course}}">{{ $course->ranking_course }}</option>
+
+                            @endforeach
+                        </select> 
+                    </div>
+                    
+                </div>
+                <div class="col-md-3">
+                        <div class="form-group">
+                
+                        <select class="form-control height-35 f-14" placeholder="client"  name="client" id="client"  required>                 
+                            <option value="EDOXI">EDOXI</option>
+                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMETRAINING">TIME TRAINING</option>                
+                        </select>  
+                    </div>
+                    
+                </div> 
+    </div>
     <div class="d-flex flex-column w-tables rounded mt-3 bg-white">
 
     <div class="container">
@@ -49,6 +76,7 @@ input[type="date"] {
                 <th>Course Name</th>
                 <th>Keyword Name</th>
                 <th>Search Volume</th>
+                <th>Client</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -65,6 +93,7 @@ input[type="date"] {
                 <td><?=$value->ranking_course?></td>
                 <td><?=$value->ranking_keyword?></td>
                 <td><?=$value->search_volume?></td>
+                <td><?=$value->client?></td>
                 <td><div class="dropdown">
                 <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -113,10 +142,45 @@ $(document).ready(function() {
 
     otable=new DataTable('#example');
 
+    var client = $('#client').val();
+
+    otable.column(4).search(client).draw();
 
     var val =  $("#myInputTextField").val();
 
     console.log(val);
+
+
+    $("#course_name,#client").change(function(){
+
+
+        var client = $('#client').val();
+
+        var course_name = $('#course_name').val()
+
+        console.log(client);
+
+        console.log(course_name);
+
+        if(course_name == null){
+
+            otable.column(4).search(client).draw();
+            
+
+        }else{
+
+
+            otable.column(1).search(course_name).draw();
+
+            otable.column(4).search(client).draw();
+
+
+        }
+
+        
+
+
+    });
 
 
 

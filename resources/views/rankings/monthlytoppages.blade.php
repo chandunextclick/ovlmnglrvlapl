@@ -24,15 +24,12 @@ input[type="date"] {
 @section('content')
 <div class="row">
     <div class="col-sm-12">
-        <x-form id="save-holiday-data-form" method="post">
+        <x-form id="save-toppages-data-form" method="post">
             <div class="add-client bg-white rounded">
                 <h4 class="mb-0 p-20 f-21 font-weight-normal text-capitalize border-bottom-grey">
                     @lang('app.add') @lang('app.menu.toppagesbyclick')</h4>
                 <div class="row pl-20 pr-20 pt-20">
-                    <div class="col-lg-3">
-                        <!-- <x-forms.text class="date-picker" :fieldLabel="__('app.date')" fieldName="date[]"
-                            fieldId="dateField1" :fieldPlaceholder="__('app.date')" fieldValue=""
-                            fieldRequired="true" /> -->
+                    <div class="col-md-3">
                             <select class="form-control height-35 f-14 mt-5" placeholder="yearmonth"  name="yearmonth[]" id="yearmonth1"  required>
                             
                             <?php
@@ -53,13 +50,20 @@ input[type="date"] {
                             ?>
                             </select> 
                     </div>
-                    
-                    <div class="col-lg-4">
+                    <div class="col-md-3">
+                
+                            <select class="form-control height-35 f-14 mt-5" placeholder="client"  name="client[]" id="client1"  required>                 
+                            <option value="EDOXI">EDOXI</option>
+                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMETRAINING">TIME TRAINING</option>                
+                        </select>  
+                    </div>
+                    <div class="col-md-3">
                         <div class="form-group my-3">
                         <input type="text" name="url[]" id="url1" class="form-control height-35 f-14 mt-5" placeholder="URL">
                         </div>
                     </div>
-                    <div class="col-lg-3 align-items-center justify-content-center">
+                    <div class="col-md-3 align-items-center justify-content-center">
                         <div class="form-group my-5">
                         <input type="text" name="clicks[]" id="clicks1" class="form-control height-35 f-14 mt-5" placeholder="No of Clicks">
                         </div>  
@@ -78,7 +82,7 @@ input[type="date"] {
                 <!--  ADD ITEM END-->
 
                 <x-form-actions>
-                    <x-forms.button-primary id="save-holiday-form" class="mr-3" icon="check">@lang('app.save')
+                    <x-forms.button-primary id="save-toppages-form" class="mr-3" icon="check">@lang('app.save')
                     </x-forms.button-primary>
                     <x-forms.button-cancel :link="route('holidays.index')" class="border-0">@lang('app.cancel')
                     </x-forms.button-cancel>
@@ -113,11 +117,11 @@ input[type="date"] {
             i += 1;
 
             $(`<div id="addMoreBox${i}" class="row pl-20 pr-20 clearfix">
-                <div class="col-lg-3 col-md-6 col-12"><select class="form-control height-35 f-14 mt-5" placeholder="yearmonth"  name="yearmonth[]" id="yearmonth${i}"required><?php $month = strtotime(date('Y').'-'.date('m').'-'.date('j').' - 6 months');$end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 1 months');while($month < $end){ $selected = (date('F Y', $month)==$yearmonth)? ' selected' :''; ?><option <?= $selected ?> value="<?= date('F Y', $month) ?>"><?=date('F Y', $month)?></option><?php $month = strtotime("+1 month", $month);}?></select> 
-                </div>  <div class="col-lg-4 col-md-5 col-10"> <div class="form-group my-3">
+                <div class="col-md-3"><select class="form-control height-35 f-14 mt-5" placeholder="yearmonth"  name="yearmonth[]" id="yearmonth${i}"required><?php $month = strtotime(date('Y').'-'.date('m').'-'.date('j').' - 6 months');$end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 1 months');while($month < $end){ $selected = (date('F Y', $month)==$yearmonth)? ' selected' :''; ?><option <?= $selected ?> value="<?= date('F Y', $month) ?>"><?=date('F Y', $month)?></option><?php $month = strtotime("+1 month", $month);}?></select> 
+                </div><div class="col-md-3"><select class="form-control height-35 f-14 mt-5" placeholder="client"  name="client[]" id="client${i}"  required><option value="EDOXI">EDOXI</option><option value="TIMEMASTER">TIME MASTER</option><option value="TIMETRAINING">TIME TRAINING</option></select></div>  <div class="col-md-3  col-10"> <div class="form-group my-3">
                 <input type="text" name="url[]" id="url${i}" class="form-control height-35 f-14 mt-5" placeholder="URL">
-                </div> </div> <div class="col-lg-3 align-items-center justify-content-center"><div class="form-group my-5"><input type="text" name="clicks[]" id="clicks${i}" class="form-control height-35 f-14 mt-5" placeholder="No of Clicks"></div>  
-                </div> <div class="col-lg-2 col-md-1 col-2"><a href="javascript:;" class="d-flex align-items-center justify-content-center mt-5 remove-item" data-item-id="${i}"><i class="fa fa-times-circle f-20 text-lightest"></i></a></div></div>`)
+                </div> </div> <div class="col-md-2 align-items-center justify-content-center"><div class="form-group my-5"><input type="text" name="clicks[]" id="clicks${i}" class="form-control height-35 f-14 mt-5" placeholder="No of Clicks"></div>  
+                </div> <div class="col-md-1 col-2"><a href="javascript:;" class="d-flex align-items-center justify-content-center mt-5 remove-item" data-item-id="${i}"><i class="fa fa-times-circle f-20 text-lightest"></i></a></div></div>`)
                 .insertBefore($insertBefore);
 
            
@@ -133,24 +137,24 @@ input[type="date"] {
 
     
 
-        $('#save-holiday-form').click(function() {
+        $('#save-toppages-form').click(function() {
 
 
 
     
 
-            var formData = $('#save-holiday-data-form').serializeArray();
+            var formData = $('#save-toppages-data-form').serializeArray();
 
         
 
             const url = "{{ route('rankings.storetoppages') }}";
             $.easyAjax({
                 url: url,
-                container: '#save-holiday-data-form',
+                container: '#save-toppages-data-form',
                 type: "POST",
                 disableButton: true,
                 blockUI: true,
-                buttonSelector: "#save-holiday-form",
+                buttonSelector: "#save-toppages-form",
                 data: formData,
                 success: function(response) {
                     window.location.href = response.redirectUrl;

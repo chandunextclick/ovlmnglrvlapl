@@ -54,6 +54,17 @@
                         <input type="text" class="form-control height-35 f-14" placeholder="Increase Percent" value="" name="increase_percent" id="increase_percent" autocomplete="off" required>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="client_name">CLIENT
+                        <sup class="f-14 mr-1">*</sup>
+                        </label>
+                        <select class="form-control height-35 f-14" placeholder="client"  name="client" id="client"  required>                 
+                            <option value="EDOXI">EDOXI</option>
+                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMETRAINING">TIME TRAINING</option>                
+                        </select>  
+                    </div>
         
                 <div class="w-100 border-top-grey d-block d-lg-flex d-md-flex justify-content-start px-4 py-3">
     <button type="submit" class="btn-primary rounded f-14 p-2 mr-3" id="save-persona-form">

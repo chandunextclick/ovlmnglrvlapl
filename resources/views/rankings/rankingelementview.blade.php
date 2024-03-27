@@ -39,6 +39,20 @@ input[type="date"] {
             </div>
         </div>
     <!-- Task Box Start -->
+    <div class="row mt-4">
+  
+                <div class="col-md-3">
+                        <div class="form-group">
+                
+                        <select class="form-control height-35 f-14" placeholder="client"  name="client" id="client"  required>                 
+                            <option value="EDOXI">EDOXI</option>
+                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMETRAINING">TIME TRAINING</option>                
+                        </select>  
+                    </div>
+                    
+                </div> 
+    </div>
     <div class="d-flex flex-column w-tables rounded mt-3 bg-white">
 
     <div class="container">
@@ -48,6 +62,7 @@ input[type="date"] {
                 <th>Element ID</th>
                 <th>Element Name</th>
                 <th>Increase Percent</th>
+                <th>Client</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -63,6 +78,7 @@ input[type="date"] {
                 <td><?=$value->id?></td>
                 <td><?=$value->ranking_element?></td>
                 <td><?=$value->increase_percent?></td>
+                <td><?=$value->client?></td>
                 <td><div class="dropdown">
                 <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -111,10 +127,32 @@ $(document).ready(function() {
 
     otable=new DataTable('#example');
 
+    var client = $('#client').val();
+
+    otable.column(3).search(client).draw();
+
     var val =  $("#myInputTextField").val();
 
     console.log(val);
 
+$("#client").change(function(){
+
+
+var client = $('#client').val();
+
+
+console.log(client);
+
+
+    otable.column(3).search(client).draw();
+
+
+
+
+
+
+
+});
 
 
     $("#example").on( "click", ".delbtn", function( event ) {

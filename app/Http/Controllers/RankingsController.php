@@ -105,6 +105,11 @@ class RankingsController extends AccountBaseController
         $data['company']=$this->company;
         
         
+        $query = "SELECT * FROM `ranking_course`";
+
+
+        $data['courses'] = DB::select($query);
+        
     
         $data['rankingelement']= DB::table('ranking_element')->get();
         
@@ -120,8 +125,8 @@ class RankingsController extends AccountBaseController
         $data['rankingelement'] = [
         
             'ranking_element' => $request->input('element_name'),
-            'increase_percent' => $request->input('increase_percent')
-        
+            'increase_percent' => $request->input('increase_percent'),
+            'client' => $request->input('client')
         ];
         
         try{
@@ -149,7 +154,7 @@ class RankingsController extends AccountBaseController
         // Update data into the persona table
         DB::table('ranking_element')
                 ->where('id', $request->input('element_id'))
-                ->update(['ranking_element' => $request->input('element_name'),'increase_percent' => $request->input('increase_percent')]);
+                ->update(['ranking_element' => $request->input('element_name'),'increase_percent' => $request->input('increase_percent'),'client' => $request->input('client')]);
         
         return redirect()->route('rankings.rankingelementview');
         
@@ -265,6 +270,11 @@ public function rankingcountryview()
     $data['company']=$this->company;
     
 
+    $query = "SELECT * FROM `ranking_course`";
+
+
+    $data['courses'] = DB::select($query);
+    
     $data['rankingcountry']= DB::table('ranking_countries')->get();
     
 
@@ -279,7 +289,8 @@ public function rankincountrystore(Request $request) {
     $data['rankingcountry'] = [
     
         'ranking_country' => $request->input('country_name'),
-        'increase_percent' => $request->input('increase_percent')
+        'increase_percent' => $request->input('increase_percent'),
+        'client' => $request->input('client')
     
     ];
     
@@ -308,7 +319,7 @@ public function rankincountryupdate(Request $request){
     // Update data into the persona table
     DB::table('ranking_countries')
             ->where('id', $request->input('country_id'))
-            ->update(['ranking_country' => $request->input('country_name'),'increase_percent' => $request->input('increase_percent')]);
+            ->update(['ranking_country' => $request->input('country_name'),'increase_percent' => $request->input('increase_percent'),'client' => $request->input('client')]);
     
     return redirect()->route('rankings.rankingcountryview');
     
@@ -569,7 +580,7 @@ public function rankinkeywordedit($id)
 
     $data['keyword'] = DB::table('ranking_keyword')
                         ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
-                        ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course')
+                        ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','ranking_keyword.client')
                         ->where('ranking_keyword.id', $id)->first();
 
 
@@ -585,7 +596,7 @@ public function rankinkeywordupdate(Request $request){
     // Update data into the persona table
     DB::table('ranking_keyword')
             ->where('id', $request->input('keyword_id'))
-            ->update(['ranking_course' => $request->input('course_name'),'ranking_keyword' => $request->input('keyword_name'),'search_volume' => $request->input('search_volume')]);
+            ->update(['ranking_course' => $request->input('course_name'),'ranking_keyword' => $request->input('keyword_name'),'search_volume' => $request->input('search_volume'),'client' => $request->input('client')]);
     
     return redirect()->route('rankings.rankingkeywordview');
     
@@ -642,11 +653,16 @@ public function rankingkeywordview()
     $data['unreadMessagesCount']=$this->unreadMessagesCount;
     $data['worksuitePlugins']=$this->worksuitePlugins;
     $data['company']=$this->company;
+
+    $query = "SELECT * FROM `ranking_course`";
+
+
+    $data['courses'] = DB::select($query);
     
 
     $data['rankingkeyword']= DB::table('ranking_keyword')
                             ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
-                            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course')
+                            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_keyword.client','ranking_course.ranking_course')
                             ->get();
     
 
@@ -662,7 +678,8 @@ public function rankinkeywordstore(Request $request) {
     
         'ranking_keyword' => $request->input('keyword_name'),
         'ranking_course' => $request->input('course_name'),
-        'search_volume' => $request->input('search_volume')
+        'search_volume' => $request->input('search_volume'),
+        'client' => $request->input('client')
     
     ];
     
@@ -716,6 +733,8 @@ public function monthlykeywordranking(Request $request)
     $monthdata = date('F',strtotime('-1 month'));
 
     $yearmonth = date('F Y',strtotime('-1 month'));
+
+    $client = "EDOXI";
     
 
     if ($request->isMethod('post')) {
@@ -723,6 +742,8 @@ public function monthlykeywordranking(Request $request)
         // Handle POST request
 
         $yearmonth = $request->input('yearmonth');
+
+        $client = $request->input('client');
 
         $arr = explode(" ",$yearmonth);
 
@@ -739,13 +760,17 @@ public function monthlykeywordranking(Request $request)
 
     $data['monthdata']=$monthdata;
 
+    $data['client']=$client;
+
     $data['rankingkeyword']= DB::table('ranking_keyword')
                             ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
                             ->leftJoin('monthy_keyword_rankings', function ($join) use ($yeardata,$monthdata) {
                                 $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
                                     ->where('monthy_keyword_rankings.year', '=', $yeardata)
                                     ->where('monthy_keyword_rankings.month', '=', $monthdata);
+                                    
                             })
+                            ->where('ranking_keyword.client', '=', $client)
                             ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','monthy_keyword_rankings.googlemap_rank')
                             ->get();  
                             
@@ -844,6 +869,8 @@ public function monthlyelementranking(Request $request)
     $monthdata = date('F',strtotime('-1 month'));
 
     $yearmonth = date('F Y',strtotime('-1 month'));
+
+    $client = "EDOXI";
     
 
     if ($request->isMethod('post')) {
@@ -851,6 +878,8 @@ public function monthlyelementranking(Request $request)
         // Handle POST request
 
         $yearmonth = $request->input('yearmonth');
+
+        $client = $request->input('client');
 
         $arr = explode(" ",$yearmonth);
 
@@ -867,12 +896,15 @@ public function monthlyelementranking(Request $request)
 
     $data['monthdata']=$monthdata;
 
+    $data['client']=$client;
+
     $data['rankingelement']= DB::table('ranking_element')
                             ->leftJoin('monthly_element_rankings', function ($join) use ($yeardata,$monthdata) {
                                 $join->on('monthly_element_rankings.element_id', '=', 'ranking_element.id')
                                     ->where('monthly_element_rankings.year', '=', $yeardata)
                                     ->where('monthly_element_rankings.month', '=', $monthdata);
                             })
+                            ->where('ranking_element.client', '=', $client)
                             ->select('ranking_element.id','ranking_element.ranking_element','ranking_element.increase_percent','monthly_element_rankings.google_rank','monthly_element_rankings.google_rank_prev')
                             ->get();  
                             
@@ -974,6 +1006,8 @@ public function monthlyelementranking(Request $request)
         $monthdata = date('F',strtotime('-1 month'));
     
         $yearmonth = date('F Y',strtotime('-1 month'));
+
+        $client = "EDOXI";
         
     
         if ($request->isMethod('post')) {
@@ -981,6 +1015,8 @@ public function monthlyelementranking(Request $request)
             // Handle POST request
     
             $yearmonth = $request->input('yearmonth');
+
+            $client = $request->input('client');
     
             $arr = explode(" ",$yearmonth);
     
@@ -996,6 +1032,8 @@ public function monthlyelementranking(Request $request)
         $data['yeardata']=$yeardata;
     
         $data['monthdata']=$monthdata;
+
+        $data['client']=$client;
     
         $data['rankingcountry']= DB::table('ranking_countries')
                                 ->leftJoin('monthly_country_rankings', function ($join) use ($yeardata,$monthdata) {
@@ -1003,6 +1041,7 @@ public function monthlyelementranking(Request $request)
                                         ->where('monthly_country_rankings.year', '=', $yeardata)
                                         ->where('monthly_country_rankings.month', '=', $monthdata);
                                 })
+                                ->where('ranking_countries.client', '=', $client)
                                 ->select('ranking_countries.id','ranking_countries.ranking_country','ranking_countries.increase_percent','monthly_country_rankings.google_rank','monthly_country_rankings.google_rank_prev')
                                 ->get();  
                            
@@ -1215,7 +1254,7 @@ public function monthlyelementranking(Request $request)
     }
 
 
-    public function monthlydetailedseoreport($yearmonth)
+    public function monthlydetailedseoreport($yearmonth,$client)
     {
     
         $data['pageTitle']= 'Seo Report';
@@ -1248,6 +1287,8 @@ public function monthlyelementranking(Request $request)
 
         $data['year'] = $yearmonthar[1];
 
+        $data['client'] = $client;
+
         return view('rankings.monthlyseodetailedreport',$data);
     }
 
@@ -1257,6 +1298,7 @@ public function getelementrankings(Request $request) {
         
         $month = $request->input('month');
         $year = $request->input('year');
+        $client = $request->input('client');
     
 
         $impressionelement= DB::table('ranking_element')
@@ -1266,6 +1308,7 @@ public function getelementrankings(Request $request) {
                                     ->where('monthly_element_rankings.month', '=', $month);
                             })
                             ->select('ranking_element.id','ranking_element.ranking_element','ranking_element.increase_percent','monthly_element_rankings.google_rank','monthly_element_rankings.google_rank_prev')
+                            ->where('ranking_element.client', '=',$client)
                             ->where('ranking_element.elements_type', '=',0)
                             ->orderBy('ranking_element.elements_type')
                             ->get();  
@@ -1277,6 +1320,7 @@ public function getelementrankings(Request $request) {
                                     ->where('monthly_element_rankings.month', '=', $month);
                             })
                             ->select('ranking_element.id','ranking_element.ranking_element','ranking_element.increase_percent','monthly_element_rankings.google_rank','monthly_element_rankings.google_rank_prev')
+                            ->where('ranking_element.client', '=',$client)
                             ->where('ranking_element.elements_type', '=',1)
                             ->orderBy('ranking_element.elements_type')
                             ->get();  
@@ -1291,6 +1335,7 @@ public function getelementrankings(Request $request) {
         
         $month = $request->input('month');
         $year = $request->input('year');
+        $client = $request->input('client');
     
 
         $rankingcountry= DB::table('ranking_countries')
@@ -1299,6 +1344,7 @@ public function getelementrankings(Request $request) {
                                     ->where('monthly_country_rankings.year', '=', $year)
                                     ->where('monthly_country_rankings.month', '=', $month);
                             })
+                            ->where('ranking_countries.client', '=', $client)
                             ->select('ranking_countries.id','ranking_countries.ranking_country','ranking_countries.increase_percent','monthly_country_rankings.google_rank','monthly_country_rankings.google_rank_prev')
                             ->get();  
         
@@ -1312,11 +1358,12 @@ public function getelementrankings(Request $request) {
         
         $month = $request->input('month');
         $year = $request->input('year');
-    
+        $client = $request->input('client');
 
         $toppages= DB::table('monthly_toppages')
                             ->where('monthly_toppages.year', '=', $year)
                             ->where('monthly_toppages.month', '=', $month)
+                            ->where('monthly_toppages.client', '=', $client)
                             ->select('monthly_toppages.id','monthly_toppages.url','monthly_toppages.clicks','monthly_toppages.month','monthly_toppages.year')
                             ->get();  
         
@@ -1325,13 +1372,15 @@ public function getelementrankings(Request $request) {
         
     }
 
-    public function getkeywordrankings(Request $request) {
+    public function getkeywordrankings(Request $request){
     
         
         $month = $request->input('month');
         $year = $request->input('year');
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
+        $client = $request->input('client');
+        
     
 
         $rankingkeyword= DB::table('ranking_keyword')
@@ -1346,6 +1395,7 @@ public function getelementrankings(Request $request) {
                                     ->where('mkr.year', '=', $preyear)
                                     ->where('mkr.month', '=', $premonth);
                             })
+                            ->where('ranking_keyword.client', '=', $client)
                             ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','monthy_keyword_rankings.googlemap_rank','mkr.google_rank as prerank','mkr.googlemap_rank as premaprank')
                             ->orderby('ranking_keyword.ranking_keyword')
                             ->get();   
@@ -1362,6 +1412,7 @@ public function getelementrankings(Request $request) {
         $year = $request->input('year');
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
+        $client = $request->input('client');
     
 
         
@@ -1372,6 +1423,7 @@ public function getelementrankings(Request $request) {
                         ->where('mkr.month', '=', $premonth)
                         ->where('mkr.year', '=', $preyear);
                 })
+                ->where('ranking_keyword.client', '=', $client)
                 ->selectRaw('mkr.month,
                     SUM(CASE WHEN mkr.google_rank BETWEEN 1 AND 5 THEN 1 ELSE 0 END) AS count_1_to_5,
                     SUM(CASE WHEN mkr.google_rank BETWEEN 6 AND 10 THEN 1 ELSE 0 END) AS count_6_to_10,
@@ -1387,6 +1439,7 @@ public function getelementrankings(Request $request) {
                         ->where('mkr.month', '=', $month)
                         ->where('mkr.year', '=', $year);
                 })
+                ->where('ranking_keyword.client', '=', $client)
                 ->selectRaw('mkr.month,
                     SUM(CASE WHEN mkr.google_rank BETWEEN 1 AND 5 THEN 1 ELSE 0 END) AS count_1_to_5,
                     SUM(CASE WHEN mkr.google_rank BETWEEN 6 AND 10 THEN 1 ELSE 0 END) AS count_6_to_10,
@@ -1410,7 +1463,7 @@ public function getelementrankings(Request $request) {
         $year = $request->input('year');
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
-    
+        $client =  $request->input('client');
 
         $droppedniche = DB::table('ranking_keyword')
                         ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
@@ -1425,6 +1478,7 @@ public function getelementrankings(Request $request) {
                                 ->where('mkr.month', '=', $month)
                                 ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
                         })
+                        ->where('ranking_keyword.client', '=', $client)
                         ->select('ranking_course.ranking_course')
                             ->groupBy('ranking_course.ranking_course')
                             ->havingRaw('COUNT(ranking_course.ranking_course) > 1')
@@ -1444,7 +1498,7 @@ public function getelementrankings(Request $request) {
         $year = $request->input('year');
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
-    
+        $client =  $request->input('client');
 
         $droppednonone = DB::table('ranking_keyword')
                             ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
@@ -1460,6 +1514,7 @@ public function getelementrankings(Request $request) {
                                     ->where('mkr.month', '=', $month)
                                     ->where('mkr.google_rank', '>', 1);
                             })
+                            ->where('ranking_keyword.client', '=', $client)
                             ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
                             ->get();   
         
@@ -1475,7 +1530,7 @@ public function getelementrankings(Request $request) {
         $year = $request->input('year');
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
-    
+        $client =  $request->input('client');
 
         $upnonone = DB::table('ranking_keyword')
                             ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
@@ -1491,6 +1546,7 @@ public function getelementrankings(Request $request) {
                                     ->where('mkr.month', '=', $month)
                                     ->where('mkr.google_rank', '=', 1);
                             })
+                            ->where('ranking_keyword.client', '=', $client)
                             ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as prevposition','mkr.google_rank as upposition')
                             ->get();   
         
@@ -1506,7 +1562,7 @@ public function getelementrankings(Request $request) {
         $year = $request->input('year');
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
-    
+        $client =  $request->input('client');
 
         $uptotwotofive = DB::table('ranking_keyword')
                         ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
@@ -1522,6 +1578,7 @@ public function getelementrankings(Request $request) {
                                 ->where('mkr.month', '=', $premonth)
                                 ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
                         })
+                        ->where('ranking_keyword.client', '=', $client)
                         ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as currentposition','mkr.google_rank as prevposition')
                         ->get();   
         
@@ -1538,7 +1595,7 @@ public function getelementrankings(Request $request) {
         $year = $request->input('year');
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
-    
+        $client =  $request->input('client');
 
         $dropfromtwo = DB::table('ranking_keyword')
                         ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
@@ -1554,6 +1611,7 @@ public function getelementrankings(Request $request) {
                                 ->where('mkr.month', '=', $month)
                                 ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
                         })
+                        ->where('ranking_keyword.client', '=', $client)
                         ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
                         ->get();     
 
@@ -1634,6 +1692,7 @@ public function storetoppages(Request $request)
     $yearmonths = $request->yearmonth;
     $urls = $request->url;
     $clicks = $request->clicks;
+    $client = $request->client;
 
 
     foreach ($yearmonths as $index => $value) {
@@ -1647,7 +1706,8 @@ public function storetoppages(Request $request)
                 'url' => $urls[$index],
                 'clicks' => $clicks[$index],
                 'month' => $yearmontharray[0],
-                'year' => $yearmontharray[1]
+                'year' => $yearmontharray[1],
+                'client' => $client[$index],
             
             ];
 

@@ -258,7 +258,7 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::match(['get', 'post'],'rankings/monthlymarketingsalesreport', [RankingsController::class, 'monthlymarketingsalesreport'])->name('rankings.monthlymarketingsalesreport');
     
-    Route::get('rankings/monthlydetailedseoreport/{yearmonth}', [RankingsController::class, 'monthlydetailedseoreport'])->name('rankings.monthlydetailedseoreport');
+    Route::get('rankings/monthlydetailedseoreport/{yearmonth}/{client}', [RankingsController::class, 'monthlydetailedseoreport'])->name('rankings.monthlydetailedseoreport');
 
     Route::post('rankings/getelementrankings', [RankingsController::class, 'getelementrankings'])->name('rankings.getelementrankings');
    

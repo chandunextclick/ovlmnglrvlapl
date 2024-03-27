@@ -36,7 +36,7 @@
                 <h4 class="mb-0 p-20 f-21 font-weight-normal text-capitalize border-bottom-grey">
                     Edit Ranking Keywords</h4>
                 <div class="row p-20">
-                <div class="col-md-4">
+                <div class="col-md-3">
                         <div class="form-group">
                         <label class="f-14 text-dark-grey mb-12" data-label="true" for="persona_course">COURSE
                         <sup class="f-14 mr-1">*</sup>
@@ -51,7 +51,20 @@
                     </div>
                     
                 </div>
-                    <div class="col-md-4">
+                <div class="col-md-3">
+                        <div class="form-group">
+                        <label class="f-14 text-dark-grey mb-12" data-label="true" for="client_name">CLIENT
+                        <sup class="f-14 mr-1">*</sup>
+                        </label>
+                        <select class="form-control height-35 f-14" placeholder="client"  name="client" id="client"  required>                 
+                            <option <?= ($keyword->client == "EDOXI")? 'selected':'' ?> value="EDOXI">EDOXI</option>
+                            <option <?= ($keyword->client == "TIMEMASTER")? 'selected':'' ?> value="TIMEMASTER">TIME MASTER</option>
+                            <option <?= ($keyword->client == "TIMETRAINING")? 'selected':'' ?> value="TIMETRAINING">TIME TRAINING</option>                
+                        </select>  
+                    </div>
+                    
+                </div>
+                    <div class="col-md-3">
                         <div class="form-group">
                         <label class="f-14 text-dark-grey mb-12" data-label="true" for="keyword_name">Keyword Name
                         <sup class="f-14 mr-1">*</sup>
@@ -61,7 +74,7 @@
                         </div>
                     
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                         <label class="f-14 text-dark-grey mb-12" data-label="true" for="keyword_name">Search Volume
                         </label>

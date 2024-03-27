@@ -153,6 +153,8 @@ var keywordmonth = '<?php echo $month; ?>';
 
 var keywordyear = '<?php echo $year; ?>';
 
+var client = '<?php echo $client; ?>';
+
 console.log(keywordmonth,keywordyear);
 
 var keywordpreviousmonth = getPreviousMonth(keywordmonth,keywordyear);
@@ -164,15 +166,15 @@ var keywordpremonth = keywordprear[0];
 var keywordpreyear = keywordprear[1];
 
 
-updatedroppednoonekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+updatedroppednoonekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
 
-updateupnoonekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+updateupnoonekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
 
-updatedroppedfromtwokeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+updatedroppedfromtwokeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
 
-updatetwotofivekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+updatetwotofivekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
 
-updatedroppedniche(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+updatedroppedniche(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
 
 function getPreviousMonth(currentMonthString,currentYearString) {
 
@@ -194,7 +196,7 @@ function getPreviousMonth(currentMonthString,currentYearString) {
 // ------------------------------------------------------------------------------
 
 
-function updatedroppedniche(month,year,premonth,preyear){
+function updatedroppedniche(month,year,premonth,preyear,client){
 
 
 let url = "{{ route('rankings.getdropedniche') }}";
@@ -222,6 +224,7 @@ $.easyAjax({
             year:year,
             premonth:premonth,
             preyear:preyear,
+            client:client,
         },
         success: function(response) {
 
@@ -253,7 +256,7 @@ $.easyAjax({
 // ------------------------------------------------------------------------------
 
 
-function updatedroppednoonekeyword(month,year,premonth,preyear){
+function updatedroppednoonekeyword(month,year,premonth,preyear,client){
 
 
 let url = "{{ route('rankings.getdropednooneword') }}";
@@ -281,6 +284,7 @@ $.easyAjax({
             year:year,
             premonth:premonth,
             preyear:preyear,
+            client:client,
         },
         success: function(response) {
 
@@ -312,7 +316,7 @@ $.easyAjax({
 // ------------------------------------------------------------------------------
 
 
-function updateupnoonekeyword(month,year,premonth,preyear){
+function updateupnoonekeyword(month,year,premonth,preyear,client){
 
 
 let url = "{{ route('rankings.getupnooneword') }}";
@@ -340,6 +344,7 @@ $.easyAjax({
             year:year,
             premonth:premonth,
             preyear:preyear,
+            client:client,
         },
         success: function(response) {
 
@@ -370,7 +375,7 @@ $.easyAjax({
 // dropedfromtwo
 // ------------------------------------------------------------------------------
 
-function updatedroppedfromtwokeyword(month,year,premonth,preyear){
+function updatedroppedfromtwokeyword(month,year,premonth,preyear,client){
 
 
 let url = "{{ route('rankings.getdropedfromtwoword') }}";
@@ -398,6 +403,7 @@ $.easyAjax({
             year:year,
             premonth:premonth,
             preyear:preyear,
+            client:client,
         },
         success: function(response) {
 
@@ -428,7 +434,7 @@ $.easyAjax({
 // uptwotofive
 // ------------------------------------------------------------------------------
 
-function updatetwotofivekeyword(month,year,premonth,preyear){
+function updatetwotofivekeyword(month,year,premonth,preyear,client){
 
 
 let url = "{{ route('rankings.getuptwotofiveword') }}";
@@ -456,6 +462,7 @@ $.easyAjax({
             year:year,
             premonth:premonth,
             preyear:preyear,
+            client:client,
         },
         success: function(response) {
 

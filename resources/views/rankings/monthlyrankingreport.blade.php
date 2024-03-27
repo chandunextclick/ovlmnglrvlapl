@@ -36,6 +36,9 @@ input[type="date"] {
   <div class="row">
     <div class="col-md-12 card">
     <h4 class="mt-4">SEO Brief Report <span id="span-brief"><?=$yearmonth?></span></h4>
+    <h4 class="mt-4">Country Wise Traffic Report <span id="span-country"><?=$yearmonth?></span></h4>
+    <div class="row">
+        <div class="col-md-4">
     <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="elementyearmonth" id="elementyearmonth"  required>
                             
                             <?php
@@ -55,6 +58,15 @@ input[type="date"] {
                             }
                             ?>
     </select> 
+    </div>
+    <div class="col-md-4">
+    <select class="form-control height-35 f-14 mt-4" placeholder="client"  name="elementclient" id="elementclient"  required>                 
+                            <option value="EDOXI">EDOXI</option>
+                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMETRAINING">TIME TRAINING</option>                
+    </select>  
+    </div>
+    </div>
     <table id="elementimp" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
@@ -86,6 +98,8 @@ input[type="date"] {
     </div>
     <div class="col-md-12 card mt-4">
     <h4 class="mt-4">Country Wise Traffic Report <span id="span-country"><?=$yearmonth?></span></h4>
+    <div class="row">
+        <div class="col-md-4">
     <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="countryyearmonth" id="countryyearmonth"  required>
                             
                             <?php
@@ -105,6 +119,15 @@ input[type="date"] {
                             }
                             ?>
     </select> 
+    </div>
+    <div class="col-md-4">
+    <select class="form-control height-35 f-14 mt-4" placeholder="client"  name="countryclient" id="countryclient"  required>                 
+                            <option value="EDOXI">EDOXI</option>
+                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMETRAINING">TIME TRAINING</option>                
+    </select>  
+    </div>
+    </div>
     <table id="country" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
@@ -122,6 +145,8 @@ input[type="date"] {
     </div>
     <div class="col-md-12 card mt-4">
     <h4 class="mt-4">Keyword Rankings <span id="span-country"><?=$yearmonth?></span></h4>
+    <div class="row">
+        <div class="col-md-4">
     <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="keywordyearmonth" id="keywordyearmonth"  required>
                             
                             <?php
@@ -141,6 +166,15 @@ input[type="date"] {
                             }
                             ?>
     </select> 
+    </div>
+    <div class="col-md-4">
+    <select class="form-control height-35 f-14 mt-4" placeholder="client"  name="keywordclient" id="keywordclient"  required>                 
+                            <option value="EDOXI">EDOXI</option>
+                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMETRAINING">TIME TRAINING</option>                
+    </select>  
+    </div>
+    </div>
     <table id="keywordrankings" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
@@ -160,6 +194,8 @@ input[type="date"] {
     </div>
     <div class="col-md-12 card mt-4">
     <h4 class="mt-4">Top Pages By Clicks <span id="span-toppages"><?=$yearmonth?></span></h4>
+    <div class="row">
+        <div class="col-md-4">
     <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="toppagesyearmonth" id="toppagesyearmonth"  required>
                             
                             <?php
@@ -179,6 +215,15 @@ input[type="date"] {
                             }
                             ?>
     </select> 
+    </div>
+    <div class="col-md-4">
+    <select class="form-control height-35 f-14 mt-4" placeholder="client"  name="toppagesclient" id="toppagesclient"  required>                 
+                            <option value="EDOXI">EDOXI</option>
+                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMETRAINING">TIME TRAINING</option>                
+    </select>  
+    </div>
+    </div>
     <table id="toppage" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
             <tr>
@@ -228,18 +273,22 @@ $(document).ready(function() {
 
     var elementyearmonth = $('#elementyearmonth').val()
 
+    var elementclient = $('#elementclient').val()
+
     const elementar = elementyearmonth.split(" ");
 
     var elementmonth = elementar[0];
 
     var elementyear = elementar[1];
 
-    updateelementdata(elementmonth,elementyear);
+    updateelementdata(elementmonth,elementyear,elementclient);
 
-    $("#elementyearmonth").change(function(){
+    $("#elementyearmonth,#elementclient").change(function(){
 
 
     var elementyearmonth = $('#elementyearmonth').val()
+
+    var elementclient = $('#elementclient').val()
 
     const elementar = elementyearmonth.split(" ");
 
@@ -254,7 +303,7 @@ $(document).ready(function() {
 
     $("#span-brief").html($('#elementyearmonth').val())
 
-    updateelementdata(elementmonth,elementyear);
+    updateelementdata(elementmonth,elementyear,elementclient);
 
     });
 
@@ -266,6 +315,7 @@ $(document).ready(function() {
 
     var countryyearmonth = $('#countryyearmonth').val()
 
+    var countryclient = $('#countryclient').val()
 
     const countryar = countryyearmonth.split(" ");
 
@@ -273,11 +323,13 @@ $(document).ready(function() {
 
     var countryyear = countryar[1];
 
-    updatecountrydata(countrymonth,countryyear);
+    updatecountrydata(countrymonth,countryyear,countryclient);
 
-    $("#countryyearmonth").change(function(){
+    $("#countryyearmonth,#countryclient").change(function(){
 
         var countryyearmonth = $('#countryyearmonth').val()
+
+        var countryclient = $('#countryclient').val()
 
         const countryar = countryyearmonth.split(" ");
 
@@ -290,7 +342,7 @@ $(document).ready(function() {
 
         $("#span-country").html($('#countryyearmonth').val())
 
-        updatecountrydata(countrymonth,countryyear);
+        updatecountrydata(countrymonth,countryyear,countryclient);
 
     });
 
@@ -303,6 +355,7 @@ toppagetable=new DataTable('#toppage');
 
 var toppageyearmonth = $('#toppagesyearmonth').val()
 
+var toppageclient = $('#toppagesclient').val()
 
 const toppagear = toppageyearmonth.split(" ");
 
@@ -310,12 +363,13 @@ var toppagemonth = toppagear[0];
 
 var toppageyear = toppagear[1];
 
-updatetoppagedata(toppagemonth,toppageyear);
+updatetoppagedata(toppagemonth,toppageyear,toppageclient);
 
-$("#toppagesyearmonth").change(function(){
+$("#toppagesyearmonth,#toppagesclient").change(function(){
 
     var toppageyearmonth = $('#toppagesyearmonth').val()
 
+    var toppageclient = $('#toppagesclient').val()
 
     const toppagear = toppageyearmonth.split(" ");
 
@@ -325,7 +379,7 @@ $("#toppagesyearmonth").change(function(){
 
     $("#span-toppages").html($('#toppagesyearmonth').val())
 
-    updatetoppagedata(toppagemonth,toppageyear);
+    updatetoppagedata(toppagemonth,toppageyear,toppageclient);
 
 });
 
@@ -337,6 +391,7 @@ keytable=new DataTable('#keywordrankings');
 
 var keywordyearmonth = $('#keywordyearmonth').val()
 
+var keywordclient = $('#keywordclient').val()
 
 const keywordar = keywordyearmonth.split(" ");
 
@@ -354,11 +409,13 @@ var keywordpreyear = keywordprear[1];
 
 console.log(keywordpremonth,keywordpreyear);
 
-updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
 
-$("#keywordyearmonth").change(function(){
+$("#keywordyearmonth,#keywordclient").change(function(){
 
-    var keywordyearmonth = $('#keywordyearmonth').val()
+    var keywordyearmonth = $('#keywordyearmonth').val();
+
+    var keywordclient = $('#keywordclient').val()
 
     const keywordar = keywordyearmonth.split(" ");
 
@@ -379,7 +436,7 @@ $("#keywordyearmonth").change(function(){
 
     console.log(keywordpremonth,keywordpreyear);
 
-    updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+    updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
 
 });
 
@@ -439,7 +496,7 @@ function getPreviousMonth(currentMonthString,currentYearString) {
 
 
 
-function updateelementdata(month,year){
+function updateelementdata(month,year,client){
 
 
 let url = "{{ route('rankings.getelementrankings') }}";
@@ -465,6 +522,7 @@ $.easyAjax({
             _token: csrfToken,
             month:month,
             year:year,
+            client:client
         },
         success: function(response) {
 
@@ -504,7 +562,7 @@ $.easyAjax({
 
 }
 
-function updatecountrydata(month,year){
+function updatecountrydata(month,year,client){
 
 
 let url = "{{ route('rankings.getcountryrankings') }}";
@@ -530,6 +588,7 @@ $.easyAjax({
             _token: csrfToken,
             month:month,
             year:year,
+            client:client,
         },
         success: function(response) {
 
@@ -557,7 +616,7 @@ $.easyAjax({
 }
 
 
-function updatetoppagedata(month,year){
+function updatetoppagedata(month,year,client){
 
 
 let url = "{{ route('rankings.gettoppages') }}";
@@ -583,6 +642,7 @@ $.easyAjax({
             _token: csrfToken,
             month:month,
             year:year,
+            client:client,
         },
         success: function(response) {
 
@@ -610,7 +670,7 @@ $.easyAjax({
 }
 
 
-function updatekeyworddata(month,year,premonth,preyear){
+function updatekeyworddata(month,year,premonth,preyear,client){
 
 
 let url = "{{ route('rankings.getkeywordrangerankings') }}";
@@ -638,12 +698,13 @@ $.easyAjax({
             year:year,
             premonth:premonth,
             preyear:preyear,
+            client:client,
         },
         success: function(response) {
 
             if (response.status == 'success') {
                 
-                // console.log(response.element);
+            
                 keytable.clear().draw();
                 response.keywordrange.forEach((item) => {
 

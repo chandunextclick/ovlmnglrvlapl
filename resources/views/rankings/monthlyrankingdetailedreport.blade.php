@@ -40,33 +40,41 @@ input[type="date"] {
     <div class="col-md-12 card">
     <h4 class="mt-4">Keyword Monthly Rankings</h4>
     <div class="row">
-        <div class="col-md-4">
-        <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="kewordyearmonth" id="keywordyearmonth"  required>
-                            
-                            <?php
-                            
-                            $month = strtotime(date('Y').'-'.date('m').'-'.date('j').' - 4 months');
-                            $end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 1 months');
-                            while($month < $end){
-                
-                                $selected = (date('F Y', $month)==$yearmonth)? ' selected' :'';
-                
-                            ?>
-                
-                                            <option <?= $selected ?> value="<?= date('F Y', $month) ?>"><?=date('F Y', $month)?></option>
-                
-                            <?php
-                            $month = strtotime("+1 month", $month);
-                            }
-                            ?>
-    </select> 
-        </div>     
-        <div class="col-md-4"> 
-        <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
-            <input type="text" id="myInputTextField" class="form-control height-35 f-14" placeholder="Search" autocomplete="off">
-            </div>
+        <div class="col-md-3">
+            <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="kewordyearmonth" id="keywordyearmonth"  required>
+                                
+                                <?php
+                                
+                                $month = strtotime(date('Y').'-'.date('m').'-'.date('j').' - 4 months');
+                                $end = strtotime(date('Y').'-'.date('m').'-'.date('j').' + 1 months');
+                                while($month < $end){
+                    
+                                    $selected = (date('F Y', $month)==$yearmonth)? ' selected' :'';
+                    
+                                ?>
+                    
+                                                <option <?= $selected ?> value="<?= date('F Y', $month) ?>"><?=date('F Y', $month)?></option>
+                    
+                                <?php
+                                $month = strtotime("+1 month", $month);
+                                }
+                                ?>
+            </select> 
         </div>  
-        <div class="col-md-4">
+        <div class="col-md-3">
+                <select class="form-control height-35 f-14 mt-4" placeholder="client"  name="keywordclient" id="keywordclient"  required>                 
+                                        <option value="EDOXI">EDOXI</option>
+                                        <option value="TIMEMASTER">TIME MASTER</option>
+                                        <option value="TIMETRAINING">TIME TRAINING</option>                
+                </select>  
+        </div>
+   
+        <div class="col-md-3"> 
+            <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
+                <input type="text" id="myInputTextField" class="form-control height-35 f-14" placeholder="Search" autocomplete="off">
+                </div>
+        </div>  
+        <div class="col-md-3">
         <select class="form-control height-35 f-14 mt-4" placeholder="Course"  name="course_name" id="course_name">
                             <option selected disabled>Select Course</option>
                             @foreach($courses as $course) 
@@ -100,7 +108,7 @@ input[type="date"] {
   </div>
 </div>
 
-<button class="btn btn-success" id="observ-btn"><a href="<?=route('rankings.monthlydetailedseoreport',['yearmonth' => $yearmonth])?>" class="text-white">observation</a></button>
+<button class="btn btn-success" id="observ-btn"><a href="<?=route('rankings.monthlydetailedseoreport',['yearmonth' => $yearmonth,'client' => 'EDOXI'])?>" class="text-white">observation</a></button>
 
 @endsection
 
@@ -131,6 +139,8 @@ keytable=new DataTable('#keyword');
 
 var keywordyearmonth = $('#keywordyearmonth').val()
 
+var keywordclient = $('#keywordclient').val()
+
 
 const keywordar = keywordyearmonth.split(" ");
 
@@ -148,17 +158,23 @@ var keywordpreyear = keywordprear[1];
 
 console.log(keywordpremonth,keywordpreyear);
 
-updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
 
-$("#keywordyearmonth").change(function(){
+$("#keywordyearmonth,#keywordclient").change(function(){
 
 
     var selectedYearMonth = $('#keywordyearmonth').val();
-    var newRoute = "{{ route('rankings.monthlydetailedseoreport',':yearmonth') }}";
-    newRoute = newRoute.replace(':yearmonth',selectedYearMonth);
+
+    var keywordclient = $('#keywordclient').val()
+
+    var newRoute = "{{ route('rankings.monthlydetailedseoreport', ['yearmonth' => ':yearmonth', 'client' => ':client']) }}";
+
+    newRoute = newRoute.replace(':yearmonth',selectedYearMonth).replace(':client', keywordclient);
+
     $('#observ-btn a').attr('href', newRoute);
 
     var keywordyearmonth = $('#keywordyearmonth').val()
+
 
     const keywordar = keywordyearmonth.split(" ");
 
@@ -180,7 +196,7 @@ $("#keywordyearmonth").change(function(){
 
     console.log(keywordpremonth,keywordpreyear);
 
-    updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear);
+    updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
 
 });
 
@@ -240,7 +256,7 @@ function getPreviousMonth(currentMonthString,currentYearString) {
 }
 
 
-function updatekeyworddata(month,year,premonth,preyear){
+function updatekeyworddata(month,year,premonth,preyear,client){
 
 
 let url = "{{ route('rankings.getkeywordrankings') }}";
@@ -268,6 +284,7 @@ $.easyAjax({
             year:year,
             premonth:premonth,
             preyear:preyear,
+            client:client,
         },
         success: function(response) {
 

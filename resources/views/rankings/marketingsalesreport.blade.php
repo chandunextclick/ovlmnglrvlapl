@@ -154,8 +154,7 @@ $("#keywordyearmonth").change(function(){
 
 
     var selectedYearMonth = $('#keywordyearmonth').val();
-    var newRoute = "{{ route('rankings.monthlydetailedseoreport',':yearmonth') }}";
-    newRoute = newRoute.replace(':yearmonth',selectedYearMonth);
+
     $('#observ-btn a').attr('href', newRoute);
 
     var keywordyearmonth = $('#keywordyearmonth').val()
@@ -269,6 +268,7 @@ $.easyAjax({
             year:year,
             premonth:premonth,
             preyear:preyear,
+            client:"EDOXI",
         },
         success: function(response) {
 
