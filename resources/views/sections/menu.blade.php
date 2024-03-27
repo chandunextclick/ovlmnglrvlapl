@@ -374,6 +374,36 @@
 @if (in_array('reports', user_modules()) && ($sidebarUserPermissions['view_digitalmarketing_report'] == 4  ))
 
 
+<x-menu-item icon="bar-chart" :text="__('app.menu.rankingmaster')">
+            <x-slot name="iconPath">
+                <path
+                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
+            </x-slot>
+            <div class="accordionItemContent pb-2">
+
+                <x-sub-menu-item :link="route('rankings.rankingcourseview')" :text="__('app.menu.rankingcourse')" />
+         
+                <x-sub-menu-item :link="route('rankings.rankingkeywordview')" :text="__('app.menu.rankingkeyword')" />
+                
+
+                <x-sub-menu-item :link="route('rankings.rankingelementview')" :text="__('app.menu.rankingelement')" />
+                
+
+                <x-sub-menu-item :link="route('rankings.rankingcountryview')" :text="__('app.menu.rankingcountry')" />
+                
+
+                <x-sub-menu-item :link="route('rankings.monthlykeywordranking')" :text="__('app.menu.monthlykeywordranking')" />
+
+                <x-sub-menu-item :link="route('rankings.monthlyelementranking')" :text="__('app.menu.monthlyelementranking')" />
+
+                <x-sub-menu-item :link="route('rankings.monthlycountryranking')" :text="__('app.menu.monthlycountryranking')" />
+
+                <x-sub-menu-item :link="route('rankings.toppagesbyclick')" :text="__('app.menu.toppagesbyclick')" />
+  
+            </div>
+    </x-menu-item>
+
+
 <x-menu-item icon="graph-up" :text="__('app.menu.digitalmarketing')" :link="route('rankings.monthlyrankingreport')">
             <x-slot name="iconPath">
                 <path
@@ -381,33 +411,6 @@
             </x-slot>
 </x-menu-item>
 
-<x-menu-item icon="bar-chart" :text="__('app.menu.monthlykeywordranking')" :link="route('rankings.monthlykeywordranking')">
-            <x-slot name="iconPath">
-                <path
-                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
-            </x-slot>
-</x-menu-item>
-
-<x-menu-item icon="bar-chart" :text="__('app.menu.monthlyelementranking')" :link="route('rankings.monthlyelementranking')">
-            <x-slot name="iconPath">
-                <path
-                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
-            </x-slot>
-</x-menu-item>
-
-<x-menu-item icon="bar-chart" :text="__('app.menu.monthlycountryranking')" :link="route('rankings.monthlycountryranking')">
-            <x-slot name="iconPath">
-                <path
-                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
-            </x-slot>
-</x-menu-item>
-
-<x-menu-item icon="bar-chart" :text="__('app.menu.toppagesbyclick')" :link="route('rankings.toppagesbyclick')">
-            <x-slot name="iconPath">
-                <path
-                    d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z" />
-            </x-slot>
-</x-menu-item>
 
 @endif
 
