@@ -32,7 +32,10 @@ class RankingsController extends AccountBaseController
         $data['pageTitle']= 'ADD Ranking Element';
         $data['pushSetting']= $this->pushSetting;
         $data['pusherSettings']= $this->pusherSettings;
-        $data['checkListCompleted']= $this->checkListCompleted;
+        if (in_array('admin', user_roles())){
+
+            $data['checkListCompleted']= $this->checkListCompleted;
+        }
         $data['checkListTotal']= $this->checkListTotal;
         $data['activeTimerCount']= $this->activeTimerCount;
         $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -59,7 +62,10 @@ class RankingsController extends AccountBaseController
         $data['pageTitle']= 'Edit Ranking Element';
         $data['pushSetting']= $this->pushSetting;
         $data['pusherSettings']= $this->pusherSettings;
-        $data['checkListCompleted']= $this->checkListCompleted;
+        if (in_array('admin', user_roles())){
+
+            $data['checkListCompleted']= $this->checkListCompleted;
+        }
         $data['checkListTotal']= $this->checkListTotal;
         $data['activeTimerCount']= $this->activeTimerCount;
         $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -89,7 +95,10 @@ class RankingsController extends AccountBaseController
         $data['pageTitle']= 'Ranking Element';
         $data['pushSetting']= $this->pushSetting;
         $data['pusherSettings']= $this->pusherSettings;
-        $data['checkListCompleted']= $this->checkListCompleted;
+        if (in_array('admin', user_roles())){
+
+            $data['checkListCompleted']= $this->checkListCompleted;
+        }
         $data['checkListTotal']= $this->checkListTotal;
         $data['activeTimerCount']= $this->activeTimerCount;
         $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -197,7 +206,10 @@ public function rankingcountrycreate()
     $data['pageTitle']= 'ADD Ranking Country';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -224,7 +236,10 @@ public function rankincountryedit($id)
     $data['pageTitle']= 'Edit Ranking Country';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -254,7 +269,10 @@ public function rankingcountryview()
     $data['pageTitle']= 'Ranking Country';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -274,7 +292,7 @@ public function rankingcountryview()
 
 
     $data['courses'] = DB::select($query);
-    
+
     $data['rankingcountry']= DB::table('ranking_countries')->get();
     
 
@@ -363,7 +381,10 @@ public function rankingcoursecreate()
     $data['pageTitle']= 'ADD Ranking Course';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -390,7 +411,10 @@ public function rankincourseedit($id)
     $data['pageTitle']= 'Edit Ranking Course';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -420,7 +444,10 @@ public function rankingcourseview()
     $data['pageTitle']= 'Ranking Course';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -528,7 +555,10 @@ public function rankingkeywordcreate()
     $data['pageTitle']= 'ADD Ranking Keyword';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -559,7 +589,10 @@ public function rankinkeywordedit($id)
     $data['pageTitle']= 'Edit Ranking Keyword';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -639,7 +672,10 @@ public function rankingkeywordview()
     $data['pageTitle']= 'Ranking Course';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
