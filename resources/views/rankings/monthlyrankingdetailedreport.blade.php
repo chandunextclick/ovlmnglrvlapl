@@ -83,7 +83,14 @@ input[type="date"] {
 
                             @endforeach
                         </select> 
-        </div>                  
+        </div> 
+        <div class="col-md-3">
+        <select class="form-control height-35 f-14 mt-4 d-none" placeholder="location"  name="keywordlocation" id="keywordlocation">                 
+                            <option value="ALL">ALL</option>
+                            <option value="AbuDhabi">Abu Dhabi</option>
+                            <option value="Mussafah">Mussafah</option>                
+        </select>  
+        </div>                 
     </div>
 
    
@@ -108,7 +115,7 @@ input[type="date"] {
   </div>
 </div>
 
-<button class="btn btn-success" id="observ-btn"><a href="<?=route('rankings.monthlydetailedseoreport',['yearmonth' => $yearmonth,'client' => 'EDOXI'])?>" class="text-white">observation</a></button>
+<button class="btn btn-success" id="observ-btn"><a href="<?=route('rankings.monthlydetailedseoreport',['yearmonth' => $yearmonth,'client' => 'EDOXI','location' => 'ALL'])?>" class="text-white" target="_blank">observation</a></button>
 
 @endsection
 
@@ -141,6 +148,7 @@ var keywordyearmonth = $('#keywordyearmonth').val()
 
 var keywordclient = $('#keywordclient').val()
 
+var keywordlocation = $('#keywordlocation').val()
 
 const keywordar = keywordyearmonth.split(" ");
 
@@ -158,18 +166,33 @@ var keywordpreyear = keywordprear[1];
 
 console.log(keywordpremonth,keywordpreyear);
 
-updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
+updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient,keywordlocation);
 
-$("#keywordyearmonth,#keywordclient").change(function(){
+$("#keywordyearmonth,#keywordclient,#keywordlocation").change(function(){
 
 
     var selectedYearMonth = $('#keywordyearmonth').val();
 
     var keywordclient = $('#keywordclient').val()
 
-    var newRoute = "{{ route('rankings.monthlydetailedseoreport', ['yearmonth' => ':yearmonth', 'client' => ':client']) }}";
 
-    newRoute = newRoute.replace(':yearmonth',selectedYearMonth).replace(':client', keywordclient);
+    if(keywordclient == "TIMEMASTER"){
+
+    $('#keywordlocation').removeClass("d-none");
+
+    }else{
+
+    $('#keywordlocation').prop('selectedIndex',0);
+
+    $('#keywordlocation').addClass("d-none");
+
+    }
+
+    var keywordlocation = $('#keywordlocation').val()
+
+    var newRoute = "{{ route('rankings.monthlydetailedseoreport', ['yearmonth' => ':yearmonth', 'client' => ':client', 'location' => ':location']) }}";
+
+    newRoute = newRoute.replace(':yearmonth',selectedYearMonth).replace(':client', keywordclient).replace(':location', keywordlocation);
 
     $('#observ-btn a').attr('href', newRoute);
 
@@ -196,7 +219,7 @@ $("#keywordyearmonth,#keywordclient").change(function(){
 
     console.log(keywordpremonth,keywordpreyear);
 
-    updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
+    updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient,keywordlocation);
 
 });
 
@@ -256,7 +279,7 @@ function getPreviousMonth(currentMonthString,currentYearString) {
 }
 
 
-function updatekeyworddata(month,year,premonth,preyear,client){
+function updatekeyworddata(month,year,premonth,preyear,client,location){
 
 
 let url = "{{ route('rankings.getkeywordrankings') }}";
@@ -285,6 +308,7 @@ $.easyAjax({
             premonth:premonth,
             preyear:preyear,
             client:client,
+            location:location,
         },
         success: function(response) {
 

@@ -155,6 +155,8 @@ var keywordyear = '<?php echo $year; ?>';
 
 var client = '<?php echo $client; ?>';
 
+var location = '<?php echo $location; ?>';
+
 console.log(keywordmonth,keywordyear);
 
 var keywordpreviousmonth = getPreviousMonth(keywordmonth,keywordyear);
@@ -166,15 +168,15 @@ var keywordpremonth = keywordprear[0];
 var keywordpreyear = keywordprear[1];
 
 
-updatedroppednoonekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
+updatedroppednoonekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client,location);
 
-updateupnoonekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
+updateupnoonekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client,location);
 
-updatedroppedfromtwokeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
+updatedroppedfromtwokeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client,location);
 
-updatetwotofivekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
+updatetwotofivekeyword(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client,location);
 
-updatedroppedniche(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client);
+updatedroppedniche(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,client,location);
 
 function getPreviousMonth(currentMonthString,currentYearString) {
 
@@ -196,7 +198,7 @@ function getPreviousMonth(currentMonthString,currentYearString) {
 // ------------------------------------------------------------------------------
 
 
-function updatedroppedniche(month,year,premonth,preyear,client){
+function updatedroppedniche(month,year,premonth,preyear,client,location){
 
 
 let url = "{{ route('rankings.getdropedniche') }}";
@@ -225,6 +227,7 @@ $.easyAjax({
             premonth:premonth,
             preyear:preyear,
             client:client,
+            location:location,
         },
         success: function(response) {
 
@@ -256,7 +259,7 @@ $.easyAjax({
 // ------------------------------------------------------------------------------
 
 
-function updatedroppednoonekeyword(month,year,premonth,preyear,client){
+function updatedroppednoonekeyword(month,year,premonth,preyear,client,location){
 
 
 let url = "{{ route('rankings.getdropednooneword') }}";
@@ -285,6 +288,7 @@ $.easyAjax({
             premonth:premonth,
             preyear:preyear,
             client:client,
+            location:location,
         },
         success: function(response) {
 
@@ -316,7 +320,7 @@ $.easyAjax({
 // ------------------------------------------------------------------------------
 
 
-function updateupnoonekeyword(month,year,premonth,preyear,client){
+function updateupnoonekeyword(month,year,premonth,preyear,client,location){
 
 
 let url = "{{ route('rankings.getupnooneword') }}";
@@ -345,6 +349,7 @@ $.easyAjax({
             premonth:premonth,
             preyear:preyear,
             client:client,
+            location:location,
         },
         success: function(response) {
 
@@ -375,7 +380,7 @@ $.easyAjax({
 // dropedfromtwo
 // ------------------------------------------------------------------------------
 
-function updatedroppedfromtwokeyword(month,year,premonth,preyear,client){
+function updatedroppedfromtwokeyword(month,year,premonth,preyear,client,location){
 
 
 let url = "{{ route('rankings.getdropedfromtwoword') }}";
@@ -404,6 +409,7 @@ $.easyAjax({
             premonth:premonth,
             preyear:preyear,
             client:client,
+            location:location,
         },
         success: function(response) {
 
@@ -434,7 +440,7 @@ $.easyAjax({
 // uptwotofive
 // ------------------------------------------------------------------------------
 
-function updatetwotofivekeyword(month,year,premonth,preyear,client){
+function updatetwotofivekeyword(month,year,premonth,preyear,client,location){
 
 
 let url = "{{ route('rankings.getuptwotofiveword') }}";
@@ -463,6 +469,7 @@ $.easyAjax({
             premonth:premonth,
             preyear:preyear,
             client:client,
+            location:location,
         },
         success: function(response) {
 

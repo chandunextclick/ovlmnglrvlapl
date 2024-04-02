@@ -114,7 +114,7 @@ class RankingsController extends AccountBaseController
         $data['company']=$this->company;
         
         
-        $query = "SELECT * FROM `ranking_course`";
+        $query = "SELECT * FROM `ranking_course` ORDER by ranking_course";
 
 
         $data['courses'] = DB::select($query);
@@ -288,7 +288,7 @@ public function rankingcountryview()
     $data['company']=$this->company;
     
 
-    $query = "SELECT * FROM `ranking_course`";
+    $query = "SELECT * FROM `ranking_course` ORDER by ranking_course";
 
 
     $data['courses'] = DB::select($query);
@@ -574,7 +574,7 @@ public function rankingkeywordcreate()
     $data['company']=$this->company;
 
 
-    $query = "SELECT * FROM `ranking_course`";
+    $query = "SELECT * FROM `ranking_course` ORDER by ranking_course";
 
 
     $data['courses'] = DB::select($query);
@@ -607,7 +607,7 @@ public function rankinkeywordedit($id)
     $data['worksuitePlugins']=$this->worksuitePlugins;
     $data['company']=$this->company;
     
-    $query = "SELECT * FROM `ranking_course`";
+    $query = "SELECT * FROM `ranking_course` ORDER by ranking_course";
 
     $data['courses'] = DB::select($query);
 
@@ -690,7 +690,7 @@ public function rankingkeywordview()
     $data['worksuitePlugins']=$this->worksuitePlugins;
     $data['company']=$this->company;
 
-    $query = "SELECT * FROM `ranking_course`";
+    $query = "SELECT * FROM `ranking_course` ORDER by ranking_course";
 
 
     $data['courses'] = DB::select($query);
@@ -1239,7 +1239,7 @@ public function monthlyelementranking(Request $request)
     
         $data['monthdata']=$monthdata;
     
-        $query = "SELECT * FROM `ranking_course`";
+        $query = "SELECT * FROM `ranking_course` ORDER by ranking_course";
 
 
         $data['courses'] = DB::select($query);
@@ -1311,7 +1311,7 @@ public function monthlyelementranking(Request $request)
     
         $data['monthdata']=$monthdata;
     
-        $query = "SELECT * FROM `ranking_course`";
+        $query = "SELECT * FROM `ranking_course` ORDER by ranking_course";
 
 
         $data['courses'] = DB::select($query);
@@ -1323,7 +1323,7 @@ public function monthlyelementranking(Request $request)
     }
 
 
-    public function monthlydetailedseoreport($yearmonth,$client)
+    public function monthlydetailedseoreport($yearmonth,$client,$location)
     {
     
         $data['pageTitle']= 'Seo Report';
@@ -1357,6 +1357,8 @@ public function monthlyelementranking(Request $request)
         $data['year'] = $yearmonthar[1];
 
         $data['client'] = $client;
+
+        $data['location'] = $location;
 
         return view('rankings.monthlyseodetailedreport',$data);
     }
@@ -1449,10 +1451,35 @@ public function getelementrankings(Request $request) {
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
         $client = $request->input('client');
-        
-    
+        $location = $request->input('location');
 
-        $rankingkeyword= DB::table('ranking_keyword')
+
+
+        if($client == "TIMEMASTER" && $location != "ALL"){
+
+
+            $rankingkeyword= DB::table('ranking_keyword')
+            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+            ->leftJoin('monthy_keyword_rankings', function ($join) use ($year,$month) {
+                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                    ->where('monthy_keyword_rankings.year', '=', $year)
+                    ->where('monthy_keyword_rankings.month', '=', $month);
+            })
+            ->leftJoin('monthy_keyword_rankings as mkr', function ($join) use ($preyear,$premonth) {
+                $join->on('mkr.keyword_id', '=', 'ranking_keyword.id')
+                    ->where('mkr.year', '=', $preyear)
+                    ->where('mkr.month', '=', $premonth);
+            })
+            ->where('ranking_keyword.client', '=', $client)
+            ->where('ranking_keyword.location', '=', $location)
+            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','monthy_keyword_rankings.googlemap_rank','mkr.google_rank as prerank','mkr.googlemap_rank as premaprank')
+            ->orderby('ranking_keyword.ranking_keyword')
+            ->get();   
+
+
+        }else{
+
+            $rankingkeyword= DB::table('ranking_keyword')
                             ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
                             ->leftJoin('monthy_keyword_rankings', function ($join) use ($year,$month) {
                                 $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
@@ -1468,6 +1495,13 @@ public function getelementrankings(Request $request) {
                             ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','monthy_keyword_rankings.googlemap_rank','mkr.google_rank as prerank','mkr.googlemap_rank as premaprank')
                             ->orderby('ranking_keyword.ranking_keyword')
                             ->get();   
+
+
+        }
+        
+    
+
+        
         
                             
         return Reply::dataOnly(['status' => 'success','keyword' => $rankingkeyword]);
@@ -1579,6 +1613,32 @@ public function getelementrankings(Request $request) {
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
         $client =  $request->input('client');
+        $location =  $request->input('location');
+
+        if($client == "TIMEMASTER" && $location != "ALL"){
+
+            $droppedniche = DB::table('ranking_keyword')
+                        ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+                        ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                            $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                                ->where('monthy_keyword_rankings.year', '=', $preyear)
+                                ->where('monthy_keyword_rankings.month', '=', $premonth);
+                        })
+                        ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                            $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                                ->where('mkr.year', '=', $year)
+                                ->where('mkr.month', '=', $month)
+                                ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
+                        })
+                        ->where('ranking_keyword.client', '=', $client)
+                        ->where('ranking_keyword.location', '=', $location)
+                        ->select('ranking_course.ranking_course')
+                            ->groupBy('ranking_course.ranking_course')
+                            ->havingRaw('COUNT(ranking_course.ranking_course) > 1')
+                            ->get();  
+
+
+        }else{
 
         $droppedniche = DB::table('ranking_keyword')
                         ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
@@ -1599,6 +1659,7 @@ public function getelementrankings(Request $request) {
                             ->havingRaw('COUNT(ranking_course.ranking_course) > 1')
                             ->get();  
 
+        }
         
                             
         return Reply::dataOnly(['status' => 'success','droppedniche' => $droppedniche]);
@@ -1614,6 +1675,32 @@ public function getelementrankings(Request $request) {
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
         $client =  $request->input('client');
+        $location =  $request->input('location');
+
+        if($client == "TIMEMASTER" && $location != "ALL"){
+
+
+            $droppednonone = DB::table('ranking_keyword')
+                            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+                            ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                                    ->where('monthy_keyword_rankings.year', '=', $preyear)
+                                    ->where('monthy_keyword_rankings.month', '=', $premonth)
+                                    ->where('monthy_keyword_rankings.google_rank', '=',1);
+                            })
+                            ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                                $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                                    ->where('mkr.year', '=', $year)
+                                    ->where('mkr.month', '=', $month)
+                                    ->where('mkr.google_rank', '>', 1);
+                            })
+                            ->where('ranking_keyword.client', '=', $client)
+                            ->where('ranking_keyword.location', '=', $location)
+                            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
+                            ->get();  
+
+
+        }else{
 
         $droppednonone = DB::table('ranking_keyword')
                             ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
@@ -1631,7 +1718,9 @@ public function getelementrankings(Request $request) {
                             })
                             ->where('ranking_keyword.client', '=', $client)
                             ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
-                            ->get();   
+                            ->get();  
+                            
+        }
         
                             
         return Reply::dataOnly(['status' => 'success','droppednonone' => $droppednonone]);
@@ -1646,6 +1735,35 @@ public function getelementrankings(Request $request) {
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
         $client =  $request->input('client');
+        $location =  $request->input('location');
+
+
+        if($client == "TIMEMASTER" && $location != "ALL"){
+
+
+            $upnonone = DB::table('ranking_keyword')
+            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+            ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                    ->where('monthy_keyword_rankings.year', '=', $preyear)
+                    ->where('monthy_keyword_rankings.month', '=', $premonth)
+                    ->where('monthy_keyword_rankings.google_rank', '>',1);
+            })
+            ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                    ->where('mkr.year', '=', $year)
+                    ->where('mkr.month', '=', $month)
+                    ->where('mkr.google_rank', '=', 1);
+            })
+            ->where('ranking_keyword.client', '=', $client)
+            ->where('ranking_keyword.location', '=', $location)
+            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as prevposition','mkr.google_rank as upposition')
+            ->get();  
+
+
+
+        }else{
+
 
         $upnonone = DB::table('ranking_keyword')
                             ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
@@ -1664,6 +1782,8 @@ public function getelementrankings(Request $request) {
                             ->where('ranking_keyword.client', '=', $client)
                             ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as prevposition','mkr.google_rank as upposition')
                             ->get();   
+
+        }
         
                             
         return Reply::dataOnly(['status' => 'success','upnonone' => $upnonone]);
@@ -1678,24 +1798,61 @@ public function getelementrankings(Request $request) {
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
         $client =  $request->input('client');
+        $location =  $request->input('location');
 
-        $uptotwotofive = DB::table('ranking_keyword')
-                        ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
-                        ->Join('monthy_keyword_rankings', function ($join) use ($year,$month) {
-                            $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
-                                ->where('monthy_keyword_rankings.year', '=', $year)
-                                ->where('monthy_keyword_rankings.month', '=', $month)
-                                ->whereIn('monthy_keyword_rankings.google_rank',array(2,3,4,5));
-                        })
-                        ->Join('monthy_keyword_rankings as mkr', function ($join) use ($preyear,$premonth) {
-                            $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
-                                ->where('mkr.year', '=', $preyear)
-                                ->where('mkr.month', '=', $premonth)
-                                ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
-                        })
-                        ->where('ranking_keyword.client', '=', $client)
-                        ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as currentposition','mkr.google_rank as prevposition')
-                        ->get();   
+
+        if($client == "TIMEMASTER" && $location != "ALL"){
+
+
+            $uptotwotofive = DB::table('ranking_keyword')
+            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+            ->Join('monthy_keyword_rankings', function ($join) use ($year,$month) {
+                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                    ->where('monthy_keyword_rankings.year', '=', $year)
+                    ->where('monthy_keyword_rankings.month', '=', $month)
+                    ->whereIn('monthy_keyword_rankings.google_rank',array(2,3,4,5));
+            })
+            ->Join('monthy_keyword_rankings as mkr', function ($join) use ($preyear,$premonth) {
+                $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                    ->where('mkr.year', '=', $preyear)
+                    ->where('mkr.month', '=', $premonth)
+                    ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
+            })
+            ->where('ranking_keyword.client', '=', $client)
+            ->where('ranking_keyword.location', '=', $location)
+            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as currentposition','mkr.google_rank as prevposition')
+            ->get();  
+
+
+
+
+
+
+        }else{
+
+
+
+            $uptotwotofive = DB::table('ranking_keyword')
+            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+            ->Join('monthy_keyword_rankings', function ($join) use ($year,$month) {
+                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                    ->where('monthy_keyword_rankings.year', '=', $year)
+                    ->where('monthy_keyword_rankings.month', '=', $month)
+                    ->whereIn('monthy_keyword_rankings.google_rank',array(2,3,4,5));
+            })
+            ->Join('monthy_keyword_rankings as mkr', function ($join) use ($preyear,$premonth) {
+                $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                    ->where('mkr.year', '=', $preyear)
+                    ->where('mkr.month', '=', $premonth)
+                    ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
+            })
+            ->where('ranking_keyword.client', '=', $client)
+            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank as currentposition','mkr.google_rank as prevposition')
+            ->get();   
+
+        }
+
+
         
                             
         return Reply::dataOnly(['status' => 'success','uptotwotofive' => $uptotwotofive]);
@@ -1711,28 +1868,56 @@ public function getelementrankings(Request $request) {
         $premonth = $request->input('premonth');
         $preyear = $request->input('preyear');
         $client =  $request->input('client');
-
-        $dropfromtwo = DB::table('ranking_keyword')
-                        ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
-                        ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
-                            $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
-                                ->where('monthy_keyword_rankings.year', '=', $preyear)
-                                ->where('monthy_keyword_rankings.month', '=', $premonth)
-                                ->whereIn('monthy_keyword_rankings.google_rank',array(2,3,4,5));
-                        })
-                        ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
-                            $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
-                                ->where('mkr.year', '=', $year)
-                                ->where('mkr.month', '=', $month)
-                                ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
-                        })
-                        ->where('ranking_keyword.client', '=', $client)
-                        ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
-                        ->get();     
+        $location =  $request->input('location');
 
 
+        if($client == "TIMEMASTER" && $location != "ALL"){
 
-        
+
+            $dropfromtwo = DB::table('ranking_keyword')
+            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+            ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                    ->where('monthy_keyword_rankings.year', '=', $preyear)
+                    ->where('monthy_keyword_rankings.month', '=', $premonth)
+                    ->whereIn('monthy_keyword_rankings.google_rank',array(2,3,4,5));
+            })
+            ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                    ->where('mkr.year', '=', $year)
+                    ->where('mkr.month', '=', $month)
+                    ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
+            })
+            ->where('ranking_keyword.client', '=', $client)
+            ->where('ranking_keyword.location', '=', $location)
+            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
+            ->get(); 
+
+
+
+        }else{
+
+
+            $dropfromtwo = DB::table('ranking_keyword')
+            ->join('ranking_course', 'ranking_keyword.ranking_course', '=', 'ranking_course.id')
+            ->Join('monthy_keyword_rankings', function ($join) use ($preyear,$premonth) {
+                $join->on('monthy_keyword_rankings.keyword_id', '=', 'ranking_keyword.id')
+                    ->where('monthy_keyword_rankings.year', '=', $preyear)
+                    ->where('monthy_keyword_rankings.month', '=', $premonth)
+                    ->whereIn('monthy_keyword_rankings.google_rank',array(2,3,4,5));
+            })
+            ->Join('monthy_keyword_rankings as mkr', function ($join) use ($year,$month) {
+                $join->on('mkr.keyword_id', '=', 'monthy_keyword_rankings.keyword_id')
+                    ->where('mkr.year', '=', $year)
+                    ->where('mkr.month', '=', $month)
+                    ->whereRaw('mkr.google_rank > monthy_keyword_rankings.google_rank');
+            })
+            ->where('ranking_keyword.client', '=', $client)
+            ->select('ranking_keyword.id','ranking_keyword.ranking_keyword','ranking_keyword.search_volume','ranking_course.ranking_course','monthy_keyword_rankings.google_rank','mkr.google_rank as dropped')
+            ->get();    
+
+        }
+
                             
         return Reply::dataOnly(['status' => 'success','dropfromtwo' => $dropfromtwo]);
         
@@ -2262,7 +2447,7 @@ public function monthlymarketingsalesreport(Request $request)
 
     $data['monthdata']=$monthdata;
 
-    $query = "SELECT * FROM `ranking_course`";
+    $query = "SELECT * FROM `ranking_course` ORDER by ranking_course";
 
 
     $data['courses'] = DB::select($query);

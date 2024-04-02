@@ -400,6 +400,8 @@ var keywordyearmonth = $('#keywordyearmonth').val()
 
 var keywordclient = $('#keywordclient').val()
 
+var keywordlocation = $('#keywordlocation').val()
+
 const keywordar = keywordyearmonth.split(" ");
 
 var keywordmonth = keywordar[0];
@@ -416,7 +418,7 @@ var keywordpreyear = keywordprear[1];
 
 console.log(keywordpremonth,keywordpreyear);
 
-updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
+updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient,keywordlocation);
 
 $("#keywordyearmonth,#keywordclient,#keywordlocation").change(function(){
 
