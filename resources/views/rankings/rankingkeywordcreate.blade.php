@@ -59,7 +59,8 @@
                         </label>
                         <select class="form-control height-35 f-14" placeholder="client"  name="client" id="client"  required>                 
                             <option value="EDOXI">EDOXI</option>
-                            <option value="TIMEMASTER">TIME MASTER</option>
+                            <option value="TIMEMASTERA">TIME MASTER AbuDhabi</option>
+                            <option value="TIMEMASTERM">TIME MASTER Mussafah</option>
                             <option value="TIMETRAINING">TIME TRAINING</option>                
                         </select>  
                     </div>

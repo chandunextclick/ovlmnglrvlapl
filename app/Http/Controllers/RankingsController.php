@@ -709,13 +709,46 @@ public function rankingkeywordview()
 
 public function rankinkeywordstore(Request $request) {
 
+    $clientval=$request->input('client');
+
+    $client="";
+
+    $location="";
+
+    if($clientval == "EDOXI"){
+
+        $client = "EDOXI";
+
+        $location = "DUBAI";
+
+    }elseif($clientval == "TIMETRAINING"){
+
+        $client = "TIMETRAINING";
+
+        $location = "AbuDhabi";
+
+    }elseif($clientval == "TIMEMASTERA"){
+
+        $client = "TIMEMASTER";
+
+        $location = "AbuDhabi";
+
+    }elseif($clientval == "TIMEMASTERM"){
+    
+        $client = "TIMEMASTER";
+
+        $location = "Mussafah";
+    
+    }
+
    
     $data['rankingkeyword'] = [
     
         'ranking_keyword' => $request->input('keyword_name'),
         'ranking_course' => $request->input('course_name'),
         'search_volume' => $request->input('search_volume'),
-        'client' => $request->input('client')
+        'client' => $client,
+        'location' => $location
     
     ];
     
