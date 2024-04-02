@@ -174,6 +174,13 @@ input[type="date"] {
                             <option value="TIMETRAINING">TIME TRAINING</option>                
     </select>  
     </div>
+    <div class="col-md-4">
+    <select class="form-control height-35 f-14 mt-4 d-none" placeholder="location"  name="keywordlocation" id="keywordlocation">                 
+                            <option value="ALL">ALL</option>
+                            <option value="AbuDhabi">Abu Dhabi</option>
+                            <option value="Mussafah">Mussafah</option>                
+    </select>  
+    </div>
     </div>
     <table id="keywordrankings" class="table table-striped table-responsive" style="min-height:100px;">
         <thead>
@@ -411,11 +418,29 @@ console.log(keywordpremonth,keywordpreyear);
 
 updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
 
-$("#keywordyearmonth,#keywordclient").change(function(){
+$("#keywordyearmonth,#keywordclient,#keywordlocation").change(function(){
+
+
+
 
     var keywordyearmonth = $('#keywordyearmonth').val();
 
     var keywordclient = $('#keywordclient').val()
+
+    if(keywordclient == "TIMEMASTER"){
+
+        $('#keywordlocation').removeClass("d-none");
+
+    }else{
+
+        $('#keywordlocation').prop('selectedIndex',0);
+
+        $('#keywordlocation').addClass("d-none");
+
+    }
+
+
+    var keywordlocation = $('#keywordlocation').val()
 
     const keywordar = keywordyearmonth.split(" ");
 
@@ -436,7 +461,7 @@ $("#keywordyearmonth,#keywordclient").change(function(){
 
     console.log(keywordpremonth,keywordpreyear);
 
-    updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient);
+    updatekeyworddata(keywordmonth,keywordyear,keywordpremonth,keywordpreyear,keywordclient,keywordlocation);
 
 });
 
@@ -670,7 +695,7 @@ $.easyAjax({
 }
 
 
-function updatekeyworddata(month,year,premonth,preyear,client){
+function updatekeyworddata(month,year,premonth,preyear,client,location){
 
 
 let url = "{{ route('rankings.getkeywordrangerankings') }}";
@@ -699,6 +724,7 @@ $.easyAjax({
             premonth:premonth,
             preyear:preyear,
             client:client,
+            location:location,
         },
         success: function(response) {
 

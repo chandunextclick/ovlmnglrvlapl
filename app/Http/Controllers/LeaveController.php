@@ -364,7 +364,7 @@ class LeaveController extends AccountBaseController
             $leaveYear = $leaveYear->subYear();
         }
 
-        $userTotalLeaves = Leave::byUserCount($request->user_id, $leaveYear->year);
+        $userTotalLeaves = Leave::byUserCount($request->user_id,$request->leave_type_id, $leaveYear->year);
         $remainingLeave = $employeeLeaveQuota->no_of_leaves - $userTotalLeaves;
 
         if(($userTotalLeaves + .5) == $employeeLeaveQuota->no_of_leaves && $request->duration == 'single') {
