@@ -68,6 +68,12 @@ input[type="date"] {
             
             </div>
             </div>
+            <div class="row">
+            <div class="col-md-6">
+            <div id="table-actions" class="flex-grow-1 align-items-center mt-4"> 
+                <input type="text" id="myInputTextField" class="form-control height-35 f-14" placeholder="Search" autocomplete="off">
+            </div>
+        </div></div>
 
    
 
@@ -142,6 +148,25 @@ input[type="date"] {
 $(document).ready(function() {
 
     otable=new DataTable('#example');
+
+
+
+
+$("#myInputTextField").keyup(function(){
+
+    if($(this).val()==null){
+
+        otable.search("").draw();
+
+    }else{
+
+        otable.search($(this).val()).draw();
+        
+    }
+
+
+
+});
 
 
     $("#example").on( "change", ".ranking", function( event ) {
