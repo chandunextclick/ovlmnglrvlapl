@@ -318,9 +318,32 @@ $.easyAjax({
                 keytable.clear().draw();
                 response.keyword.forEach((item) => {
 
-                    // console.log(item.ranking_element);
+                if(item.prerank<item.google_rank){
+                    
+              
 
-                    keytable.row.add([item.id,item.ranking_course,item.ranking_keyword,item.search_volume,item.google_rank,item.prerank,item.googlemap_rank,item.premaprank]).draw();
+                    curcol='<p style="color:red">'+item.google_rank+'</p>'
+
+                }else{
+
+                    curcol=item.google_rank;
+                }
+
+                if(item.premaprank<item.googlemap_rank){
+                    
+              
+
+                    curcolmap='<p style="color:red">'+item.googlemap_rank+'</p>'
+
+                }else{
+
+                    curcolmap=item.googlemap_rank;
+                }
+
+
+                
+
+                    keytable.row.add([item.id,item.ranking_course,item.ranking_keyword,item.search_volume,curcol,item.prerank,curcolmap,item.premaprank]).draw();
 
                 });
 

@@ -229,8 +229,16 @@ input[type="date"] {
     
 </div>
 
-        </div>
+
+<iframe src="http://localhost/lmsedoxi/quizzes/46/start" title="quizzes" class="mt-4" height="800px;"></iframe>
+
+
     </div>
+</div>
+
+
+
+
 
 
 

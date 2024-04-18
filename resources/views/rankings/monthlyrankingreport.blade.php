@@ -36,7 +36,7 @@ input[type="date"] {
   <div class="row">
     <div class="col-md-12 card">
     <h4 class="mt-4">SEO Brief Report <span id="span-brief"><?=$yearmonth?></span></h4>
-    <h4 class="mt-4">Country Wise Traffic Report <span id="span-country"><?=$yearmonth?></span></h4>
+    <h4 class="mt-4">Element Wise Traffic Report <span id="span-country"><?=$yearmonth?></span></h4>
     <div class="row">
         <div class="col-md-4">
     <select class="form-control height-35 f-14 mt-4" placeholder="yearmonth"  name="elementyearmonth" id="elementyearmonth"  required>
@@ -562,7 +562,16 @@ $.easyAjax({
 
                     // console.log(item.ranking_element);
 
-                    elimptable.row.add([item.ranking_element,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
+                if(item.google_rank_prev>item.google_rank){
+                    
+                    curcol='<p style="color:red">'+item.google_rank+'</p>'
+
+                }else{
+
+                    curcol=item.google_rank;
+                }
+
+                    elimptable.row.add([item.ranking_element,item.increase_percent,curcol,item.google_rank_prev]).draw();
 
                 });
 
@@ -571,9 +580,21 @@ $.easyAjax({
                 
 
                 response.trafficelement.forEach((item) => {
+                    
+                if(item.google_rank_prev>item.google_rank){
+                    
+              
 
+                    curcol='<p style="color:red">'+item.google_rank+'</p>'
 
-                eltrtable.row.add([item.ranking_element,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
+                }else{
+
+                    curcol=item.google_rank;
+                }
+
+                
+
+                eltrtable.row.add([item.ranking_element,item.increase_percent,curcol,item.google_rank_prev]).draw();
 
                 });
 
@@ -625,9 +646,22 @@ $.easyAjax({
                 cttable.clear().draw();
                 response.country.forEach((item) => {
 
-                    // console.log(item.ranking_element);
+                if(item.google_rank_prev>item.google_rank){
+                    
+              
 
-                    cttable.row.add([item.ranking_country,item.increase_percent,item.google_rank,item.google_rank_prev]).draw();
+                    curcol='<p style="color:red">'+item.google_rank+'</p>'
+
+                }else{
+
+                    curcol=item.google_rank;
+                }
+
+        
+
+                    cttable.row.add([item.ranking_country,item.increase_percent,curcol,item.google_rank_prev]).draw();
+
+
 
                 });
 
@@ -678,8 +712,6 @@ $.easyAjax({
                 // console.log(response.element);
                 toppagetable.clear().draw();
                 response.toppages.forEach((item) => {
-
-                    // console.log(item.ranking_element);
 
                     toppagetable.row.add(['<a href='+item.url+' target="_blank">'+item.url+'</a>',item.clicks]).draw();
 
@@ -736,7 +768,7 @@ $.easyAjax({
                 keytable.clear().draw();
                 response.keywordrange.forEach((item) => {
 
-                    // console.log(item.ranking_element);
+                
 
                     keytable.row.add([item.month,item.count_1_to_5,item.count_6_to_10,item.count_11_to_20,item.count_21_to_30,item.count_31greater]).draw();
 

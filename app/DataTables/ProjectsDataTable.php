@@ -412,7 +412,7 @@ class ProjectsDataTable extends BaseDataTable
         }
 
         if (!is_null($request->category_id) && $request->category_id != 'all') {
-            $model->where('category_id', $request->category_id);
+            $model->where('projects.category_id', $request->category_id);
         }
 
         if (!is_null($request->employee_id) && $request->employee_id != 'all') {

@@ -30,7 +30,10 @@ public function enquiry(Request $request)
     $data['pageTitle']= 'Enquiry';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -101,7 +104,10 @@ public function customerpersonacreate(Request $request)
     $data['pageTitle']= 'Customer Persona';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -154,7 +160,10 @@ public function customerpersonaedit($id)
     $data['pageTitle']= 'Customer Persona';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -207,7 +216,10 @@ public function customerpersonaview(Request $request)
     $data['pageTitle']= 'Customer Persona';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -281,7 +293,10 @@ public function enquirydetail($id)
     $data['pageTitle']= 'Enquiry Detail';;
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
@@ -339,7 +354,10 @@ public function essldata(Request $request){
     $data['pageTitle']= 'Employee Log';
     $data['pushSetting']= $this->pushSetting;
     $data['pusherSettings']= $this->pusherSettings;
-    $data['checkListCompleted']= $this->checkListCompleted;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
     $data['checkListTotal']= $this->checkListTotal;
     $data['activeTimerCount']= $this->activeTimerCount;
     $data['unreadNotificationCount']= $this->unreadNotificationCount;
