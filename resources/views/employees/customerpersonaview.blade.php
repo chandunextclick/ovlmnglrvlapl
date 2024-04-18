@@ -226,7 +226,7 @@ input[type="date"] {
         </tbody>
         
     </table>
-    
+            
 </div>
     </div>
 </div>
@@ -291,7 +291,7 @@ $(document).ready(function() {
 
         }else{
 
-            otable.column(1).search($(this).val()).draw();
+            otable.column(4).search($(this).val()).draw();
         }
         
 
