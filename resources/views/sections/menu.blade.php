@@ -102,6 +102,12 @@
                 <x-sub-menu-item :link="route('sprofile.essldata')" :text="__('app.menu.essldata')" /> 
                 
                 @endif
+
+                @if (isset($sidebarUserPermissions['view_designation']) && $sidebarUserPermissions['view_designation'] == 4 )
+
+                <x-sub-menu-item :link="route('sprofile.getquizuserlead')" :text="__('app.menu.quizlead')" /> 
+                
+                @endif
                 
                 
             </div>
@@ -324,6 +330,10 @@
 
                 @if ($sidebarUserPermissions['view_task_report'] == 4 && $sidebarUserPermissions['view_task_report'] != 'none' && in_array('tasks', user_modules()))
                     <x-sub-menu-item :link="route('project-report.index')" :text="__('app.menu.projectReport')" />
+                @endif
+
+                @if ($sidebarUserPermissions['view_task_report'] == 4 && $sidebarUserPermissions['view_task_report'] != 'none' && in_array('tasks', user_modules()))
+                    <x-sub-menu-item :link="route('rankings.upgradation')" :text="__('app.menu.upgradationpgReport')" />
                 @endif
 
                 @if ($sidebarUserPermissions['view_task_report'] == 4 && $sidebarUserPermissions['view_task_report'] != 'none' && in_array('tasks', user_modules()))

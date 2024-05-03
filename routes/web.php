@@ -163,6 +163,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::match(['get', 'post'], 'sprofile/enquiry', [StudentProfileController::class, 'enquiry'])->name('sprofile.enquiry');
 
+    Route::match(['get', 'post'], 'sprofile/getquizuserlead', [StudentProfileController::class, 'getquizuserlead'])->name('sprofile.getquizuserlead');
+
     Route::match(['get', 'post'], 'sprofile/essldata', [StudentProfileController::class, 'essldata'])->name('sprofile.essldata');
 
     Route::match(['get', 'post'], 'sprofile/customerpersonacreate', [StudentProfileController::class, 'customerpersonacreate'])->name('sprofile.customerpersonacreate');
@@ -257,6 +259,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::match(['get', 'post'],'rankings/monthlydetailedrankingreport', [RankingsController::class, 'monthlydetailedrankingreport'])->name('rankings.monthlydetailedrankingreport');
 
     Route::match(['get', 'post'],'rankings/monthlymarketingsalesreport', [RankingsController::class, 'monthlymarketingsalesreport'])->name('rankings.monthlymarketingsalesreport');
+
+    Route::match(['get', 'post'],'rankings/upgradation', [RankingsController::class, 'upgradation'])->name('rankings.upgradation');
     
     Route::get('rankings/monthlydetailedseoreport/{yearmonth}/{client}/{location}', [RankingsController::class, 'monthlydetailedseoreport'])->name('rankings.monthlydetailedseoreport');
 
@@ -268,6 +272,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::post('rankings/getkeywordrankings', [RankingsController::class, 'getkeywordrankings'])->name('rankings.getkeywordrankings');
 
+    Route::post('rankings/getupgradation', [RankingsController::class, 'getupgradation'])->name('rankings.getupgradation');
+    
     Route::post('rankings/getkeywordrangerankings', [RankingsController::class, 'getkeywordrangerankings'])->name('rankings.getkeywordrangerankings');
     
     Route::post('rankings/getdropedniche', [RankingsController::class, 'getdropedniche'])->name('rankings.getdropedniche');

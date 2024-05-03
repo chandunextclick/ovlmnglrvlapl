@@ -24,6 +24,79 @@ class StudentProfileController extends AccountBaseController
     }
     
 
+
+public function getquizuserlead(Request $request)
+{
+    
+        $data['pageTitle']= 'Enquiry';
+        $data['pushSetting']= $this->pushSetting;
+        $data['pusherSettings']= $this->pusherSettings;
+        if (in_array('admin', user_roles())){
+    
+            $data['checkListCompleted']= $this->checkListCompleted;
+        }
+        $data['checkListTotal']= $this->checkListTotal;
+        $data['activeTimerCount']= $this->activeTimerCount;
+        $data['unreadNotificationCount']= $this->unreadNotificationCount;
+        $data['appTheme']= $this->appTheme;
+        $data['appName']= $this->appName;
+        $data['user']= $this->user;
+        $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+        $data['companyName']=$this->companyName;
+        $data['userCompanies']=$this->userCompanies;
+        $data['currentRouteName']=$this->currentRouteName;
+        $data['unreadMessagesCount']=$this->unreadMessagesCount;
+        $data['worksuitePlugins']=$this->worksuitePlugins;
+        $data['company']=$this->company;
+        
+        $url = 'https://www.learning.edoxi.com/quizzes/getquizuserlead'; // Replace with the URL you want to fetch data from
+    
+    
+    
+        $data['date2'] = date("Y-m-d"); // Get the current date in "YYYY-MM-DD" format
+    
+        // Calculate one month before the current date
+        
+        $data['date1'] = date("Y-m-d", strtotime("-1 month", strtotime($data['date2'])));
+    
+        // dd($request->input('start_date'));    
+    
+    
+        if ($request->isMethod('post')) {
+    
+            // Handle POST request
+            $data['date1'] = $request->input('start_date');
+            $data['date2'] = $request->input('end_date');
+            
+            // Retrieve and display data based on the POST data
+        }
+
+    
+    
+        $url .= '?start_date=' . urlencode($data['date1']) . '&end_date=' . urlencode($data['date2']);
+        
+        $dateparam = array(
+            'param1' => $data['date1'],
+            'param2' => $data['date2']
+        );
+        
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+
+        $data['quizlead'] = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        $this->env = $data['quizlead'];
+        curl_close($ch);
+
+    
+        if (!$data['quizlead']) {
+            die('Failed to fetch data.');
+        }
+    
+    
+        return view('employees.quizlead',$data);
+}
+
 public function enquiry(Request $request)
 {
 

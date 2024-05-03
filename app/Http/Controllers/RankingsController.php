@@ -2458,6 +2458,60 @@ public function monthlymarketingsalesreport(Request $request)
 
 }
 
+public function upgradation(Request $request)
+{
+
+    $data['pageTitle']= 'Upgradation Page Report';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
+    
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+
+    return view('reports.upgradationreport',$data);
+
+}
+
+public function getupgradation(Request $request){
+    
+        
+    $completion = $request->input('completion');
+
+
+
+        $upgradationqry= DB::table('projects as p')
+        ->join('project_category as pc', 'pc.id', '=', 'p.category_id')
+        ->leftJoin('tasks as t', function ($join) {
+            $join->on('t.project_id', '=', 'p.id')
+                ->where('t.heading', '=', 'publishing');
+        })
+        ->leftJoin('task_results as tr','tr.task_id', '=', 't.id')
+        ->where('pc.category_name', '=', 'Course Page Upgradation/CTR improvement')
+        ->where('p.completion_percent',($completion == "notfinished")?'!=':'=', 100)
+        ->select('p.project_name','pc.category_name','p.status','t.heading','tr.result')
+        ->get();   
+
+                        
+    return Reply::dataOnly(['status' => 'success','upgradation' => $upgradationqry]);
+    
+}
+
 
 
 
