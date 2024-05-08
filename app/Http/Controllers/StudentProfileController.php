@@ -846,11 +846,11 @@ public function generateesslreport(Request $request) {
         $count=0;
         if($data['essllog']){
 
-                // Mail::send('employees.ajax.mail',$data,function($messages) use ($user){  
-                //     $messages->to($user->email);
-                //     $messages->subject('Log( '.date("Y-m-d", strtotime("-1 day")).' ) of '. $user->name);
+                Mail::send('employees.ajax.mail',$data,function($messages) use ($user){  
+                    $messages->to($user->email);
+                    $messages->subject('Log( '.date("Y-m-d", strtotime("-1 day")).' ) of '. $user->name);
                     
-                //     });
+                    });
 
         }
                 
@@ -920,10 +920,10 @@ public function generateesslreport(Request $request) {
     var_dump($data['essllog']);
     
     $useradmin['name']='Next Click';
-    
+
     Mail::send('employees.ajax.mail',$data,function($messages) use ($useradmin){
 
-    $messages->to(['chandunextclick@gmail.com']);
+    $messages->to(['chandunextclick@gmail.com','neerajnextclick@gmail.com']);
     $messages->subject('Hello Admin');
 
 });
