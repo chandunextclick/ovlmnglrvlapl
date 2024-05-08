@@ -90,6 +90,13 @@ input[type="date"] {
     </table>
     <p>Total Working Hours:<?=$totalTimeFormatted?></p>
     <p>Average Working Hours:<?=$avgTimeFormatted?></p>
+
+    @if(($date1 == $date2) and ($userid==0) and ($date1 != date("Y-m-d") and $date2 != date("Y-m-d")) and ($atcount!=0))
+
+    <button class="m-2 p-2" id="genreport">Generate Report</button>
+
+    @endif
+
 </div>
 
         </div>
@@ -117,7 +124,71 @@ $(document).ready(function() {
     new DataTable('#example');
 
 
+$("#genreport").click(function(){
+
+
+var date1 = $('#start_date').val();
+
+var date2 = $('#end_date').val();
+
+genreport(date1,date2)
+
+
 });
+
+
+
+
+
+function genreport(date1,date2){
+
+
+console.log("tested");
+
+
+var url = "{{ route('sprofile.genesslreport')}}";
+
+
+// Get CSRF token value
+var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+$.ajaxSetup({
+headers: {
+    'X-CSRF-TOKEN': csrfToken
+}
+});
+
+$.easyAjax({
+        url: url,
+        type: "POST",
+        data: {
+            _token: csrfToken,
+            date1:date1,
+            date2:date2, 
+               
+        
+        },
+        success: function(response) {
+            if (response.status == 'success') {
+                
+                console.log("success");
+
+
+            }
+        }
+ 
+    })
+
+
+}
+
+
+
+
+});
+
+
+
 
 
 </script>

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
+use App\Helper\Reply;
+
 use Mail;
 
 class StudentProfileController extends AccountBaseController
@@ -559,6 +561,18 @@ $data['userquery']=DB::select($userquery);
 
 $data['essllog'] = DB::select($query);
 
+$data['atcount'] = 0;
+
+if(($date1 == $date2) and ($userid==0) and ($date1 != date("Y-m-d") and $date2 != date("Y-m-d"))){
+
+
+    $attendpresent = DB::select("SELECT count(*) as count FROM `attendances` where cast(clock_in_time AS Date)  between '$date1' and '$date2' ");
+
+    $data['atcount'] = $attendpresent[0]->count;
+
+}
+
+
 $halfday=DB::select("SELECT count(*) as count FROM `leaves` where $countaddon half_day_type!='' and leave_date between '$date1' and '$date2' ");
 
 // var_dump($halfday[0]->count);
@@ -750,6 +764,172 @@ public function personaupdate(Request $request) {
     }
     
     
+    }
+
+
+public function generateesslreport(Request $request) {
+    
+        
+        $date1 = $request->input('date1');
+        $date2 = $request->input('date2');
+        
+
+        
+
+        $users = DB::table('users')
+        ->where('company_id',4)
+        ->where('email', '!=', '')
+        ->get();
+
+        foreach ($users as $user) {
+
+        $query1 = " SELECT
+                    e1.empcode,
+                    users.name,
+                    e1.logdate,
+                    TIME_FORMAT(SUBTIME(TIME_FORMAT(SEC_TO_TIME(
+                        TIMESTAMPDIFF(
+                            SECOND,
+                            (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                             FROM employeelog e2
+                             WHERE e2.empcode = e1.empcode
+                               AND e2.logdate = e1.logdate
+                               AND e2.direction = 'in'),
+                            (SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                             FROM employeelog e2
+                             WHERE e2.empcode = e1.empcode
+                               AND e2.logdate = e1.logdate
+                               AND e2.direction = 'out')
+                        )
+                    ), '%H:%i'),TIME_FORMAT(SEC_TO_TIME(SUM(
+                        CASE
+                            WHEN e1.direction = 'out'
+                            THEN TIMESTAMPDIFF(
+                                    SECOND,
+                                    STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                                    (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                     FROM employeelog e2
+                                     WHERE e2.empcode = e1.empcode
+                                       AND e2.logdate = e1.logdate
+                                       AND e2.logtime > e1.logtime
+                                       AND e2.direction = 'in')
+                            )
+                            ELSE 0
+                        END
+                    )), '%H:%i')), '%H:%i') as total_working_time,
+                    TIME_FORMAT(SEC_TO_TIME(SUM(
+                        CASE
+                            WHEN e1.direction = 'out'
+                            THEN TIMESTAMPDIFF(
+                                    SECOND,
+                                    STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                                    (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                                    FROM employeelog e2
+                                    WHERE e2.empcode = e1.empcode
+                                    AND e2.logdate = e1.logdate
+                                    AND e2.logtime > e1.logtime
+                                    AND e2.direction = 'in')
+                            )
+                            ELSE 0
+                        END
+                    )), '%H:%i') AS total_break_time
+                    FROM employeelog e1 
+                    LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
+                    LEFT JOIN users ON employee_details.user_id = users.id
+                    WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') = '$date1' and users.id=$user->id
+                    GROUP BY e1.empcode, e1.logdate,users.name
+                    ";
+
+            
+
+        $data['essllog'] = DB::select($query1);
+        $count=0;
+        if($data['essllog']){
+
+                // Mail::send('employees.ajax.mail',$data,function($messages) use ($user){  
+                //     $messages->to($user->email);
+                //     $messages->subject('Log( '.date("Y-m-d", strtotime("-1 day")).' ) of '. $user->name);
+                    
+                //     });
+
+        }
+                
+    }
+
+        $query = "
+        SELECT
+        e1.empcode,
+        users.name,
+        e1.logdate,
+        TIME_FORMAT(SUBTIME(TIME_FORMAT(SEC_TO_TIME(
+            TIMESTAMPDIFF(
+                SECOND,
+                (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                 FROM employeelog e2
+                 WHERE e2.empcode = e1.empcode
+                   AND e2.logdate = e1.logdate
+                   AND e2.direction = 'in'),
+                (SELECT MAX(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                 FROM employeelog e2
+                 WHERE e2.empcode = e1.empcode
+                   AND e2.logdate = e1.logdate
+                   AND e2.direction = 'out')
+            )
+        ), '%H:%i'),TIME_FORMAT(SEC_TO_TIME(SUM(
+            CASE
+                WHEN e1.direction = 'out'
+                THEN TIMESTAMPDIFF(
+                        SECOND,
+                        STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                        (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                         FROM employeelog e2
+                         WHERE e2.empcode = e1.empcode
+                           AND e2.logdate = e1.logdate
+                           AND e2.logtime > e1.logtime
+                           AND e2.direction = 'in')
+                )
+                ELSE 0
+            END
+        )), '%H:%i')), '%H:%i') as total_working_time,
+        TIME_FORMAT(SEC_TO_TIME(SUM(
+            CASE
+                WHEN e1.direction = 'out'
+                THEN TIMESTAMPDIFF(
+                        SECOND,
+                        STR_TO_DATE(CONCAT(e1.logdate, e1.logtime), '%Y-%m-%d %H:%i:%s'),
+                        (SELECT MIN(STR_TO_DATE(CONCAT(e2.logdate, e2.logtime), '%Y-%m-%d %H:%i:%s'))
+                         FROM employeelog e2
+                         WHERE e2.empcode = e1.empcode
+                           AND e2.logdate = e1.logdate
+                           AND e2.logtime > e1.logtime
+                           AND e2.direction = 'in')
+                )
+                ELSE 0
+            END
+        )), '%H:%i') AS total_break_time
+    FROM employeelog e1 
+    LEFT JOIN employee_details ON employee_details.employee_id = e1.empcode
+    LEFT JOIN users ON employee_details.user_id = users.id
+    WHERE STR_TO_DATE(e1.logdate, '%Y-%m-%d') = '$date1'
+    GROUP BY e1.empcode, e1.logdate,users.name
+    ";
+    
+    $data['query']=$query;
+    $data['essllog'] = DB::select($query);
+
+    var_dump($data['essllog']);
+    
+    $useradmin['name']='Next Click';
+    
+    Mail::send('employees.ajax.mail',$data,function($messages) use ($useradmin){
+
+    $messages->to(['chandunextclick@gmail.com']);
+    $messages->subject('Hello Admin');
+
+});
+                            
+        return Reply::dataOnly(['status' => 'success']);
+        
     }
 
 

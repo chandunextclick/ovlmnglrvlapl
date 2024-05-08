@@ -296,6 +296,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::get('sprofile/enquirydetail/{id}', [StudentProfileController::class, 'enquirydetail'])->name('sprofile.enquirydetail');
 
+    Route::post('sprofile/genesslreport', [StudentProfileController::class, 'generateesslreport'])->name('sprofile.genesslreport');
+
     Route::get('client-notes/ask-for-password/{id}', [ClientNoteController::class, 'askForPassword'])->name('client_notes.ask_for_password');
     Route::post('client-notes/check-password', [ClientNoteController::class, 'checkPassword'])->name('client_notes.check_password');
     Route::post('client-notes/apply-quick-action', [ClientNoteController::class, 'applyQuickAction'])->name('client-notes.apply_quick_action');
