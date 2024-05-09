@@ -608,6 +608,7 @@ return array (
         'knowledgeDesc' => 'Description',
         'knowledgeHeading' => 'Article Heading',
         'knowledgeCategory' => 'Article Category',
+        'knowledgeClient' => 'Article Client',
         'knowledge' => 'Knowledge',
         'knowledgebase' => 'Knowledge Base',
         'updateknowledge' => 'Update Article',

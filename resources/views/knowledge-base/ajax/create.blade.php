@@ -31,6 +31,32 @@
 
                     <div class="col-md-6 knowledgecategory">
                         <div class="form-group my-3">
+                            <x-forms.label fieldId="knowledgebaseclient" fieldRequired="true" :fieldLabel="__('modules.knowledgeBase.knowledgeClient')">
+                            </x-forms.label>
+
+                            <x-forms.input-group >
+                                <select class="form-control select-picker" name="client" id="client"
+                                    data-live-search="true">
+                                    <option value="">--</option>
+                                    @foreach ($clients as $client)
+                                        <option
+                                         value="{{ $client->id }}">
+                                            {{ mb_ucwords($client->name) }}</option>
+                                    @endforeach
+                                </select>
+
+                                <x-slot name="append">
+                                    <button id="addKnowledgeCategory" type="button"
+                                        class="btn btn-outline-secondary border-grey"
+                                        data-toggle="tooltip" data-original-title="{{ __('app.add').' '.__('modules.knowledgeBase.knowledgeCategory') }}">@lang('app.add')</button>
+                                </x-slot>
+
+                            </x-forms.input-group>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 knowledgecategory">
+                        <div class="form-group my-3">
                             <x-forms.label fieldId="knowledgebasecategory" fieldRequired="true" :fieldLabel="__('modules.knowledgeBase.knowledgeCategory')">
                             </x-forms.label>
 
@@ -46,11 +72,6 @@
                                     @endforeach
                                 </select>
 
-                                <x-slot name="append">
-                                    <button id="addKnowledgeCategory" type="button"
-                                        class="btn btn-outline-secondary border-grey"
-                                        data-toggle="tooltip" data-original-title="{{ __('app.add').' '.__('modules.knowledgeBase.knowledgeCategory') }}">@lang('app.add')</button>
-                                </x-slot>
 
                             </x-forms.input-group>
                         </div>

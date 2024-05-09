@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $to
  * @property string $heading
  * @property int|null $category_id
+ *  * @property int|null $client_id
  * @property string|null $description
  * @property int $added_by
  * @property \Illuminate\Support\Carbon|null $created_at

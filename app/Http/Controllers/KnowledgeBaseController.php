@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helper\Reply;
 use Illuminate\Http\Request;
 use App\Models\KnowledgeBase;
+use App\Models\User;
 use App\Models\KnowledgeBaseCategory;
 use App\Http\Controllers\AccountBaseController;
 use App\Http\Requests\KnowledgeBase\KnowledgeBaseStore;
@@ -63,6 +64,7 @@ class KnowledgeBaseController extends AccountBaseController
         $knowledgeBase = new KnowledgeBase();
         $this->knowledgeBase = $knowledgeBase->appends;
         $this->categories = KnowledgeBaseCategory::all();
+        $this->clients = User::allClients();
         $this->selected_category_id = $id;
 
         if (request('category') != '') {
@@ -87,6 +89,7 @@ class KnowledgeBaseController extends AccountBaseController
 
         $knowledgeBase->to = $request->to;
         $knowledgeBase->heading = $request->heading;
+        $knowledgeBase->client_id = $request->client;
         $knowledgeBase->category_id = $request->category;
         $knowledgeBase->description = trim_editor($request->description);
         $knowledgeBase->added_by = user()->id;
