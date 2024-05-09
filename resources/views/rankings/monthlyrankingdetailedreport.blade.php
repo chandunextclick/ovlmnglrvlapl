@@ -318,18 +318,19 @@ $.easyAjax({
                 keytable.clear().draw();
                 response.keyword.forEach((item) => {
 
-                if(item.prerank<item.google_rank){
+                if(parseInt(item.prerank)<parseInt(item.google_rank)){
                     
               
 
                     curcol='<p style="color:red">'+item.google_rank+'</p>'
+
 
                 }else{
 
                     curcol=item.google_rank;
                 }
 
-                if(item.premaprank<item.googlemap_rank){
+                if(parseInt(item.premaprank)<parseInt(item.googlemap_rank)){
                     
               
 

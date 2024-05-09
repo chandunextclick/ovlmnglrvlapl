@@ -562,7 +562,7 @@ $.easyAjax({
 
                     // console.log(item.ranking_element);
 
-                if(item.google_rank_prev>item.google_rank){
+                if(parseInt(item.google_rank_prev)>parseInt(item.google_rank)){
                     
                     curcol='<p style="color:red">'+item.google_rank+'</p>'
 
@@ -581,7 +581,7 @@ $.easyAjax({
 
                 response.trafficelement.forEach((item) => {
                     
-                if(item.google_rank_prev>item.google_rank){
+                if(parseInt(item.google_rank_prev)>parseInt(item.google_rank)){
                     
               
 
@@ -646,7 +646,7 @@ $.easyAjax({
                 cttable.clear().draw();
                 response.country.forEach((item) => {
 
-                if(item.google_rank_prev>item.google_rank){
+                if(parseInt(item.google_rank_prev)>parseInt(item.google_rank)){
                     
               
 
