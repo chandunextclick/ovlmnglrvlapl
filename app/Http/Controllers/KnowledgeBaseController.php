@@ -43,7 +43,8 @@ class KnowledgeBaseController extends AccountBaseController
 
         } else {
             $this->activeMenu = 'all_category';
-            $this->knowledgebases = KnowledgeBase::with('knowledgebasecategory')->get();
+            $this->knowledgebases = KnowledgeBase::with('knowledgebasecategory')->with('knowledgebaseclient')->get();
+            // var_dump($this->knowledgebases);
         }
 
         return view('knowledge-base.index', $this->data);

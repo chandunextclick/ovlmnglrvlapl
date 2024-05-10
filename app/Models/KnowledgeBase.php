@@ -51,6 +51,11 @@ class KnowledgeBase extends BaseModel
         return $this->belongsTo(KnowledgeBaseCategory::class, 'category_id');
     }
 
+    public function knowledgebaseclient(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'client_id');
+    }
+
     public function files(): HasMany
     {
         return $this->hasMany(KnowledgeBaseFile::class, 'knowledge_base_id')->orderBy('id', 'desc');

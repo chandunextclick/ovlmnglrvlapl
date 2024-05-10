@@ -106,7 +106,7 @@
                             <th>#</th>
                             <th>@lang('modules.knowledgeBase.knowledgeHeading')</th>
                             <th>@lang('modules.knowledgeBase.knowledgeCategory')</th>
-                            <th>@lang('app.to')</th>
+                            <th>@lang('modules.knowledgeBase.knowledgeClient')</th>
                             <th class="text-right">@lang('app.action')</th>
                         </x-slot>
 
@@ -118,7 +118,7 @@
                                        class="openRightModal text-darkest-grey d-block">{{ $item->heading }}</a>
                                 </td>
                                 <td>{{ ucfirst($item->knowledgebasecategory->name) }}</td>
-                                <td>{{ ucfirst($item->to) }}</td>
+                                <td>{{ ucfirst($item->knowledgebaseclient->name) }}</td>
                                 <td class="text-right">
                                     @if ($editKnowledgebasePermission == 'all' || ($editKnowledgebasePermission == 'added' && $item->added_by == user()->id))
                                         <div class="task_view">
