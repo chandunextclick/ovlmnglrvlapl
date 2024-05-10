@@ -202,11 +202,15 @@ class KnowledgeBaseController extends AccountBaseController
 
     public function searchQuery($srch_query = '')
     {
-        $model = KnowledgeBase::query();
+        $model = KnowledgeBase::query()->join('users', 'users.id', '=', 'client_id');
 
-        if ($srch_query != '')
+        if ($srch_query != '')  
         {
-            $model->where('heading', 'LIKE', '%'.$srch_query.'%');
+            
+            $model->where('heading', 'LIKE', '%'.$srch_query.'%')
+            ->orWhere('users.name', 'LIKE', '%'.$srch_query.'%');
+            
+            
         }
 
         if (in_array('employee', user_roles()) && !in_array('admin', user_roles())) {
