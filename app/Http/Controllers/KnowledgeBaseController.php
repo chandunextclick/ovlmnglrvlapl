@@ -202,13 +202,14 @@ class KnowledgeBaseController extends AccountBaseController
 
     public function searchQuery($srch_query = '')
     {
-        $model = KnowledgeBase::query()->join('users', 'users.id', '=', 'client_id');
+        $model = KnowledgeBase::query();
+
+   
 
         if ($srch_query != '')  
         {
             
-            $model->where('heading', 'LIKE', '%'.$srch_query.'%')
-            ->orWhere('users.name', 'LIKE', '%'.$srch_query.'%');
+            $model->where('heading', 'LIKE', '%'.$srch_query.'%');
             
             
         }
@@ -229,7 +230,7 @@ class KnowledgeBaseController extends AccountBaseController
             $model->where('category_id', request('categoryId'));
         }
 
-        $this->knowledgebases = $model->with('knowledgebasecategory')->get();
+        $this->knowledgebases = $model->with('knowledgebasecategory')->with('knowledgebaseclient')->get();
         $this->editKnowledgebasePermission = user()->permission('edit_knowledgebase');
         $this->deleteKnowledgebasePermission = user()->permission('delete_knowledgebase');
 

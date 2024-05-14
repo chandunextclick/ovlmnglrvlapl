@@ -8,6 +8,7 @@
     </x-slot>
 
     @forelse ($knowledgebases as $key => $item)
+    
         <tr>
             <td>{{ $key + 1 }}</td>
             <td>
