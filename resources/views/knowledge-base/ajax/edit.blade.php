@@ -210,17 +210,25 @@ color: #fff !important;
         //
 
         knowledgeBaseDropzone.on('sending', function(file, xhr, formData) {
+                console.log("sending");
                 var ids = "{{ $knowledge->id }}";
                 formData.append('knowledge_base_id', ids);
                 $.easyBlockUI();
             });
 
         knowledgeBaseDropzone.on('uploadprogress', function() {
+            console.log("progress");
             $.easyBlockUI();
         });
         knowledgeBaseDropzone.on('completemultiple', function(file) {
-            window.location.href = "{{ route('knowledgebase.index') }}";        });
+
+            console.log("completed");
+
+            window.location.href = "{{ route('knowledgebase.index') }}";      
+        
+        });
         knowledgeBaseDropzone.on('error', function(file) {
+            console.log("error");
         });
 
         $('#add-file').click(function() {

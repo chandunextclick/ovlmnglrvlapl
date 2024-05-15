@@ -36,6 +36,7 @@ class KnowledgeBaseFileController extends AccountBaseController
      */
     public function store(Request $request)
     {
+    
         if($request->has('file')) {
 
             foreach ($request->file as $fileData) {
