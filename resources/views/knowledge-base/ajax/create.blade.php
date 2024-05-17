@@ -117,7 +117,7 @@
             $('.department').toggleClass('d-none');
         });
 
-        Dropzone.autoDiscover = false;
+        Dropzone.autoDiscover = false;  
             //Dropzone class
             knowledgeBaseDropzone = new Dropzone("div#file-upload-dropzone", {
                 dictDefaultMessage: "{{ __('app.dragDrop') }}",
