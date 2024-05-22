@@ -375,23 +375,6 @@
                         @endif
 
 
-                            @include('dashboard.employee.widgets.birthday')
-
-                            @include('dashboard.employee.widgets.appreciation')
-
-                            @include('dashboard.employee.widgets.leave')
-
-                            @include('dashboard.employee.widgets.work_from_home')
-
-                            @include('dashboard.employee.widgets.work_anniversary')
-
-                            @include('dashboard.employee.widgets.notice-period')
-
-                            @include('dashboard.employee.widgets.probation')
-
-                            @include('dashboard.employee.widgets.internship')
-
-                            @include('dashboard.employee.widgets.contract')
                     </div>
                 </div>
             @endif
@@ -483,7 +466,7 @@
                             </div>
                     @endif
                     @if (in_array('week_timelog', $activeWidgets) && $sidebarUserPermissions['view_timelogs'] != 5 && $sidebarUserPermissions['view_timelogs'] != 'none')
-                        <div @class(['mb-3', 'col-md-6' => (in_array('lead', $activeWidgets) && $leadAgent), 'col-md-12' => !(in_array('lead', $activeWidgets) && $leadAgent)])>
+                        <div @class(['mb-3', 'col-md-6' => (in_array('lead', $activeWidgets) && $leadAgent), 'col-md-12 d-none' => !(in_array('lead', $activeWidgets) && $leadAgent)])>
                             <div
                                 class="bg-white p-20 rounded b-shadow-4 d-flex justify-content-between align-items-center">
                                 <div class="d-block text-capitalize w-100">
@@ -601,7 +584,7 @@
 
                 <!-- EMP DASHBOARD TICKETS STARTS -->
                 @if (in_array('ticket', $activeWidgets) && $sidebarUserPermissions['view_tickets'] != 5 && $sidebarUserPermissions['view_tickets'] != 'none')
-                <div class="row">
+                <div class="row d-none">
                     <div class="col-sm-12">
                         <div class="card border-0 b-shadow-4 mb-3 e-d-info">
                             <x-cards.data :title="__('modules.module.tickets')" padding="false" otherClasses="h-200">
@@ -657,7 +640,7 @@
                 @if (in_array('my_calender', $activeWidgets) &&
                 (in_array('tasks', user_modules()) || in_array('events', user_modules()) || in_array('holidays', user_modules()) ||
                 in_array('tickets', user_modules()) || in_array('leaves', user_modules())))
-                    <div class="row">
+                    <div class="row d-none">
                         <div class="col-md-12">
                             <x-cards.data :title="__('app.menu.myCalendar')">
                                 <div id="calendar"></div>
@@ -731,7 +714,7 @@
 
                 @if (in_array('notices', $activeWidgets) && $sidebarUserPermissions['view_notice'] != 5 && $sidebarUserPermissions['view_notice'] != 'none')
                     @isset($notices)
-                        <div class="row">
+                        <div class="row d-none">
                             <!-- EMP DASHBOARD NOTICE START -->
                             <div class="col-md-12">
                                 <div class="my-3 b-shadow-4 rounded bg-white pb-2">

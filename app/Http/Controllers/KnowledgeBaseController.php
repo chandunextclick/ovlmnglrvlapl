@@ -36,6 +36,8 @@ class KnowledgeBaseController extends AccountBaseController
 
         $this->categories = KnowledgeBaseCategory::all();
 
+        $this->clients = User::allClients();
+
         if (request()->id != '') {
             $category = KnowledgeBaseCategory::findOrFail(request('id'));
             $this->activeMenu = strtolower(str_replace(' ', '_', $category->name));
@@ -111,6 +113,8 @@ class KnowledgeBaseController extends AccountBaseController
         abort_403(!in_array($this->viewPermission, ['all', 'added']));
 
         $this->knowledge = KnowledgeBase::findOrFail($id);
+
+        
 
         if (request()->ajax()) {
             $this->pageTitle = __('modules.knowledgeBase.knowledgebase');
@@ -200,16 +204,24 @@ class KnowledgeBaseController extends AccountBaseController
         KnowledgeBase::whereIn('id', explode(',', $request->row_ids))->forceDelete();
     }
 
-    public function searchQuery($srch_query = '')
+    public function searchQuery($client=0,$srch_query = '')
     {
         $model = KnowledgeBase::query();
 
-   
+        
 
         if ($srch_query != '')  
         {
             
             $model->where('heading', 'LIKE', '%'.$srch_query.'%');
+            
+            
+        }
+
+        if ($client != 0)  
+        {
+            
+            $model->where('client_id',$client);
             
             
         }

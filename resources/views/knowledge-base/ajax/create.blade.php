@@ -44,13 +44,6 @@
                                             {{ mb_ucwords($client->name) }}</option>
                                     @endforeach
                                 </select>
-
-                                <x-slot name="append">
-                                    <button id="addKnowledgeCategory" type="button"
-                                        class="btn btn-outline-secondary border-grey"
-                                        data-toggle="tooltip" data-original-title="{{ __('app.add').' '.__('modules.knowledgeBase.knowledgeCategory') }}">@lang('app.add')</button>
-                                </x-slot>
-
                             </x-forms.input-group>
                         </div>
                     </div>
@@ -71,7 +64,11 @@
                                             {{ mb_ucwords($category->name) }}</option>
                                     @endforeach
                                 </select>
-
+                                <x-slot name="append">
+                                    <button id="addKnowledgeCategory" type="button"
+                                        class="btn btn-outline-secondary border-grey"
+                                        data-toggle="tooltip" data-original-title="{{ __('app.add').' '.__('modules.knowledgeBase.knowledgeCategory') }}">@lang('app.add')</button>
+                                </x-slot>
 
                             </x-forms.input-group>
                         </div>

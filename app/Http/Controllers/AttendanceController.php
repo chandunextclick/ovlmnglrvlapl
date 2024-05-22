@@ -390,8 +390,10 @@ class AttendanceController extends AccountBaseController
 
         $this->logtotalTime=$this->emplogtotal[0]->total_working_time;
 
+        
+
         // Explode the time string into hours and minutes
-        list($hours, $minutes) = explode(':',$this->logtotalTime);
+        list($hours, $minutes) = explode(':',($this->logtotalTime != null)?$this->logtotalTime:"07:30");
 
         // Format the result
         $formattedTime = sprintf('%dh %02dm', $hours, $minutes);
@@ -399,7 +401,7 @@ class AttendanceController extends AccountBaseController
         // Now, $formattedTime contains the formatted total working time
         $this->emptotalTime = $formattedTime;
 
- 
+
 
         $this->maxClockIn = $attendanceActivity->count() < $this->attendanceSettings->clockin_in_day;
 

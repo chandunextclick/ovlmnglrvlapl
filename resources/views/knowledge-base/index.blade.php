@@ -53,19 +53,31 @@
 
             <x-slot name="buttons">
                 <form action="" id="filter-form">
-                    <div class="d-flex justify-conten mb-2">
+                    <div class="d-flex justify-content mb-2">
 
                         @if ($addknowledgebasePermission == 'all')
-                            <div class="form-group flex-grow-1">
+                            <div class="form-group">
                                 <x-forms.link-primary
                                     :link="route('knowledgebase.create') . '?category=' . request('id')"
                                     class="mb-2 openRightModal" icon="plus">
                                     @lang('modules.knowledgeBase.addknowledgebase')
                                 </x-forms.link-primary>
 
-                                <x-forms.button-secondary id="addCategory" class="mr-3 mb-2 mb-lg-0" icon="plus">
+                                <x-forms.button-secondary id="addCategory" class="mr-1 mb-2 mb-lg-0" icon="plus">
                                     @lang('modules.module.addknowledgebaseCategory')
                                 </x-forms.button-secondary>
+
+    
+                                <select class="mr-1" name="client" id="client-search-field"
+                                    style="height:40px;width:150px;border-radius:4px;">
+                                    <option value=0>All</option>
+                                    @foreach ($clients as $client)
+                                        <option
+                                        value="{{ $client->id }}">
+                                            {{ mb_ucwords($client->name) }}</option>
+                                    @endforeach
+                                </select>
+                              
 
 
                             </div>
@@ -82,7 +94,7 @@
                                        id="search-text-field" placeholder="@lang('app.startTyping')">
                             </div>
                         </div>
-                        <x-forms.button-secondary class="btn-xs d-none height-35 ml-2" id="reset-filters"
+                        <x-forms.button-secondary class="btn-xs d-none height-50 ml-2" id="reset-filters"
                                                   icon="times-circle">
                             @lang('app.clearFilters')
                         </x-forms.button-secondary>
@@ -179,9 +191,17 @@
         });
 
         function showSearchData() {
+
             const srch = $('#search-text-field').val();
-            let url = "{{ route('knowledgebase.searchQuery', ':query') }}";
+
+            const clsrch = $('#client-search-field').val();
+
+            let url = "{{ route('knowledgebase.searchQuery', [':clsrch',':query']) }}";
+
+            url = url.replace(':clsrch', clsrch);
+            
             url = url.replace(':query', srch);
+           
 
             const token = "{{ csrf_token() }}";
             const categoryId = "{{ request()->id }}";
@@ -202,6 +222,10 @@
         }
 
         $('#search-text-field').on('change keyup', function () {
+            showSearchData();
+        });
+
+        $('#client-search-field').on('change keyup', function () {
             showSearchData();
         });
 

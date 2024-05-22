@@ -490,7 +490,10 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     /* KnowledgeBase */
     Route::get('knowledgebase/create/{id?}', [KnowledgeBaseController::class, 'create'])->name('knowledgebase.create');
     Route::post('knowledgebase/apply-quick-action', [KnowledgeBaseController::class, 'applyQuickAction'])->name('knowledgebase.apply_quick_action');
-    Route::get('knowledgebase/searchquery/{query?}', [KnowledgeBaseController::class, 'searchQuery'])->name('knowledgebase.searchQuery');
+   
+    Route::get('knowledgebase/searchquery/{clsrch?}/{srch?}', [KnowledgeBaseController::class, 'searchQuery'])->name('knowledgebase.searchQuery');
+
+
     Route::resource('knowledgebase', KnowledgeBaseController::class)->except(['create']);
 
     Route::get('knowledgebase-files/download/{id}', [KnowledgeBaseFileController::class, 'download'])->name('knowledgebase-files.download');
