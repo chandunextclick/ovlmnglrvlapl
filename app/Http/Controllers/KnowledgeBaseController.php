@@ -141,6 +141,8 @@ class KnowledgeBaseController extends AccountBaseController
         $this->knowledge = KnowledgeBase::findOrFail($id);
         $this->categories = KnowledgeBaseCategory::all();
 
+        $this->clients = User::allClients();
+
         $this->pageTitle = __('modules.knowledgeBase.updateknowledge');
 
         if (request()->ajax()) {
@@ -161,6 +163,7 @@ class KnowledgeBaseController extends AccountBaseController
         $knowledge = KnowledgeBase::findOrFail($id);
         $knowledge->heading = $request->heading;
         $knowledge->description = trim_editor($request->description);
+        $knowledge->client_id = $request->client;
         $knowledge->to = $request->to;
         $knowledge->category_id = $request->category;
         $knowledge->added_by = user()->id;

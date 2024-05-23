@@ -72,6 +72,25 @@ color: #fff !important;
                                         </x-slot>
 
                                     </x-forms.input-group>
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 knowledgecategory">
+                                <div class="form-group my-3">
+                                    <x-forms.label fieldId="knowledgebaseclient" fieldRequired="true" :fieldLabel="__('modules.knowledgeBase.knowledgeClient')">
+                                    </x-forms.label>
+
+                                    <x-forms.input-group >
+                                        <select class="form-control select-picker" name="client" id="client"
+                                            data-live-search="true">
+                                            <option value="">--</option>
+                                            @foreach ($clients as $client)
+                                                <option {{ isset($knowledge->client_id) && $knowledge->client_id == $client->id ? 'selected' : '' }}
+                                                value="{{ $client->id }}">
+                                                    {{ mb_ucwords($client->name) }}</option>
+                                            @endforeach
+                                        </select>
+                                    </x-forms.input-group>
                                 </div>
                             </div>
 
