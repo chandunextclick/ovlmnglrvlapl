@@ -513,10 +513,14 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     /* TASKS */
 
     Route::get('tasks/salestasks', [TaskController::class, 'salestasks'])->name('tasks.salestasks');
+    Route::get('tasks/salestaskscreateproject/{id}', [TaskController::class, 'salestaskscreateproject'])->name('tasks.salestaskscreateprj');
+    Route::get('tasks/salestasksupdateprj/{id}', [TaskController::class, 'salestasksupdateprj'])->name('tasks.salestasksupdateprj');
     Route::get('tasks/client-detail', [TaskController::class, 'clientDetail'])->name('tasks.clientDetail');
     Route::post('tasks/change-status', [TaskController::class, 'changeStatus'])->name('tasks.change_status');
     Route::post('tasks/apply-quick-action', [TaskController::class, 'applyQuickAction'])->name('tasks.apply_quick_action');
     Route::post('tasks/store-pin', [TaskController::class, 'storePin'])->name('tasks.store_pin');
+    Route::post('tasks/store-salestaskprj', [TaskController::class, 'storesalestaskprj'])->name('tasks.storesalestaskprj');
+    Route::post('tasks/update-salestask', [TaskController::class, 'updsalestask'])->name('tasks.updsalestask');
     Route::post('tasks/reminder', [TaskController::class, 'reminder'])->name('tasks.reminder');
     Route::post('tasks/destroy-pin/{id}', [TaskController::class, 'destroyPin'])->name('tasks.destroy_pin');
     Route::post('tasks/check-task/{taskID}', [TaskController::class, 'checkTask'])->name('tasks.check_task');

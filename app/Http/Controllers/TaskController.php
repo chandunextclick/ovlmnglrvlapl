@@ -32,6 +32,7 @@ use App\Models\TaskComment;
 use App\Models\TaskCommentEmoji;
 use App\Models\TaskFile;
 use App\Models\TaskSetting;
+use App\Models\ProjectTemplate;
 use Illuminate\Support\Facades\Config;
 
 class TaskController extends AccountBaseController
@@ -990,7 +991,269 @@ class TaskController extends AccountBaseController
 
     public function salestasks(){
 
-        return view('tasks.salestasks',$this->data);
+        $data['pageTitle']= 'Admin Tasks';
+        $data['pushSetting']= $this->pushSetting;
+        $data['pusherSettings']= $this->pusherSettings;
+        if (in_array('admin', user_roles())){
+    
+            $data['checkListCompleted']= $this->checkListCompleted;
+        }
+        
+        $data['checkListTotal']= $this->checkListTotal;
+        $data['activeTimerCount']= $this->activeTimerCount;
+        $data['unreadNotificationCount']= $this->unreadNotificationCount;
+        $data['appTheme']= $this->appTheme;
+        $data['appName']= $this->appName;
+        $data['user']= $this->user;
+        $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+        $data['companyName']=$this->companyName;
+        $data['userCompanies']=$this->userCompanies;
+        $data['currentRouteName']=$this->currentRouteName;
+        $data['unreadMessagesCount']=$this->unreadMessagesCount;
+        $data['worksuitePlugins']=$this->worksuitePlugins;
+        $data['company']=$this->company;
+
+
+        $url = 'https://edoxi.cyradrive.com/task-manager/admintask'; // Replace with the URL you want to fetch data from
+    
+        
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+
+        $data['admintask'] = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        $this->env = $data['admintask'];
+        curl_close($ch);
+
+
+        // var_dump($data['admintask']);
+    
+        if (!$data['admintask']) {
+            die('Failed to fetch data.');
+        }
+
+        $data['salestaskids'] = DB::table('adminsalestask')->pluck('ext_taskid')->toArray();
+
+        $data['salestaskprjids'] = DB::table('adminsalestask')->where('project_id','!=',0)->pluck('ext_taskid')->toArray();
+
+        // var_dump($data['salestaskprjids']);
+
+        return view('tasks.salestasks',$data);
+    }
+
+
+
+    public function salestaskscreateproject($id){
+
+    $this->clients = User::allClients();
+
+    $this->prjtemplates = DB::table('project_templates')->select('id','project_name')->get();
+
+    $this->saletaskid = $id;
+
+    return view('tasks.salestaskscreateproject',$this->data);
+
+    }
+
+    public function salestasksupdateprj($id){
+
+    
+    
+        $this->saletaskid = $id;
+    
+        return view('tasks.salestasksedit',$this->data);
+    
+    }
+
+
+    public function updsalestask(Request $request){
+
+    $taskid=$request->salestask_id;
+
+    $tasknote=$request->tasknote;
+
+    $taskstatus=$request->task_status;
+
+    $taskcount = DB::table('adminsalestask')->where('ext_taskid', $taskid)->count();
+
+
+    if($taskcount==0){
+
+        $tasktoinsert[] = [
+
+            'ext_taskid' => $taskid,
+            'type' => "SalesTask Updation"  
+        ];
+    
+        DB::table('adminsalestask')->insert($tasktoinsert);
+
+        
+    }
+
+
+
+    // var_dump($taskid,$tasknote,$taskstatus);
+
+
+    $url = 'https://edoxi.cyradrive.com/task-manager/admintaskstatusupdate'; // Replace with the URL you want to fetch data from
+
+
+    $dataparam = array(
+
+        'taskid' => $taskid,
+        'tasknote' => $tasknote,
+        'taskstatus' => $taskstatus,
+    );
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataparam)); // Set POST data
+    $response = curl_exec($ch);
+
+    curl_close($ch);
+
+    return redirect()->route('tasks.salestasks');
+
+    }
+
+
+    public function storesalestaskprj(Request $request){
+
+    $tempid=$request->template_name;
+
+    $clientid=$request->client_name;
+
+    $saletaskid=$request->salestask_id;
+
+
+
+    $taskcount = DB::table('adminsalestask')->where('ext_taskid', $saletaskid)->count();
+
+
+    if($taskcount==0){
+
+
+
+    $startDate = Carbon::parse($request->project_startdate)->format('Y-m-d');
+    $deadline =  Carbon::parse($request->project_deadline)->format('Y-m-d');
+
+
+    $template = ProjectTemplate::with('projectMembers','projectDepartments')->findOrFail($tempid);
+
+    $project = new Project();
+    $project->project_name = $request->project_name;
+    $project->project_short_code = 'PRJ'.Project::max('id')+1;
+    $project->start_date = $startDate;
+    $project->deadline = $deadline;
+
+    $project->client_id = $request->client_name;
+
+    $project->category_id = $template->category_id;
+
+    $project->save();
+
+
+
+    $projectTemplateMembers = $template->projectMembers ? $template->projectMembers->pluck('id')->toArray() : null;
+    $projectTemplateDepartments = $template->projectDepartments ? $template->projectDepartments->pluck('id')->toArray() : null;
+
+    $TeamToInsert = [];
+
+    $MemberToInsert = [];
+
+    foreach ($projectTemplateDepartments as $teamId) {
+
+        $TeamToInsert[] = [
+            'project_id' => $project->id,
+            'team_id' => $teamId  
+        ];
+
+        
+    }
+
+    DB::table('project_departments')->insert($TeamToInsert);
+
+    foreach ($projectTemplateMembers as $memberId) {
+
+        $MemberToInsert[] = [
+            'project_id' => $project->id,
+            'user_id' => $memberId 
+        ];
+
+        
+    }
+
+    DB::table('project_members')->insert($MemberToInsert);
+
+
+
+    // dd($template);
+
+    foreach ($template->tasks as $task) {
+
+        $projectTask = new Task();
+        $projectTask->project_id = $project->id;
+        $projectTask->heading = $task->heading;
+        
+        $projectTask->task_category_id = $task->project_template_task_category_id;
+        $projectTask->description = trim_editor($task->description);
+        $projectTask->start_date = $startDate;
+        $projectTask->due_date = $deadline;
+        $projectTask->is_private = 0;
+        $projectTask->template_task_id = $task->id;
+       
+        $projectTask->save();
+
+        foreach ($task->usersMany as $value) {
+            TaskUser::create(
+                [
+                    'user_id' => $value->id,
+                    'task_id' => $projectTask->id
+                ]
+            );
+
+            
+        }
+
+        foreach ($task->subtasks as $value) {
+            $projectTask->subtasks()->create(['title' => $value->title]);
+        }
+    }
+
+    DB::statement('CALL sp_update_project_dependent(?)', [$project->id]);
+
+
+    $tasktoinsert[] = [
+
+        'ext_taskid' => $saletaskid,
+        'project_id' => $project->id,
+        'type' => "Project Creation"  
+    ];
+
+    DB::table('adminsalestask')->insert($tasktoinsert);
+    
+    DB::commit();
+
+
+    return redirect()->route('projects.index');
+
+    }else{
+
+    $exttask = DB::table('adminsalestask')->where('ext_taskid', $saletaskid)->first();
+
+    if($exttask->project_id==0){
+
+        return redirect()->route('tasks.salestasks');
+
+    }else{
+
+        return redirect()->route('projects.show', [$exttask->project_id]);
+
+    }
+    
+    }
+
     }
 
 
