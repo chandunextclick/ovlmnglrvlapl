@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use App\DataTables\TasksDataTable;
@@ -34,6 +35,9 @@ use App\Models\TaskFile;
 use App\Models\TaskSetting;
 use App\Models\ProjectTemplate;
 use Illuminate\Support\Facades\Config;
+
+use Mail;
+
 
 class TaskController extends AccountBaseController
 {
@@ -148,9 +152,45 @@ class TaskController extends AccountBaseController
                 // Calculate project progress if enabled
                 $projectpercent = $this->calculateProjectProgress($task->project_id, 'true');
                 if($projectpercent == 100){
+
+                    $prjsalestaskcheck=DB::table('adminsalestask')->where('project_id', $task->project_id)->count();
                     
+                    if($prjsalestaskcheck!=0){
+
+                        $url = 'https://edoxi.cyradrive.com/task-manager/admintaskstatusupdate'; // Replace with the URL you want to fetch data from
+
+
+                        $tasknote = "";
+
+                        $taskstatus = "Completed";
+
+                        $dataparam = array(
+
+                            'taskid' => $taskid,
+                            'tasknote' => $tasknote,
+                            'taskstatus' => $taskstatus,
+                        );
+
+                        $ch = curl_init($url);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_POST, true);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataparam)); // Set POST data
+                        $response = curl_exec($ch);
+
+                        curl_close($ch);
+
+                        $mailresult=Mail::send('employees.ajax.salestaskcompleted',$dataparam,function($messages) use ($taskid,$taskstatus){  
+                            $messages->to("neerajnextclick@gmail.com");
+                            $messages->subject('Sale Task'.$taskid.'-'.$taskstatus);
+                
+                        });
+
+                    }
+
                     $admins = User::allAdmins($task->company->id);
                     event(new TaskEvent($task, $admins, 'TaskCompleted'));
+
+
                     
                 }
             }
@@ -1032,11 +1072,10 @@ class TaskController extends AccountBaseController
             die('Failed to fetch data.');
         }
 
-        $data['salestaskids'] = DB::table('adminsalestask')->pluck('ext_taskid')->toArray();
+        $data['salestaskids'] = DB::table('adminsalestask')->where('type','=','Project Creation')->pluck('ext_taskid')->toArray();
 
         $data['salestaskprjids'] = DB::table('adminsalestask')->where('project_id','!=',0)->pluck('ext_taskid')->toArray();
 
-        // var_dump($data['salestaskprjids']);
 
         return view('tasks.salestasks',$data);
     }
@@ -1088,11 +1127,13 @@ class TaskController extends AccountBaseController
         DB::table('adminsalestask')->insert($tasktoinsert);
 
         
+    }else{
+
+
+        DB::table('adminsalestask')->where('ext_taskid',$taskid)->update(array('type'=>"SalesTask Updation"));
+
     }
 
-
-
-    // var_dump($taskid,$tasknote,$taskstatus);
 
 
     $url = 'https://edoxi.cyradrive.com/task-manager/admintaskstatusupdate'; // Replace with the URL you want to fetch data from
@@ -1112,6 +1153,21 @@ class TaskController extends AccountBaseController
     $response = curl_exec($ch);
 
     curl_close($ch);
+
+
+    if($taskstatus == 'Completed'){
+
+
+
+        $mailresult=Mail::send('employees.ajax.salestaskcompleted',$dataparam,function($messages) use ($taskid,$taskstatus){  
+            $messages->to("neerajnextclick@gmail.com");
+            $messages->subject('Sale Task'.$taskid.'-'.$taskstatus);
+
+            });
+
+        
+    }
+
 
     return redirect()->route('tasks.salestasks');
 
@@ -1235,7 +1291,6 @@ class TaskController extends AccountBaseController
     
     DB::commit();
 
-
     return redirect()->route('projects.index');
 
     }else{
@@ -1255,6 +1310,117 @@ class TaskController extends AccountBaseController
     }
 
     }
+
+
+    public function storeindvidualtask(Request $request){
+
+
+        $tasksubject = $request->task_subject;
+
+        $taskdesc = $request->task_description;
+
+        $taskassignee = $request->assignee_name;
+
+        $filename = NULL;
+
+
+        if($request->has('file')) {
+
+            $filename = Files::uploadLocalOrS3($request->file,'indvidualtask-files/');
+
+        
+
+        }
+
+        $indtaskarray[] = [
+            'userid' => $taskassignee,
+            'subject' => $tasksubject,
+            'description' => $taskdesc,
+            'filename' => $filename
+        ];
+
+
+        DB::table('assignindtask')->insert($indtaskarray);
+        
+
+        return redirect()->route('dashboard');
+
+    }
+
+    public function assignindvidualtask(Request $request){
+
+
+
+        $taskid = $request->assigneetaskid;
+
+        $taskassignee = $request->assignee_name;
+
+
+        $taskcount = DB::table('adminsalestaskassign')->where('taskid', $taskid)->count();
+
+        if($taskcount == 0){
+
+
+            $assigntaskarray[] = [
+
+                'userid' => $taskassignee,
+                'taskid' => $taskid,
+            ];
+    
+    
+            DB::table('adminsalestaskassign')->insert($assigntaskarray);
+
+        }else{
+
+
+            DB::table('adminsalestaskassign')->where('taskid',$taskid)->update(array('userid'=>$taskassignee));
+
+
+        }
+
+        $taskcount1 = DB::table('adminsalestask')->where('ext_taskid', $taskid)->count();
+
+
+        $tasktoinsert[] = [
+
+            'ext_taskid' => $taskid,
+            'type' => "SalesTask Assigned"  
+        ];
+    
+        DB::table('adminsalestask')->insert($tasktoinsert);
+
+    
+
+
+        $url = 'https://edoxi.cyradrive.com/task-manager/admintaskstatusupdate'; // Replace with the URL you want to fetch data from
+
+
+        $tasknote = "";
+
+        $taskstatus = "Working";
+
+        $dataparam = array(
+
+            'taskid' => $taskid,
+            'tasknote' => $tasknote,
+            'taskstatus' => $taskstatus,
+        );
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataparam)); // Set POST data
+        $response = curl_exec($ch);
+
+        curl_close($ch);
+
+        
+        
+
+        return redirect()->route('dashboard');
+
+    }
+
 
 
     

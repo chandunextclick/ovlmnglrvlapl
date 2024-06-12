@@ -59,10 +59,27 @@
             border-top-right-radius: 50%;
             border-bottom-right-radius: 50%;
         }
+
+        .assignee-div{
+
+            position:fixed;
+            top:350px;
+            right:200px;
+            z-index:10;
+
+            background-color:white;
+
+            width:300px;    
+            
+
+
+        }
     </style>
 @endpush
 
 @section('content')
+
+
     <!-- CONTENT WRAPPER START -->
     <div class="px-4 py-2 border-top-0 emp-dashboard">
         <!-- WELOCOME START -->
@@ -378,9 +395,154 @@
                     </div>
                 </div>
             @endif
+
             <!-- EMP DASHBOARD INFO NOTICES END -->
             <!-- EMP DASHBOARD TASKS PROJECTS EVENTS START -->
             <div class="col-xl-7 col-lg-12 col-md-12 e-d-tasks-projects-events">
+                <div class="row mb-3 mt-xl-0 mt-lg-4 mt-md-4 mt-4">
+
+                    
+
+                    @if (in_array('admin', user_roles()) || user()->id==8)  
+
+                    <div class="col-md-12 mb-3" style="background-color:white">
+                        <h4 class="m-2">Sales Tasks</h4>
+                        <table id="example" class="table table-striped table-responsive" style="min-height:100px;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Task Title</th>
+                                    <th>Task Note</th>
+                                    <th>DeadLine</th>
+                                    <th>Assigned to</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+
+                            foreach($admintask as $value) 
+                            { 
+                                
+                                $taskid=$value['tm_task_id'];
+
+                                $taskstatus=$value['task_status'];
+                            
+                            ?>
+
+                            @if(!($taskstatus =='Completed' or $taskstatus =='Finished'))
+                                <tr>
+                                    <td><?= $value['tm_task_id'] ?></td>
+                                    <td><?= $value['task_tittle'] ?></td>
+                                    <td><?= $value['task_note'] ?></td>
+                                    <td><?= $value['task_dead_line'] ?></td>
+                                
+                                    @foreach($allasignedsaletask as $arvalue)
+
+                                    @if($arvalue->taskid == $taskid)
+
+                                    <td><?= $arvalue->name ?></td>
+                                    
+                                    @else
+
+                                    <td>Admin</td>
+
+                                    @endif
+
+                                    @endforeach
+                                    <td><?= $value['task_status'] ?></td>
+                                    <td><div class="dropdown">
+                                    <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                        @if(!in_array($taskid,$salestaskids))
+                                        <a class="dropdown-item" href="{{ route('tasks.salestaskscreateprj',['id' => "$taskid" ])}}">Create Project</a>
+                                        @endif
+                                        <a class="dropdown-item" onclick="assignadminsaletask({{$taskid}})">Assign</a>
+                        
+                                        <a class="dropdown-item" href="{{ route('tasks.salestasksupdateprj',['id' => "$taskid"])}}">Update Status</a>
+                                    </div>
+                                    </div>
+                                    </td>
+                                
+                                </tr>
+                                @endif  
+                                <?php 
+
+                                }
+                                ?>
+                            
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                    @else
+
+
+                    <div class="col-md-12 mb-3" style="background-color:white">
+                    <h4 class="m-2">Sales Tasks</h4>
+                        <table id="example" class="table table-striped table-responsive" style="min-height:100px;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Task Title</th>
+                                    <th>Task Note</th>
+                                    <th>DeadLine</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+
+                            foreach($admintask as $value) 
+                                { 
+
+                                $taskid=$value['tm_task_id'];
+
+                                $taskstatus=$value['task_status'];
+                            
+                            ?>
+
+                            @if(in_array($taskid,$salestaskassigned))
+
+                            @if(!($taskstatus =='Completed' or $taskstatus =='Finished'))
+                                <tr>
+                                    <td><?= $value['tm_task_id'] ?></td>
+                                    <td><?= $value['task_tittle'] ?></td>
+                                    <td><?= $value['task_note'] ?></td>
+                                    <td><?= $value['task_dead_line'] ?></td>
+                                    <td><?= $value['task_status'] ?></td>
+                                    <td><div class="dropdown">
+                                    <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                        @if(!in_array($taskid,$salestaskids))
+                                        <a class="dropdown-item" href="{{ route('tasks.salestaskscreateprj',['id' => "$taskid" ])}}">Create Project</a>
+                                        @endif
+                                        <a class="dropdown-item" href="{{ route('tasks.salestasksupdateprj',['id' => "$taskid"])}}">Update Status</a>
+                                    </div>
+                                    </div>
+                                    </td>
+                                
+                                </tr>
+                                @endif  
+                                @endif
+                                <?php 
+
+                                }
+                                ?>
+                            
+                            </tbody>
+
+                        </table>
+
+                    </div>  
+
+                    @endif
+                </div>
                 <!-- EMP DASHBOARD TASKS PROJECTS START -->
                 <div class="row mb-3 mt-xl-0 mt-lg-4 mt-md-4 mt-4">
                     @if (in_array('tasks', $activeWidgets) && (!is_null($viewTaskPermission) && $viewTaskPermission != 'none'))
@@ -513,6 +675,9 @@
                 </div>
                 <!-- EMP DASHBOARD TASKS PROJECTS END -->
 
+
+
+
                 @if (in_array('my_task', $activeWidgets) && (!is_null($viewTaskPermission) && $viewTaskPermission != 'none'))
                 <div class="row">
                     <div class="col-sm-12">
@@ -581,6 +746,29 @@
                     </div>
                 </div>
                 @endif
+
+                <div class="assignee-div d-none" id="assignee-divid" >
+
+                    <form method="POST" action="{{ route('tasks.assignindvidualtask') }}" class="bg-light p-3">
+                        @csrf
+                        <div class="form-group">
+                    
+                            <select class="form-control height-35 f-14" placeholder="Assignee"  name="assignee_name" id="assignee_name"  required>
+                            @foreach($assignuser as $assignee) 
+                                <option value="{{$assignee->id}}">{{$assignee->name}}</option>
+                            @endforeach                          
+                            </select> 
+                            <input type="hidden" class="form-control height-35 f-14" placeholder="Assigneetaskid" value="" name="assigneetaskid" id="assigneetaskid" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                        <button type="submit" class="btn-primary rounded f-14 p-2 mr-3" id="">
+                        <svg class="svg-inline--fa fa-check fa-w-16 mr-1" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg><!-- <i class="fa fa-check mr-1"></i> Font Awesome fontawesome.com -->
+                        Assign
+                        </button>
+                        </div>
+
+                    </form>
+                </div>
 
                 <!-- EMP DASHBOARD TICKETS STARTS -->
                 @if (in_array('ticket', $activeWidgets) && $sidebarUserPermissions['view_tickets'] != 5 && $sidebarUserPermissions['view_tickets'] != 'none')
@@ -770,7 +958,73 @@
 
     </div>
     <!-- CONTENT WRAPPER END -->
+    @if (in_array('admin', user_roles()))                                                 
+    <div class="row m-2">
+        <div class="col-md-12">
+
+            <div class="add-client bg-white rounded">
+                <form method="POST" action="{{ route('tasks.storeindvidualtask') }}" enctype="multipart/form-data">
+                    @csrf
+                    <h4 class="mb-0 p-20 f-21 font-weight-normal text-capitalize border-bottom-grey">
+                        Indvidual Task Assign</h4>
+                    <div class="row p-20">
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                            <label class="f-14 text-dark-grey mb-12" data-label="true" for="subject_name">Subject
+                            <sup class="f-14 mr-1">*</sup>
+                            </label>
+                            <input type="text" class="form-control height-35 f-14" placeholder="Subject" value="" name="task_subject" id="subject_name" autocomplete="off" required>
+                            
+                            </div>
+                        
+                    </div>
+
+                    <div class="col-md-8">
+                            <div class="form-group">
+                            <label class="f-14 text-dark-grey mb-12" data-label="true" for="Description">Description
+                        
+                            </label>
+                            <textarea class="form-control height-35 f-14 " name="task_description" placeholder="Description" required></textarea>
+                            </div>
+                        
+                    </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                            <label class="f-14 text-dark-grey mb-12" data-label="true" for="assignee_name">Assignee
+                            <sup class="f-14 mr-1">*</sup>
+                            </label>
+                            <select class="form-control height-35 f-14" placeholder="Assignee"  name="assignee_name" id="assignee_name"  required>
+                            @foreach($assignuser as $assignee) 
+                                <option value="{{$assignee->id}}">{{$assignee->name}}</option>
+                            @endforeach                          
+                            </select> 
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-3">
+                            <div class="form-group">
+                            <label class="f-14 text-dark-grey mb-12" data-label="true" for="subject_name">Files(if any)
+                            </label>
+                            <input type="file" class="form-control height-35 f-14" placeholder="File" value="" name="file" id="file" autocomplete="off">
+                            
+                            </div>   
+                    </div>
+                        
+                    <div class="w-100 border-top-grey d-block d-lg-flex d-md-flex justify-content-start px-4 py-3">
+                    <button type="submit" class="btn-primary rounded f-14 p-2 mr-3" id="">
+                        <svg class="svg-inline--fa fa-check fa-w-16 mr-1" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg><!-- <i class="fa fa-check mr-1"></i> Font Awesome fontawesome.com -->
+                        Save
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
 @endsection
+
+
 
 @push('scripts')
     @if ((!is_null($viewEventPermission) && $viewEventPermission != 'none')
@@ -782,6 +1036,18 @@
         <script src="{{ asset('vendor/full-calendar/main.min.js') }}"></script>
         <script src="{{ asset('vendor/full-calendar/locales-all.min.js') }}"></script>
         <script>
+
+        function assignadminsaletask(id){
+
+
+            $("#assignee-divid").removeClass("d-none");
+
+            $("#assigneetaskid").val(id);
+
+            
+
+        }
+
             var initialLocaleCode = '{{ user()->locale }}';
             var calendarEl = document.getElementById('calendar');
 

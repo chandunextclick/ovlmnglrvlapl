@@ -136,8 +136,8 @@
                     <x-sub-menu-item :link="route('timelogs.index')" :text="__('app.menu.timeLogs')" />
                 @endif
     
-                @if (in_array('tasks', user_modules()) && $sidebarUserPermissions['view_tasks'] != 5 && $sidebarUserPermissions['view_tasks'] != 'none')
-                    <x-sub-menu-item :link="route('tasks.salestasks')" :text="__('app.salestasks')" />
+                @if (in_array('admin', user_roles())||user()->id==8)
+                <x-sub-menu-item :link="route('tasks.salestasks')" :text="__('app.salestasks')" />
                 @endif
 
                   

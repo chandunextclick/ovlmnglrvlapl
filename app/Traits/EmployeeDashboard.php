@@ -55,6 +55,39 @@ trait EmployeeDashboard
         $officeStartTime = $officeStartTime->setTimezone('UTC');
         $officeEndTime = $officeEndTime->setTimezone('UTC');
 
+
+        $this->assignuser = DB::table('users')
+        ->where('company_id',company()->id)
+        ->where('email','!=',NULL)
+        ->whereNotIn('id',[19,5])
+        ->select('id','name')->get();
+
+        $url = 'https://edoxi.cyradrive.com/task-manager/admintask'; // Replace with the URL you want to fetch data from
+    
+        
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+
+        $this->admintask = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+
+        curl_close($ch);
+
+
+
+        $this->salestaskids = DB::table('adminsalestask')->where('type','=','Project Creation')->pluck('ext_taskid')->toArray();
+
+        $this->salestaskprjids = DB::table('adminsalestask')->where('project_id','!=',0)->pluck('ext_taskid')->toArray();
+
+
+        $this->salestaskassigned = DB::table('adminsalestaskassign')->where('userid','=',user()->id)->pluck('taskid')->toArray();
+
+        $this->allasignedsaletask = DB::table('adminsalestaskassign')->join('users','users.id','adminsalestaskassign.userid')->select('users.name','adminsalestaskassign.taskid')->get();
+
+        
+      
+
+
         if ($officeStartTime->gt($officeEndTime)) {
             $officeEndTime->addDay();
         }

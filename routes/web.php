@@ -520,6 +520,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::post('tasks/apply-quick-action', [TaskController::class, 'applyQuickAction'])->name('tasks.apply_quick_action');
     Route::post('tasks/store-pin', [TaskController::class, 'storePin'])->name('tasks.store_pin');
     Route::post('tasks/store-salestaskprj', [TaskController::class, 'storesalestaskprj'])->name('tasks.storesalestaskprj');
+    Route::post('tasks/store-indvidualtask', [TaskController::class, 'storeindvidualtask'])->name('tasks.storeindvidualtask');
+    Route::post('tasks/assign-indvidualtask', [TaskController::class, 'assignindvidualtask'])->name('tasks.assignindvidualtask');
     Route::post('tasks/update-salestask', [TaskController::class, 'updsalestask'])->name('tasks.updsalestask');
     Route::post('tasks/reminder', [TaskController::class, 'reminder'])->name('tasks.reminder');
     Route::post('tasks/destroy-pin/{id}', [TaskController::class, 'destroyPin'])->name('tasks.destroy_pin');
