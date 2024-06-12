@@ -87,9 +87,9 @@
                     <div class="col-md-3">
                     <div class="form-group">
                         <label class="f-14 text-dark-grey mb-12" data-label="true" for="project_deadline">Deadline
-                        <sup class="f-14 mr-1">*</sup>
+                    
                     </label>
-                        <input type="date" class="form-control height-35 f-14" placeholder="" value="" name="project_deadline" id="project_deadline" autocomplete="off" required>
+                        <input type="date" class="form-control height-35 f-14" placeholder="" value="" name="project_deadline" id="project_deadline" autocomplete="off">
                     </div>
                     </div>
         

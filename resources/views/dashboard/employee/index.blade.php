@@ -412,11 +412,12 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Task Title</th>
-                                    <th>Task Note</th>
+                                    <th>Task Note</th>  
                                     <th>DeadLine</th>
                                     <th>Assigned to</th>
                                     <th>Status</th>
                                     <th>Action</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -424,7 +425,7 @@
 
                             foreach($admintask as $value) 
                             { 
-                                
+                                $counter = 0;
                                 $taskid=$value['tm_task_id'];
 
                                 $taskstatus=$value['task_status'];
@@ -437,29 +438,31 @@
                                     <td><?= $value['task_tittle'] ?></td>
                                     <td><?= $value['task_note'] ?></td>
                                     <td><?= $value['task_dead_line'] ?></td>
-
                                     @if(!$allasignedsaletask->isEmpty())
                                 
-                                        @foreach($allasignedsaletask as $arvalue)
+                                @foreach($allasignedsaletask as $arvalue)
 
-                                        @if($arvalue->taskid == $taskid)
+                                @if($arvalue->taskid == $taskid)
 
-                                        <td><?= $arvalue->name ?></td>
-                                        
-                                        @else
+                                <td><?= $arvalue->name ?></td>
 
-                                        <td>Admin</td>
+                                <?php $counter++; ?>
+                                
+                                @endif
 
-                                        @endif
+                                @endforeach
 
-                                        @endforeach
+                                @if($counter == 0)
 
-                                    @else
+                                <td>Admin</td>
 
-                                        <td>Admin</td>
+                                @endif
 
-                                    @endif
+                            @else
+                            
+                                <td>Admin</td>
 
+                            @endif
                                     <td><?= $value['task_status'] ?></td>
                                     <td><div class="dropdown">
                                     <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
@@ -474,7 +477,7 @@
                                     </div>
                                     </div>
                                     </td>
-                                
+
                                 </tr>
                                 @endif  
                                 <?php 

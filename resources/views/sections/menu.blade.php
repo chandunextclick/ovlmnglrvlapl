@@ -140,7 +140,6 @@
                 <x-sub-menu-item :link="route('tasks.salestasks')" :text="__('app.salestasks')" />
                 @endif
 
-                  
                 {{-- @endif --}}
             </div>
         </x-menu-item>

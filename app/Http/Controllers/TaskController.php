@@ -1192,7 +1192,19 @@ class TaskController extends AccountBaseController
 
 
     $startDate = Carbon::parse($request->project_startdate)->format('Y-m-d');
-    $deadline =  Carbon::parse($request->project_deadline)->format('Y-m-d');
+
+    if($request->project_deadline != null){
+
+        $deadline =  Carbon::parse($request->project_deadline)->format('Y-m-d');
+
+    }else{
+
+
+        $deadline=null;
+
+
+    }
+
 
 
     $template = ProjectTemplate::with('projectMembers','projectDepartments')->findOrFail($tempid);
@@ -1201,6 +1213,7 @@ class TaskController extends AccountBaseController
     $project->project_name = $request->project_name;
     $project->project_short_code = 'PRJ'.Project::max('id')+1;
     $project->start_date = $startDate;
+
     $project->deadline = $deadline;
 
     $project->client_id = $request->client_name;
