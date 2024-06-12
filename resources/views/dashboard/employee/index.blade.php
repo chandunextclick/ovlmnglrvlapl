@@ -437,20 +437,29 @@
                                     <td><?= $value['task_tittle'] ?></td>
                                     <td><?= $value['task_note'] ?></td>
                                     <td><?= $value['task_dead_line'] ?></td>
+
+                                    @if(!$allasignedsaletask->isEmpty())
                                 
-                                    @foreach($allasignedsaletask as $arvalue)
+                                        @foreach($allasignedsaletask as $arvalue)
 
-                                    @if($arvalue->taskid == $taskid)
+                                        @if($arvalue->taskid == $taskid)
 
-                                    <td><?= $arvalue->name ?></td>
-                                    
+                                        <td><?= $arvalue->name ?></td>
+                                        
+                                        @else
+
+                                        <td>Admin</td>
+
+                                        @endif
+
+                                        @endforeach
+
                                     @else
 
-                                    <td>Admin</td>
+                                        <td>Admin</td>
 
                                     @endif
 
-                                    @endforeach
                                     <td><?= $value['task_status'] ?></td>
                                     <td><div class="dropdown">
                                     <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>

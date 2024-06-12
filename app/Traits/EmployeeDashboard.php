@@ -85,7 +85,7 @@ trait EmployeeDashboard
         $this->allasignedsaletask = DB::table('adminsalestaskassign')->join('users','users.id','adminsalestaskassign.userid')->select('users.name','adminsalestaskassign.taskid')->get();
 
         
-      
+        // var_dump($this->allasignedsaletask->isEmpty());
 
 
         if ($officeStartTime->gt($officeEndTime)) {
