@@ -1184,7 +1184,7 @@ class TaskController extends AccountBaseController
 
 
 
-    $taskcount = DB::table('adminsalestask')->where('ext_taskid', $saletaskid)->count();
+    $taskcount = DB::table('adminsalestask')->where('ext_taskid', $saletaskid)->where('type','=','Project Creation')->count();
 
 
     if($taskcount==0){
