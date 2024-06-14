@@ -70,8 +70,20 @@
             background-color:white;
 
             width:300px;    
-            
+        
 
+        }
+
+        .admintaskcomp-div{
+
+            position:fixed;
+            top:350px;
+            right:200px;
+            z-index:10;
+
+            background-color:white;
+
+            width:300px;    
 
         }
     </style>
@@ -494,7 +506,7 @@
 
 
                     <div class="col-md-12 mb-3" style="background-color:white">
-                    <h4 class="m-2">Sales Tasks</h4>
+                        <h4 class="m-2">Sales Tasks</h4>
                         <table id="example" class="table table-striped table-responsive" style="min-height:100px;">
                             <thead>
                                 <tr>
@@ -688,8 +700,6 @@
                 <!-- EMP DASHBOARD TASKS PROJECTS END -->
 
 
-
-
                 @if (in_array('my_task', $activeWidgets) && (!is_null($viewTaskPermission) && $viewTaskPermission != 'none'))
                 <div class="row">
                     <div class="col-sm-12">
@@ -758,6 +768,89 @@
                     </div>
                 </div>
                 @endif
+                <div class="col-md-12 mb-3 pb-2" style="background-color:white">
+                        <h4 class="m-2">Marketing Tasks</h4>
+                        <table id="example" class="table table-striped table-responsive" style="min-height:100px;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Task Title</th>
+                                    <th>Task Description</th>
+                                    <th>Created</th>
+                                    <th>Assigned to</th>
+                                    <th>File</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+
+                            foreach($adminindtasks as $value) 
+                                { 
+                            ?>
+                            @if (in_array('admin', user_roles()))  
+
+                                <tr>
+                                    <td><?= $value->id ?></td>
+                                    <td><?= $value->subject ?></td>
+                                    <td><?= $value->description ?></td>
+                                    <td><?= $value->createdat ?></td>
+                                    <td><?= $value->name ?></td>
+                                    @if($value->filename != null)
+                                    <td><a href="../user-uploads/indvidualtask-files/<?=$value->filename?>" download>Download</td>
+                                    @else
+                                    <th>No File</th>
+                                    @endif
+                                    <td><?= $value->status ?></td>
+                                    @if($value->status != 'completed')
+                                    <td><div class="dropdown">
+                                    <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" onclick="completeadminindtask({{$value->id}})">Task Completed</a>
+                                    </div>
+                                    </div>
+                                    </td>
+                                    @else
+                                    <td></td>
+                                    @endif
+                                </tr>
+                            @else
+                                @if ($value->userid == user()->id and $value->status!='completed')  
+                                    <tr>
+                                        <td><?= $value->id ?></td>
+                                        <td><?= $value->subject ?></td>
+                                        <td><?= $value->description ?></td>
+                                        <td><?= $value->createdat ?></td>
+                                        <td><?= $value->name ?></td>
+                                        @if($value->filename != null)
+                                        <td><a href="../user-uploads/indvidualtask-files/<?=$value->filename?>" download>Download</td>
+                                        @else
+                                        <th>No File</th>
+                                        @endif
+                                        <td><?= $value->status ?></td>
+                                        <td><div class="dropdown">
+                                        <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" onclick="completeadminindtask({{$value->id}})">Task Completed</a>
+                                        </div>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                @endif
+
+                            @endif
+                                    
+                                <?php 
+
+                                }
+                                ?>
+                            
+                            </tbody>
+
+                        </table>
+
+                    </div>
 
                 <div class="assignee-div d-none" id="assignee-divid" >
 
@@ -776,6 +869,24 @@
                         <button type="submit" class="btn-primary rounded f-14 p-2 mr-3" id="">
                         <svg class="svg-inline--fa fa-check fa-w-16 mr-1" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg><!-- <i class="fa fa-check mr-1"></i> Font Awesome fontawesome.com -->
                         Assign
+                        </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="admintaskcomp-div d-none" id="admintaskcomp-divid" >
+                    Add Your result
+                    <form method="POST" action="{{ route('tasks.admintaskcompleted') }}" class="bg-light p-3">
+                        @csrf
+                        <div class="form-group">
+                            <textarea name="compresult" cols="40"></textarea>
+                            <input type="hidden" class="form-control height-35 f-14" placeholder="comptaskid" value="" name="comptaskid" id="comptaskid" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                        <button type="submit" class="btn-primary rounded f-14 p-2 mr-3" id="">
+                        <svg class="svg-inline--fa fa-check fa-w-16 mr-1" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg><!-- <i class="fa fa-check mr-1"></i> Font Awesome fontawesome.com -->
+                        Complete
                         </button>
                         </div>
 
@@ -1049,6 +1160,8 @@
         <script src="{{ asset('vendor/full-calendar/locales-all.min.js') }}"></script>
         <script>
 
+
+
         function assignadminsaletask(id){
 
 
@@ -1057,6 +1170,17 @@
             $("#assigneetaskid").val(id);
 
             
+
+        }
+
+        function completeadminindtask(id){
+
+
+            $("#admintaskcomp-divid").removeClass("d-none");
+
+            $("#comptaskid").val(id);
+
+
 
         }
 

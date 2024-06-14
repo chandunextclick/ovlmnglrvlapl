@@ -27,6 +27,8 @@ input[type="date"] {
 
     <!-- CONTENT WRAPPER START -->
 
+@if (in_array('admin', user_roles()) || user()->id==8)  
+
 <div class="content-wrapper">
 
     <div class="row">
@@ -108,7 +110,7 @@ input[type="date"] {
 </div>
     <!-- CONTENT WRAPPER END -->
 
-
+@endif
 @endsection
 
 

@@ -1105,6 +1105,19 @@ class TaskController extends AccountBaseController
     }
 
 
+    public function admintaskcompleted(Request $request){
+
+        $taskid = $request->comptaskid;  
+
+        DB::table('assignindtask')->where('id',$taskid)->update(array('result'=>$request->compresult,'status'=>"completed"));
+        
+
+        return redirect()->route('dashboard');
+
+
+    }
+
+
     public function updsalestask(Request $request){
 
     $taskid=$request->salestask_id;

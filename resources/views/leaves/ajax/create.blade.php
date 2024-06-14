@@ -269,6 +269,7 @@
         });
 
         function setMinDate(employeeID) {
+            
             var employees = @json($employees);
 
             

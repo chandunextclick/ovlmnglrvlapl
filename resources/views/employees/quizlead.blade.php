@@ -21,27 +21,32 @@ input[type="date"] {
 @section('content')
 
     <!-- CONTENT WRAPPER START -->
-    <div class="content-wrapper">
+<div class="content-wrapper">
         
 
-    <div class="m-4">
+<div class="m-4">
 
-<form method="POST" action="{{ route('sprofile.getquizuserlead') }}">
-    @csrf
-    <label for="start_date">Start Date:</label>
-    <input type="date" name="start_date" id="start_date" value="{{ $date1 }}">
-    <label for="end_date">End Date:</label>
-    <input type="date" name="end_date" id="end_date" value="{{ $date2 }}">
-    <button type="submit" class="btn btn-primary ml-2">Apply</button>
+    <form method="POST" action="{{ route('sprofile.getquizuserlead') }}">
+        @csrf
+        <label for="start_date">Start Date:</label>
+        <input type="date" name="start_date" id="start_date" value="{{ $date1 }}">
+        <label for="end_date">End Date:</label>
+        <input type="date" name="end_date" id="end_date" value="{{ $date2 }}">
+        <button type="submit" class="btn btn-primary ml-2">Apply</button>
 
-</form>
+    </form>
 
+</div>
+<div class="d-flex flex-row-reverse">
+    <button class="btn btn-success"><a href="{{route('sprofile.getquizleaddetail')}}" class="text-white">View Detail</a></button>
 </div>
 
 
         <!-- Task Box Start -->
         <div class="d-flex flex-column w-tables rounded mt-3 bg-white">
 
+
+        
         <div class="container">
     <table id="example" class="table table-striped" style="width:100%">
         <thead>

@@ -165,6 +165,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::match(['get', 'post'], 'sprofile/getquizuserlead', [StudentProfileController::class, 'getquizuserlead'])->name('sprofile.getquizuserlead');
 
+    Route::match(['get', 'post'], 'sprofile/getquizleaddetail', [StudentProfileController::class, 'getquizleaddetail'])->name('sprofile.getquizleaddetail');
+    
     Route::match(['get', 'post'], 'sprofile/essldata', [StudentProfileController::class, 'essldata'])->name('sprofile.essldata');
 
     Route::match(['get', 'post'], 'sprofile/customerpersonacreate', [StudentProfileController::class, 'customerpersonacreate'])->name('sprofile.customerpersonacreate');
@@ -515,6 +517,7 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::get('tasks/salestasks', [TaskController::class, 'salestasks'])->name('tasks.salestasks');
     Route::get('tasks/salestaskscreateproject/{id}', [TaskController::class, 'salestaskscreateproject'])->name('tasks.salestaskscreateprj');
     Route::get('tasks/salestasksupdateprj/{id}', [TaskController::class, 'salestasksupdateprj'])->name('tasks.salestasksupdateprj');
+    Route::post('tasks/admintaskcompleted', [TaskController::class, 'admintaskcompleted'])->name('tasks.admintaskcompleted');
     Route::get('tasks/client-detail', [TaskController::class, 'clientDetail'])->name('tasks.clientDetail');
     Route::post('tasks/change-status', [TaskController::class, 'changeStatus'])->name('tasks.change_status');
     Route::post('tasks/apply-quick-action', [TaskController::class, 'applyQuickAction'])->name('tasks.apply_quick_action');

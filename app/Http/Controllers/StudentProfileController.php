@@ -23,6 +23,7 @@ class StudentProfileController extends AccountBaseController
 
             return $next($request);
         });
+
     }
     
 
@@ -30,7 +31,7 @@ class StudentProfileController extends AccountBaseController
 public function getquizuserlead(Request $request)
 {
     
-        $data['pageTitle']= 'Enquiry';
+        $data['pageTitle']= 'Quizlead';
         $data['pushSetting']= $this->pushSetting;
         $data['pusherSettings']= $this->pusherSettings;
         if (in_array('admin', user_roles())){
@@ -97,6 +98,64 @@ public function getquizuserlead(Request $request)
     
     
         return view('employees.quizlead',$data);
+}
+
+
+
+public function getquizleaddetail()
+{
+
+    $data['pageTitle']= 'Quiz Lead Detail Page';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+    $url = 'https://www.learning.edoxi.com/quizzes/getquizuserleaddetail';
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+
+    $quizlead = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+
+    $data['mail1count'] = $quizlead["mail1count"][0]['count'];
+
+    $data['mail2count'] = $quizlead["mail2count"][0]['count'];
+
+    $data['quiz1attendedcount'] = $quizlead["quiz1attendedcount"][0]['count'];
+
+    $data['quiz2attendedcount'] = $quizlead["quiz2attendedcount"][0]['count'];
+
+    $data['mail1'] = $quizlead["mail1"];
+
+    $data['mail2'] = $quizlead["mail2"];
+
+    $data['quiz1attended'] = $quizlead["quiz1attended"];
+
+    $data['quiz2attended'] = $quizlead["quiz2attended"];
+
+
+
+
+return view('employees.quizleaddetail',$data);
+
+
 }
 
 public function enquiry(Request $request)
