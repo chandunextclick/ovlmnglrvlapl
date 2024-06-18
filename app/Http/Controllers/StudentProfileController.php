@@ -87,7 +87,10 @@ public function getquizuserlead(Request $request)
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
 
+        // var_dump($response);
+
         $data['quizlead'] = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+
         $this->env = $data['quizlead'];
         curl_close($ch);
 

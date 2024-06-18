@@ -118,6 +118,10 @@
                                         <option value="{{ $optionaldate->date->format('d-m-Y') }}" data-custom="{{ $optionaldate->occassion }}" data-chkid="0">{{ mb_ucwords($optionaldate->occassion) }} ( {{ mb_ucwords($optionaldate->date->format('d-m-Y')) }} )
                                         </option>
                                     @endforeach
+                                    @foreach ($useroptional as $useropt)
+                                    <option value="{{ date('d-m-Y', strtotime($useropt->leave_date)) }}" data-custom="{{ $useropt->reason }}" data-chkid="0">{{ mb_ucwords($useropt->reason) }} ( {{ mb_ucwords(date('d-m-Y', strtotime($useropt->leave_date))) }} )
+                                    </option>
+                                    @endforeach
                                 @endif
                             </select>
 
@@ -280,9 +284,9 @@
 
             console.log(employee);
 
-            $('#optional_type_id').find('option[data-chkid="1"]').remove();
+            // $('#optional_type_id').find('option[data-chkid="1"]').remove();
 
-            $('#optional_type_id').selectpicker('refresh');
+            // $('#optional_type_id').selectpicker('refresh');
 
             if(employees.length > 0 && employee[0] !== undefined)
             {
@@ -292,82 +296,82 @@
                 var minDate = new Date(employee[0].employee_detail.joining_date);
     
 
-                if(employee[0].employee_detail.date_of_birth){
+                // if(employee[0].employee_detail.date_of_birth){
 
                     
 
-                        var birthdate = new Date(employee[0].employee_detail.date_of_birth);
+                //         var birthdate = new Date(employee[0].employee_detail.date_of_birth);
 
-                        var year = currentDate.getFullYear();
+                //         var year = currentDate.getFullYear();
 
-                        birthdate.setFullYear(year);
+                //         birthdate.setFullYear(year);
 
-                        var month = ('0' + (birthdate.getMonth() + 1)).slice(-2);
+                //         var month = ('0' + (birthdate.getMonth() + 1)).slice(-2);
 
-                        var day = ('0' + birthdate.getDate()).slice(-2);
+                //         var day = ('0' + birthdate.getDate()).slice(-2);
 
-                        var birthday = day + '-' + month + '-' + year;
+                //         var birthday = day + '-' + month + '-' + year;
 
-                        console.log(birthdate);
+                //         console.log(birthdate);
 
-                        console.log(currentDate);
+                //         console.log(currentDate);
                         
 
-                        if (birthdate > currentDate) {
+                //         if (birthdate > currentDate) {
 
 
-                            $('#optional_type_id').append($('<option>', {
-                                value: birthday,
-                                text: 'Birthday(' +birthday+' )',
-                                'data-custom': 'Birthday',
-                                'data-chkid':'1'
-                            }));
+                //             $('#optional_type_id').append($('<option>', {
+                //                 value: birthday,
+                //                 text: 'Birthday(' +birthday+' )',
+                //                 'data-custom': 'Birthday',
+                //                 'data-chkid':'1'
+                //             }));
 
                             
-                            $('#optional_type_id').selectpicker('refresh');
+                //             $('#optional_type_id').selectpicker('refresh');
 
 
-                            console.log(document.getElementById('optional_type_id')); 
+                //             console.log(document.getElementById('optional_type_id')); 
 
-                        }
+                //         }
                         
-                }  
-                if(employee[0].employee_detail.marriage_anniversary_date){
+                // }  
+                // if(employee[0].employee_detail.marriage_anniversary_date){
 
                     
 
-                    var mrandate = new Date(employee[0].employee_detail.marriage_anniversary_date);
+                //     var mrandate = new Date(employee[0].employee_detail.marriage_anniversary_date);
 
                     
 
-                    var year = currentDate.getFullYear();
+                //     var year = currentDate.getFullYear();
 
-                    mrandate.setFullYear(year);
+                //     mrandate.setFullYear(year);
 
-                    var month = ('0' + (mrandate.getMonth() + 1)).slice(-2);
+                //     var month = ('0' + (mrandate.getMonth() + 1)).slice(-2);
 
-                    var day = ('0' + mrandate.getDate()).slice(-2);
+                //     var day = ('0' + mrandate.getDate()).slice(-2);
 
-                    var mranday = day + '-' + month + '-' + year;
+                //     var mranday = day + '-' + month + '-' + year;
 
-                    console.log(mrandate,currentDate);
+                //     console.log(mrandate,currentDate);
 
-                    if (mrandate > currentDate) {
+                //     if (mrandate > currentDate) {
 
-                        console.log("mrentrytest");
+                //         console.log("mrentrytest");
 
-                        $('#optional_type_id').append($('<option>', {
-                            value: mranday,
-                            text: 'Marriage Anniversary(' +mranday+' )',
-                            'data-custom': 'MarriageAnniversary',
-                            'data-chkid':'1'
-                        }));
+                //         $('#optional_type_id').append($('<option>', {
+                //             value: mranday,
+                //             text: 'Marriage Anniversary(' +mranday+' )',
+                //             'data-custom': 'MarriageAnniversary',
+                //             'data-chkid':'1'
+                //         }));
                         
-                        $('#optional_type_id').selectpicker('refresh');
+                //         $('#optional_type_id').selectpicker('refresh');
 
-                    }
+                //     }
 
-                }    
+                // }    
 
             
                 dp1.setMin(minDate);

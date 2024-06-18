@@ -76,10 +76,12 @@ class LeaveController extends AccountBaseController
                                 ->whereBetween('date', [$currentDate, $endOfYear])
                                 ->get();
 
+        $this->useroptional = DB::table('optional_userleave')->where('userid',user()->id)
+                                ->whereBetween('leave_date', [$currentDate, $endOfYear])
+                                ->get();
         
-        
-         
-        
+        // var_dump($this->useroptional);
+
 
         if ($this->addPermission == 'added') {
             $this->defaultAssign = User::with('leaveTypes', 'leaveTypes.leaveType')->findOrFail(user()->id);
