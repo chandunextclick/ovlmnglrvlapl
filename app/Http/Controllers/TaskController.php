@@ -1317,6 +1317,27 @@ class TaskController extends AccountBaseController
     
     DB::commit();
 
+    $url = 'https://edoxi.cyradrive.com/task-manager/admintaskstatusupdate'; // Replace with the URL you want to fetch data from
+
+    $tasknote = "";
+
+    $taskstatus = "Working";
+
+    $dataparam = array(
+
+        'taskid' => $saletaskid,
+        'tasknote' => $tasknote,
+        'taskstatus' => $taskstatus,
+    );
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataparam)); // Set POST data
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+
     return redirect()->route('projects.index');
 
     }else{
