@@ -175,6 +175,8 @@ class ProjectController extends AccountBaseController
         
         Project::where('id', $id)->update(['priority' => $oper]);
 
+        Task::where('project_id', $id)->update(['task_priority' => $oper]);
+
         return Reply::success(__('messages.projectPrioritySuccessfully'));
     }
 

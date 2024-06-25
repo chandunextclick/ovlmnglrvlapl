@@ -89,6 +89,8 @@ public function getquizuserlead(Request $request)
 
         // var_dump($response);
 
+        // $data['quizlead'] = $response;
+
         $data['quizlead'] = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
 
         $this->env = $data['quizlead'];

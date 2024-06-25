@@ -516,15 +516,18 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::get('tasks/salestasks', [TaskController::class, 'salestasks'])->name('tasks.salestasks');
     Route::get('tasks/salestaskscreateproject/{id}', [TaskController::class, 'salestaskscreateproject'])->name('tasks.salestaskscreateprj');
+    Route::get('tasks/marketingtaskscreateproject/{id}', [TaskController::class, 'marketingtaskscreateproject'])->name('tasks.marketingtaskscreateproject');
     Route::get('tasks/salestasksupdateprj/{id}', [TaskController::class, 'salestasksupdateprj'])->name('tasks.salestasksupdateprj');
-    Route::post('tasks/admintaskcompleted', [TaskController::class, 'admintaskcompleted'])->name('tasks.admintaskcompleted');
+    Route::post('tasks/marketingtaskcompleted', [TaskController::class, 'marketingtaskcompleted'])->name('tasks.marketingtaskcompleted');
     Route::get('tasks/client-detail', [TaskController::class, 'clientDetail'])->name('tasks.clientDetail');
     Route::post('tasks/change-status', [TaskController::class, 'changeStatus'])->name('tasks.change_status');
     Route::post('tasks/apply-quick-action', [TaskController::class, 'applyQuickAction'])->name('tasks.apply_quick_action');
     Route::post('tasks/store-pin', [TaskController::class, 'storePin'])->name('tasks.store_pin');
+    Route::post('tasks/store-marketingtaskprj', [TaskController::class, 'storemarketingtaskprj'])->name('tasks.storemarketingtaskprj');
     Route::post('tasks/store-salestaskprj', [TaskController::class, 'storesalestaskprj'])->name('tasks.storesalestaskprj');
     Route::post('tasks/store-indvidualtask', [TaskController::class, 'storeindvidualtask'])->name('tasks.storeindvidualtask');
-    Route::post('tasks/assign-indvidualtask', [TaskController::class, 'assignindvidualtask'])->name('tasks.assignindvidualtask');
+    Route::post('tasks/assign-indvidualtask', [TaskController::class, 'assignsalestask'])->name('tasks.assignsalestask');
+    Route::post('tasks/assign-marketingtask', [TaskController::class, 'assignmarketingtask'])->name('tasks.assignmarketingtask');
     Route::post('tasks/update-salestask', [TaskController::class, 'updsalestask'])->name('tasks.updsalestask');
     Route::post('tasks/reminder', [TaskController::class, 'reminder'])->name('tasks.reminder');
     Route::post('tasks/destroy-pin/{id}', [TaskController::class, 'destroyPin'])->name('tasks.destroy_pin');

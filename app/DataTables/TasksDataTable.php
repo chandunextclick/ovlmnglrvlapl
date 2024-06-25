@@ -401,7 +401,7 @@ class TasksDataTable extends BaseDataTable
             ->leftJoin('taskboard_columns as dependentboard', 'dependentboard.id', '=', 'dependent.board_column_id')
             ->selectRaw('tasks.id, tasks.task_short_code, tasks.added_by, projects.project_name, projects.project_admin, tasks.heading, client.name as clientName, creator_user.name as created_by, creator_user.image as created_image, tasks.board_column_id,
              tasks.due_date,tasks.created_at,tasks.updated_at,tasks.completed_on,taskboard_columns.column_name as board_column, taskboard_columns.label_color,dependentboard.slug,project_category.category_name,
-              tasks.project_id, tasks.is_private,tasks.task_time_id,( select count("id") from pinned where pinned.task_id = tasks.id and pinned.user_id = ' . user()->id . ') as pinned_task')
+              tasks.project_id, tasks.is_private,tasks.task_time_id,tasks.task_priority,( select count("id") from pinned where pinned.task_id = tasks.id and pinned.user_id = ' . user()->id . ') as pinned_task')
             ->addSelect('tasks.company_id') // Company_id is fetched so the we have fetch company relation with it)
             ->with('users', 'activeTimerAll', 'boardColumn', 'activeTimer', 'timeLogged', 'timeLogged.breaks', 'userActiveTimer', 'userActiveTimer.activeBreak', 'labels', 'taskUsers')
             ->withCount('activeTimerAll', 'completedSubtasks', 'subtasks')
@@ -630,7 +630,12 @@ class TasksDataTable extends BaseDataTable
                 'createdRow' => 'function (row, data, dataIndex) {
                     if (data.slug == "completed") {
                         $(row).addClass("bg-success"); // Add the "row-green" class for rows with priority 1
+
                     }
+                    if (data.task_priority == "1") {
+                            $(row).addClass("bg-warning"); // Add the "row-yellow" class for rows with priority 1
+                    }
+                    
                 }',
             ])
             ->buttons(Button::make(['extend' => 'excel', 'text' => '<i class="fa fa-file-export"></i> ' . trans('app.exportExcel')]));

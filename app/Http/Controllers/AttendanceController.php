@@ -314,7 +314,7 @@ class AttendanceController extends AccountBaseController
                 LEFT JOIN employee_details on employee_details.employee_id=employeelog.empcode
                 LEFT JOIN users on employee_details.user_id=users.id
                 LEFT JOIN attendances on attendances.user_id=users.id
-                WHERE STR_TO_DATE(employeelog.logdate, '%Y-%m-%d') = '$this->logdate' and users.id='$this->loguser' and STR_TO_DATE(attendances.clock_in_time, '%Y-%m-%d') = '$this->logdate' order by employeelog.logtime ASC";
+                WHERE STR_TO_DATE(employeelog.logdate, '%Y-%m-%d') = '$this->logdate' and users.id='$this->loguser' and STR_TO_DATE(attendances.clock_in_time, '%Y-%m-%d') = '$this->logdate' order by time(employeelog.logtime) ASC";
         
         $this->emplogactivity=DB::select($query);
 

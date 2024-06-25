@@ -74,7 +74,7 @@
 
         }
 
-        .admintaskcomp-div{
+        .marketingtaskcomp-div{
 
             position:fixed;
             top:350px;
@@ -483,8 +483,9 @@
                                         @if(!in_array($taskid,$salestaskids))
                                         <a class="dropdown-item" href="{{ route('tasks.salestaskscreateprj',['id' => "$taskid" ])}}">Create Project</a>
                                         @endif
+                                        @if($counter == 0)  
                                         <a class="dropdown-item" onclick="assignadminsaletask({{$taskid}})">Assign</a>
-                        
+                                        @endif
                                         <a class="dropdown-item" href="{{ route('tasks.salestasksupdateprj',['id' => "$taskid"])}}">Update Status</a>
                                     </div>
                                     </div>
@@ -796,7 +797,9 @@
                                     <td><?= $value->subject ?></td>
                                     <td><?= $value->description ?></td>
                                     <td><?= $value->createdat ?></td>
+    
                                     <td><?= $value->name ?></td>
+                                   
                                     @if($value->filename != null)
                                     <td><a href="../user-uploads/indvidualtask-files/<?=$value->filename?>" download>Download</td>
                                     @else
@@ -807,7 +810,8 @@
                                     <td><div class="dropdown">
                                     <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" onclick="completeadminindtask({{$value->id}})">Task Completed</a>
+                                
+                                    <a class="dropdown-item" onclick="completemarketingtask({{$value->id}})">Task Completed</a>
                                     </div>
                                     </div>
                                     </td>
@@ -816,13 +820,17 @@
                                     @endif
                                 </tr>
                             @else
-                                @if ($value->userid == user()->id and $value->status!='completed')  
+                                @if (($value->userid == user()->id || $value->assignedid == user()->id ) and $value->status!='completed')  
                                     <tr>
                                         <td><?= $value->id ?></td>
                                         <td><?= $value->subject ?></td>
                                         <td><?= $value->description ?></td>
                                         <td><?= $value->createdat ?></td>
+                                        @if($value->assignedid!=null)
+                                        <td><?= $value->assigned_username ?></td>
+                                        @else
                                         <td><?= $value->name ?></td>
+                                        @endif
                                         @if($value->filename != null)
                                         <td><a href="../user-uploads/indvidualtask-files/<?=$value->filename?>" download>Download</td>
                                         @else
@@ -832,7 +840,13 @@
                                         <td><div class="dropdown">
                                         <span class="bi bi-three-dots-vertical dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" onclick="completeadminindtask({{$value->id}})">Task Completed</a>
+                                            @if(($value->project_id == 0) and ($value->userid == user()->id))
+                                            <a class="dropdown-item" href="{{ route('tasks.marketingtaskscreateproject',['id' => "$value->id" ])}}">Create Project</a>
+                                            @endif
+                                            @if($value->userid == user()->id and $value->assignedid==null)
+                                            <a class="dropdown-item" onclick="assignadminmarketingtask({{$value->id}})">Assign</a>
+                                            @endif
+                                            <a class="dropdown-item" onclick="completemarketingtask({{$value->id}})">Task Completed</a>
                                         </div>
                                         </div>
                                         </td>
@@ -852,9 +866,9 @@
 
                     </div>
 
-                <div class="assignee-div d-none" id="assignee-divid" >
+                <div class="assignee-div d-none" id="sales-assignee-divid" >
 
-                    <form method="POST" action="{{ route('tasks.assignindvidualtask') }}" class="bg-light p-3">
+                    <form method="POST" action="{{ route('tasks.assignsalestask') }}" class="bg-light p-3">
                         @csrf
                         <div class="form-group">
                     
@@ -863,7 +877,7 @@
                                 <option value="{{$assignee->id}}">{{$assignee->name}}</option>
                             @endforeach                          
                             </select> 
-                            <input type="hidden" class="form-control height-35 f-14" placeholder="Assigneetaskid" value="" name="assigneetaskid" id="assigneetaskid" autocomplete="off" required>
+                            <input type="hidden" class="form-control height-35 f-14" placeholder="Assignee sales taskid" value="" name="assigneetaskid" id="assigneesalestaskid" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                         <button type="submit" class="btn-primary rounded f-14 p-2 mr-3" id="">
@@ -875,9 +889,32 @@
                     </form>
                 </div>
 
-                <div class="admintaskcomp-div d-none" id="admintaskcomp-divid" >
+                <div class="assignee-div d-none" id="marketing-assignee-divid" >
+
+                    <form method="POST" action="{{ route('tasks.assignmarketingtask') }}" class="bg-light p-3">
+                        @csrf
+                        <div class="form-group">
+                    
+                            <select class="form-control height-35 f-14" placeholder="Assignee"  name="assignee_name" id="assignee_name"  required>
+                            @foreach($assignuser as $assignee) 
+                                <option value="{{$assignee->id}}">{{$assignee->name}}</option>
+                            @endforeach                          
+                            </select> 
+                            <input type="hidden" class="form-control height-35 f-14" placeholder="Assignee marketing taskid" value="" name="assigneetaskid" id="assigneemarketingtaskid" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                        <button type="submit" class="btn-primary rounded f-14 p-2 mr-3" id="">
+                        <svg class="svg-inline--fa fa-check fa-w-16 mr-1" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg><!-- <i class="fa fa-check mr-1"></i> Font Awesome fontawesome.com -->
+                        Assign
+                        </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="marketingtaskcomp-div d-none" id="marketingtaskcomp-divid" >
                     Add Your result
-                    <form method="POST" action="{{ route('tasks.admintaskcompleted') }}" class="bg-light p-3">
+                    <form method="POST" action="{{ route('tasks.marketingtaskcompleted') }}" class="bg-light p-3">
                         @csrf
                         <div class="form-group">
                             <textarea name="compresult" cols="40"></textarea>
@@ -1165,18 +1202,33 @@
         function assignadminsaletask(id){
 
 
-            $("#assignee-divid").removeClass("d-none");
+            $("#sales-assignee-divid").removeClass("d-none");
 
-            $("#assigneetaskid").val(id);
+            $("#assigneesalestaskid").val(id);
 
             
 
         }
 
-        function completeadminindtask(id){
+
+        function assignadminmarketingtask(id){
 
 
-            $("#admintaskcomp-divid").removeClass("d-none");
+            $("#marketing-assignee-divid").removeClass("d-none");
+
+            $("#assigneemarketingtaskid").val(id);
+
+
+
+        }
+
+
+
+
+        function completemarketingtask(id){
+
+
+            $("#marketingtaskcomp-divid").removeClass("d-none");
 
             $("#comptaskid").val(id);
 

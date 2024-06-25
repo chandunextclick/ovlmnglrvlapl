@@ -1094,6 +1094,19 @@ class TaskController extends AccountBaseController
 
     }
 
+
+    public function marketingtaskscreateproject($id){
+
+        $this->clients = User::allClients();
+    
+        $this->prjtemplates = DB::table('project_templates')->select('id','project_name')->get();
+    
+        $this->taskid = $id;
+    
+        return view('tasks.marketingtaskscreateproject',$this->data);
+    
+    }
+
     public function salestasksupdateprj($id){
 
     
@@ -1105,11 +1118,11 @@ class TaskController extends AccountBaseController
     }
 
 
-    public function admintaskcompleted(Request $request){
+    public function marketingtaskcompleted(Request $request){
 
         $taskid = $request->comptaskid;  
 
-        DB::table('assignindtask')->where('id',$taskid)->update(array('result'=>$request->compresult,'status'=>"completed"));
+        DB::table('marketingsalestask')->where('id',$taskid)->update(array('result'=>$request->compresult,'status'=>"completed"));
         
 
         return redirect()->route('dashboard');
@@ -1185,6 +1198,132 @@ class TaskController extends AccountBaseController
     return redirect()->route('tasks.salestasks');
 
     }
+
+
+    public function storemarketingtaskprj(Request $request){
+
+        $tempid=$request->template_name;
+    
+        $clientid=$request->client_name;
+    
+        $marketingtaskid=$request->task_id;
+    
+    
+    
+        $startDate = Carbon::parse($request->project_startdate)->format('Y-m-d');
+    
+        if($request->project_deadline != null){
+    
+            $deadline =  Carbon::parse($request->project_deadline)->format('Y-m-d');
+    
+        }else{
+    
+    
+            $deadline=null;
+    
+    
+        }
+    
+    
+    
+        $template = ProjectTemplate::with('projectMembers','projectDepartments')->findOrFail($tempid);
+    
+        $project = new Project();
+        $project->project_name = $request->project_name;
+        $project->project_short_code = 'PRJ'.Project::max('id')+1;
+        $project->start_date = $startDate;
+    
+        $project->deadline = $deadline;
+    
+        $project->client_id = $request->client_name;
+    
+        $project->category_id = $template->category_id;
+    
+        $project->save();
+    
+    
+    
+        $projectTemplateMembers = $template->projectMembers ? $template->projectMembers->pluck('id')->toArray() : null;
+        $projectTemplateDepartments = $template->projectDepartments ? $template->projectDepartments->pluck('id')->toArray() : null;
+    
+        $TeamToInsert = [];
+    
+        $MemberToInsert = [];
+    
+        foreach ($projectTemplateDepartments as $teamId) {
+    
+            $TeamToInsert[] = [
+                'project_id' => $project->id,
+                'team_id' => $teamId  
+            ];
+    
+            
+        }
+    
+        DB::table('project_departments')->insert($TeamToInsert);
+    
+        foreach ($projectTemplateMembers as $memberId) {
+    
+            $MemberToInsert[] = [
+                'project_id' => $project->id,
+                'user_id' => $memberId 
+            ];
+    
+            
+        }
+    
+        DB::table('project_members')->insert($MemberToInsert);
+    
+    
+    
+        // dd($template);
+    
+        foreach ($template->tasks as $task) {
+    
+            $projectTask = new Task();
+            $projectTask->project_id = $project->id;
+            $projectTask->heading = $task->heading;
+            
+            $projectTask->task_category_id = $task->project_template_task_category_id;
+            $projectTask->description = trim_editor($task->description);
+            $projectTask->start_date = $startDate;
+            $projectTask->due_date = $deadline;
+            $projectTask->is_private = 0;
+            $projectTask->template_task_id = $task->id;
+           
+            $projectTask->save();
+    
+            foreach ($task->usersMany as $value) {
+                TaskUser::create(
+                    [
+                        'user_id' => $value->id,
+                        'task_id' => $projectTask->id
+                    ]
+                );
+    
+                
+            }
+    
+            foreach ($task->subtasks as $value) {
+                $projectTask->subtasks()->create(['title' => $value->title]);
+            }
+        }
+    
+        DB::statement('CALL sp_update_project_dependent(?)', [$project->id]);
+    
+    
+    
+        DB::table('marketingsalestask')->where('id',$marketingtaskid)->update(array('project_id'=>$project->id));
+        
+
+        DB::commit();
+    
+    
+        return redirect()->route('projects.index');
+    
+    
+    
+        }
 
 
     public function storesalestaskprj(Request $request){
@@ -1387,14 +1526,14 @@ class TaskController extends AccountBaseController
         ];
 
 
-        DB::table('assignindtask')->insert($indtaskarray);
+        DB::table('marketingsalestask')->insert($indtaskarray);
         
 
         return redirect()->route('dashboard');
 
     }
 
-    public function assignindvidualtask(Request $request){
+    public function assignsalestask(Request $request){
 
 
 
@@ -1463,6 +1602,32 @@ class TaskController extends AccountBaseController
 
         
         
+
+        return redirect()->route('dashboard');
+
+    }
+
+
+    public function assignmarketingtask(Request $request){
+
+
+
+        $taskid = $request->assigneetaskid;
+
+        $taskassignee = $request->assignee_name;
+
+
+
+        $assigntaskarray[] = [
+
+            'userid' => $taskassignee,
+            'taskid' => $taskid,
+        ];
+
+
+        DB::table('adminmarketingtaskassign')->insert($assigntaskarray);
+
+
 
         return redirect()->route('dashboard');
 

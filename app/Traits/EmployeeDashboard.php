@@ -84,8 +84,9 @@ trait EmployeeDashboard
 
         $this->allasignedsaletask = DB::table('adminsalestaskassign')->join('users','users.id','adminsalestaskassign.userid')->select('users.name','adminsalestaskassign.taskid')->get();
 
-        $this->adminindtasks = DB::table('assignindtask')->join('users','users.id','assignindtask.userid')->select('users.name','assignindtask.*')->orderBy('createdat', 'DESC')->get();
+        $this->adminindtasks = DB::table('marketingsalestask')->leftjoin('adminmarketingtaskassign','adminmarketingtaskassign.taskid','marketingsalestask.id')->leftJoin('users as assigned_users', 'assigned_users.id', '=', 'adminmarketingtaskassign.userid')->join('users','users.id','marketingsalestask.userid')->select('users.name','marketingsalestask.*','adminmarketingtaskassign.userid as assignedid','assigned_users.name as assigned_username')->orderBy('createdat', 'DESC')->get();
     
+
 
 
         if ($officeStartTime->gt($officeEndTime)) {

@@ -268,7 +268,7 @@
 
         setMinDate($('#user_id').val());
 
-        $('#user_id').on('change', function(e) {
+        $('#user_id').on('change', function(e) {    
             setMinDate(e.target.value);
         });
 
