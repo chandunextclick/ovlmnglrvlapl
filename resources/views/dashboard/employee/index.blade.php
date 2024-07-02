@@ -1118,7 +1118,7 @@
 
     </div>
     <!-- CONTENT WRAPPER END -->
-    @if (in_array('admin', user_roles()))                                                 
+    @if (in_array('admin', user_roles()) || user()->id==8)                                                 
     <div class="row m-2">
         <div class="col-md-12">
 
