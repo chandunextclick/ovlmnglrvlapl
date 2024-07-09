@@ -2065,6 +2065,45 @@ public function monthlyenquiryreport(Request $request)
 
 
 
+public function dailytaskreport(Request $request)
+{
+
+    $data['pageTitle']= 'Daily Task Report';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
+    
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+
+
+    $data['date2'] = date("Y-m-d"); 
+
+    
+    $data['date1'] = date("Y-m-d", strtotime("-1 month", strtotime($data['date2'])));
+
+
+    return view('rankings.dailytaskreport',$data);
+
+}
+
+
+
 public function monthlyadcampaign(Request $request)
 {
 
@@ -2513,8 +2552,52 @@ public function getupgradation(Request $request){
 }
 
 
+public function getdailytaskreport(Request $request){
+    
+        
+    $date1 = $request->input('startdate');
+
+    $date2 = $request->input('enddate');
 
 
+
+    $dltask = DB::table('projects as p')
+    ->select('pc.category_name', 'u.name as Client')
+    ->selectSub(function ($query) use ($date1, $date2) {
+        $query->select('tr.result')
+            ->from('task_results as tr')
+            ->where('tr.task_id', function ($subquery) {
+                $subquery->select(DB::raw('min(tasks.id)'))
+                    ->from('tasks')
+                    ->whereRaw('tasks.project_id = p.id');
+            })
+            ->whereBetween('tr.created_at', [$date1, $date2]);
+    }, 'result')
+    ->selectSub(function ($query) {
+        $query->select('users.name')
+            ->from('task_results as res')
+            ->join('users', 'res.user_id', '=', 'users.id')
+            ->where('res.task_id', function ($subquery) {
+                $subquery->select(DB::raw('min(ts.id)'))
+                    ->from('tasks as ts')
+                    ->whereRaw('ts.project_id = p.id');
+            });
+    }, 'Author')
+    ->join('project_category as pc', 'p.category_id', '=', 'pc.id')
+    ->join('tasks as t', 't.project_id', '=', 'p.id')  // Assuming this join is necessary
+    ->join('users as u', 'u.id', '=', 'p.client_id')
+    ->where('p.completion_percent', '=', 100)
+    ->where('pc.dltask', '=', 1)
+    ->groupBy('p.project_name', 'pc.category_name', 'u.name') // Add 'u.name' to group by client name
+    ->orderByDesc('pc.category_name')
+    ->get();
+
+         
+
+                        
+    return Reply::dataOnly(['status' => 'success','dltask' => $dltask]);
+    
+}
     
 
 

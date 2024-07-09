@@ -1505,7 +1505,19 @@ class TaskController extends AccountBaseController
 
         $taskdesc = $request->task_description;
 
-        $taskassignee = $request->assignee_name;
+
+        if(in_array('admin', user_roles())){
+
+            $taskassignee = $request->assignee_name;
+            
+        }else{
+
+
+            $taskassignee = user()->id;
+            
+        }
+
+        
 
         $filename = NULL;
 
@@ -1518,6 +1530,9 @@ class TaskController extends AccountBaseController
 
         }
 
+
+        
+
         $indtaskarray[] = [
             'userid' => $taskassignee,
             'subject' => $tasksubject,
@@ -1526,7 +1541,19 @@ class TaskController extends AccountBaseController
         ];
 
 
-        DB::table('marketingsalestask')->insert($indtaskarray);
+        if(in_array('admin', user_roles())){
+
+
+            DB::table('marketingsalestask')->insert($indtaskarray);
+            
+        }else{
+
+            $mktaskid=DB::table('marketingsalestask')->insertGetId($indtaskarray);
+
+            DB::table('adminmarketingtaskassign')->insert(['userid'=>$request->assignee_name,'taskid'=>$mktaskid]);
+
+
+        }
         
 
         return redirect()->route('dashboard');

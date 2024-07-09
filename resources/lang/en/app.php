@@ -125,6 +125,7 @@ return array (
         'digitalmarketing' => 'Digital Marketing Report',
         'toppagesbyclick' => 'Top Pages By Clicks',
         'monthlyenquiryreport' => 'Monthly Enquiry Report',
+        'dailytaskreport' => 'Daily Task Report',
         'monthlyadcampaign' => 'Monthly AD Campaign',
         'monthlyadcampaignreport' => 'Monthly AD Campaign Report',
         'monthlymarketingsalesreport' => 'Marketing Sales Report',

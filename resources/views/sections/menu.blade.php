@@ -366,7 +366,7 @@
 
                 <x-sub-menu-item :link="route('rankings.monthlyenquiryreport')" :text="__('app.menu.monthlyenquiryreport')" />
 
-                <x-sub-menu-item :link="route('rankings.monthlyadcampaignreport')" :text="__('app.menu.monthlyadcampaign')" />
+                <x-sub-menu-item :link="route('rankings.dailytaskreport')" :text="__('app.menu.dailytaskreport')" />
 
                 <x-sub-menu-item :link="route('rankings.monthlymarketingsalesreport')" :text="__('app.menu.monthlymarketingsalesreport')" />
 
