@@ -101,9 +101,9 @@ trait EmployeeDashboard
             DB::raw('(SUM(CASE WHEN leave_types.type_name="sick" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="sick" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) AS sick'),
             DB::raw('(SUM(CASE WHEN leave_types.type_name="optional" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="optional" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) AS optional'),
             DB::raw('(SUM(CASE WHEN leave_types.type_name="loss of pay" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="loss of pay" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) AS lop'),
-            DB::raw('(15 - (SUM(CASE WHEN leave_types.type_name="casual" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="casual" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remcl'),
-            DB::raw('(7 - (SUM(CASE WHEN leave_types.type_name="sick" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="sick" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remsick'),
-            DB::raw('(3 - (SUM(CASE WHEN leave_types.type_name="optional" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="optional" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remoptional')
+            DB::raw('((select eq.no_of_leaves from employee_leave_quotas as eq where eq.user_id=users.id and eq.leave_type_id=10) - (SUM(CASE WHEN leave_types.type_name="casual" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="casual" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remcl'),
+            DB::raw('((select eq.no_of_leaves from employee_leave_quotas as eq where eq.user_id=users.id and eq.leave_type_id=11) - (SUM(CASE WHEN leave_types.type_name="sick" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="sick" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remsick'),
+            DB::raw('((select eq.no_of_leaves from employee_leave_quotas as eq where eq.user_id=users.id and eq.leave_type_id=12) - (SUM(CASE WHEN leave_types.type_name="optional" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="optional" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remoptional')
         )
         ->join('users', 'users.id', '=', 'leaves.user_id')
         ->join('leave_types', 'leave_types.id', '=', 'leaves.leave_type_id')

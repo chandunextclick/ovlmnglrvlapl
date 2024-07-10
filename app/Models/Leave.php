@@ -138,7 +138,7 @@ class Leave extends BaseModel
 
     }
 
-    public static function byUserCount($user,$leavetypeid,$year = null)
+    public static function byUserCount($user,$leavetypeid = null,$year = null)
     {
         $setting = company();
 
@@ -161,16 +161,20 @@ class Leave extends BaseModel
         }
 
         $fullDay = Leave::where('user_id', $user->id)
-            ->whereBetween('leave_date', [$leaveFrom, $leaveTo])
-            ->where('status', 'approved')
-            ->where('leave_type_id',$leavetypeid)
-            ->where('duration', '<>', 'half day')
-            ->get();
+                ->whereBetween('leave_date', [$leaveFrom, $leaveTo])
+                ->where('status', 'approved')
+                ->when($leavetypeid !== null, function ($query) use ($leavetypeid) {
+                    return $query->where('leave_type_id', $leavetypeid);
+                })
+                ->where('duration', '<>', 'half day')
+                ->get();
 
         $halfDay = Leave::where('user_id', $user->id)
             ->whereBetween('leave_date', [$leaveFrom, $leaveTo])
             ->where('status', 'approved')
-            ->where('leave_type_id',$leavetypeid)
+            ->when($leavetypeid !== null, function ($query) use ($leavetypeid) {
+                return $query->where('leave_type_id', $leavetypeid);
+            })
             ->where('duration', 'half day')
             ->get();
 
