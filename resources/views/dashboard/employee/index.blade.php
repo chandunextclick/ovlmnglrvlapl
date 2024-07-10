@@ -403,6 +403,53 @@
                             </div>
                         @endif
 
+                        <div class="col-md-11 ml-3" style="background-color:white">
+                        <h4 class="m-2">Employee Leave Details</h4>
+                        <table id="example" class="table table-striped table-responsive" style="min-height:100px;">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Total</th>
+                                    <th>CL</th>  
+                                    <th>SICK</th>
+                                    <th>OPT</th>
+                                    <th>LOP</th>
+                                    <th>Rem CL</th>
+                                    <th>Rem Sick</th>
+                                    <th>Rem OPT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+
+                            foreach($employeeleavedetails as $value) 
+                            { 
+                            
+                            ?>
+
+                            @if (in_array('admin', user_roles()) || (user()->id==$value->id))  
+                           
+                                <tr>
+                                    <td><?= $value->name ?></td>
+                                    <td><?= $value->Total_leave_taken ?></td>
+                                    <td><?= $value->cl ?></td>
+                                    <td><?= $value->sick ?></td>
+                                    <td><?= $value->optional ?></td>
+                                    <td><?= $value->lop ?></td>
+                                    <td><?= $value->remcl ?></td>
+                                    <td><?= $value->remsick ?></td>
+                                    <td><?= $value->remoptional ?></td>
+                                </tr>
+                            @endif
+                                <?php 
+
+                                }
+                                ?>
+                            
+                            </tbody>
+
+                        </table>
+                        </div>
 
                     </div>
                 </div>

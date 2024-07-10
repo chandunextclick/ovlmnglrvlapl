@@ -87,6 +87,32 @@ trait EmployeeDashboard
         $this->adminindtasks = DB::table('marketingsalestask')->leftjoin('adminmarketingtaskassign','adminmarketingtaskassign.taskid','marketingsalestask.id')->leftJoin('users as assigned_users', 'assigned_users.id', '=', 'adminmarketingtaskassign.userid')->join('users','users.id','marketingsalestask.userid')->select('users.name','marketingsalestask.*','adminmarketingtaskassign.userid as assignedid','assigned_users.name as assigned_username')->orderBy('createdat', 'DESC')->get();
     
 
+        $firstDateOfYear = Carbon::now()->startOfYear()->toDateString();
+
+        $currentDate = Carbon::now()->toDateString();
+
+        $this->employeeleavedetails = DB::table('leaves')
+        ->select(
+            'users.id',
+            'users.name',
+            DB::raw('(SUM(CASE WHEN leaves.status="approved" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leaves.status="approved" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) +
+                     (SUM(CASE WHEN leaves.status="pending" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leaves.status="pending" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) AS Total_leave_taken'),
+            DB::raw('(SUM(CASE WHEN leave_types.type_name="casual" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="casual" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) AS cl'),
+            DB::raw('(SUM(CASE WHEN leave_types.type_name="sick" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="sick" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) AS sick'),
+            DB::raw('(SUM(CASE WHEN leave_types.type_name="optional" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="optional" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) AS optional'),
+            DB::raw('(SUM(CASE WHEN leave_types.type_name="loss of pay" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="loss of pay" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END)) AS lop'),
+            DB::raw('(15 - (SUM(CASE WHEN leave_types.type_name="casual" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="casual" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remcl'),
+            DB::raw('(7 - (SUM(CASE WHEN leave_types.type_name="sick" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="sick" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remsick'),
+            DB::raw('(3 - (SUM(CASE WHEN leave_types.type_name="optional" THEN 1 ELSE 0 END) - SUM(CASE WHEN (leave_types.type_name="optional" AND leaves.half_day_type IS NOT NULL) THEN 0.5 ELSE 0 END))) AS remoptional')
+        )
+        ->join('users', 'users.id', '=', 'leaves.user_id')
+        ->join('leave_types', 'leave_types.id', '=', 'leaves.leave_type_id')
+        ->join('employee_details', 'employee_details.user_id', '=', 'users.id')
+        ->whereBetween('leaves.leave_date', [$firstDateOfYear, $currentDate])
+        ->whereNull('employee_details.last_date')
+        ->groupBy('users.id')
+        ->orderBy('users.name')
+        ->get();
 
 
         if ($officeStartTime->gt($officeEndTime)) {
