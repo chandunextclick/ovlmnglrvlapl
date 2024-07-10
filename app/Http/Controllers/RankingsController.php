@@ -2571,7 +2571,7 @@ public function getdailytaskreport(Request $request){
                     ->from('tasks')
                     ->whereRaw('tasks.project_id = p.id');
             })
-            ->whereBetween('tr.created_at', [$date1, $date2]);
+            ->whereRaw('STR_TO_DATE(tr.created_at, "%Y-%m-%d") BETWEEN ? AND ?', [$date1, $date2]);
     }, 'result')
     ->selectSub(function ($query) {
         $query->select('users.name')
