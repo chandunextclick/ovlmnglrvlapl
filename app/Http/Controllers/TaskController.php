@@ -1533,12 +1533,14 @@ class TaskController extends AccountBaseController
 
         
 
-        $indtaskarray[] = [
+        $indtaskarray = [
             'userid' => $taskassignee,
             'subject' => $tasksubject,
             'description' => $taskdesc,
             'filename' => $filename
         ];
+
+
 
 
         if(in_array('admin', user_roles())){
