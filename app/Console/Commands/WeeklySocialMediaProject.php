@@ -21,14 +21,14 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 
-class MonthlyReportProject extends Command
+class WeeklySocialMediaProject extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'monthly-report-log';
+    protected $signature = 'weekly-smtask-log';
 
     /**
      * The console command description.
@@ -47,10 +47,12 @@ class MonthlyReportProject extends Command
 
     
         $projecttemplates = DB::select(DB::raw("
-                    SELECT DISTINCT(project_template_id) FROM `project_template_trigger` where triggertype='report'
+                    SELECT DISTINCT(project_template_id) FROM `project_template_trigger` where triggertype='smtask'
                 "));
 
-        $icount=1;    
+        $icount=1;   
+        
+        $currentDay = date('l');
 
         foreach ($projecttemplates  as $temp) {        
 
@@ -75,17 +77,40 @@ class MonthlyReportProject extends Command
                 $template=$template3;
             }
 
+
             $clients = DB::select(DB::raw("
 
-                    SELECT DISTINCT(client_id) FROM `project_template_trigger` where project_template_id=".$template->id."
+                    SELECT DISTINCT(client_id),users.name FROM `project_template_trigger`
+                    inner join users on users.id=project_template_trigger.client_id
+                    where project_template_id=".$template->id."
 
                 "));
         
 
-            foreach ($clients  as $client) {        
+            foreach ($clients  as $client) {    
+                
+                if($template->category->category_name == 'Googlemap Poster' and $client->name != 'Edoxi-London'){
 
 
-                $this->store($template,$client->client_id);
+                    $this->store($template,$client->client_id,$client->name);
+
+                }else{
+
+                
+                if(in_array($currentDay, ['Monday', 'Wednesday', 'Friday']) and $client->name != 'Edoxi-London'){
+
+
+                    $this->store($template,$client->client_id,$client->name);
+
+
+                }elseif(in_array($currentDay, ['Tuesday', 'Thursday']) and $client->name == 'Edoxi-London'){
+
+                            $this->store($template,$client->client_id,$client->name);
+
+                }
+
+                }
+
                
             }
             
@@ -98,7 +123,10 @@ class MonthlyReportProject extends Command
 
     }
 
-    public function store($template1,$clientid){
+    public function store($template1,$clientid,$name){
+
+
+                
 
 
                 // Get the current month abbreviation
@@ -111,14 +139,17 @@ class MonthlyReportProject extends Command
 
                 $startDate = date('Y-m-d');
 
-                $deadline = date('Y-m-d', strtotime($currentDate . ' +4 days'));
+                $deadline = date('Y-m-d', strtotime($currentDate . ' +6 days'));
+
+
+            
         
                 $project = new Project();
-                $project->project_name = $template1->project_name.' '.$currentMonth . '' . $currentYear;
+                $project->project_name = $template1->project_name.' for '.$name . ' on ' . date('Y-m-d', strtotime($currentDate . ' +7 days'));
                 $project->project_short_code = 'PRJ'.Project::max('id')+1;
                 $project->company_id = 4;
                 $project->start_date = date('Y-m-d');
-                $project->deadline = date('Y-m-d', strtotime($currentDate . ' +4 days'));
+                $project->deadline = date('Y-m-d', strtotime($currentDate . ' +6 days'));
                 $project->client_id = $clientid;
         
                 $project->category_id = $template1->category_id;
@@ -205,6 +236,8 @@ class MonthlyReportProject extends Command
                 }
         
                 DB::statement('CALL sp_update_project_dependent(?)', [$project->id]);
+
+
 
 
 
