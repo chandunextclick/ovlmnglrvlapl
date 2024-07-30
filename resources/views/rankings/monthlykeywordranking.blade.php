@@ -42,9 +42,9 @@ input[type="date"] {
 
             <div class="d-flex">
 
-            @if(user()->id!=54)
+            
 
-            <select class="form-control height-35 f-14" placeholder="yearmonth"  name="yearmonth" id="yearmonth"  required>
+            <select class="form-control height-35 f-14 {{ user()->id == 8 ? 'd-none' : '' }}" placeholder="yearmonth"  name="yearmonth" id="yearmonth"  required>
                             
             <?php
             
@@ -64,7 +64,7 @@ input[type="date"] {
             ?>
             </select> 
 
-            @endif
+
 
                 <select class="form-control height-35 f-14" placeholder="client"  name="client" id="client"  required>                 
                 <option <?= ($client == "EDOXI")? 'selected':'' ?> value="EDOXI">EDOXI</option>
