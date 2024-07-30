@@ -126,6 +126,7 @@ return array (
         'toppagesbyclick' => 'Top Pages By Clicks',
         'monthlyenquiryreport' => 'Monthly Enquiry Report',
         'dailytaskreport' => 'Daily Task Report',
+        'weeklytaskreport' => 'Weekly Task Report',
         'monthlyadcampaign' => 'Monthly AD Campaign',
         'monthlyadcampaignreport' => 'Monthly AD Campaign Report',
         'monthlymarketingsalesreport' => 'Marketing Sales Report',

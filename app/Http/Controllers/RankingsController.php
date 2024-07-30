@@ -2102,6 +2102,48 @@ public function dailytaskreport(Request $request)
 
 }
 
+public function weeklytaskreport(Request $request)
+{
+
+    $data['pageTitle']= 'Weekly Task Report';
+    $data['pushSetting']= $this->pushSetting;
+    $data['pusherSettings']= $this->pusherSettings;
+    if (in_array('admin', user_roles())){
+
+        $data['checkListCompleted']= $this->checkListCompleted;
+    }
+    
+    $data['checkListTotal']= $this->checkListTotal;
+    $data['activeTimerCount']= $this->activeTimerCount;
+    $data['unreadNotificationCount']= $this->unreadNotificationCount;
+    $data['appTheme']= $this->appTheme;
+    $data['appName']= $this->appName;
+    $data['user']= $this->user;
+    $data['sidebarUserPermissions']=$this->sidebarUserPermissions;
+    $data['companyName']=$this->companyName;
+    $data['userCompanies']=$this->userCompanies;
+    $data['currentRouteName']=$this->currentRouteName;
+    $data['unreadMessagesCount']=$this->unreadMessagesCount;
+    $data['worksuitePlugins']=$this->worksuitePlugins;
+    $data['company']=$this->company;
+
+
+
+    $data['date2'] = date("Y-m-d"); 
+
+    
+    $data['date1'] = date("Y-m-d", strtotime("-1 week", strtotime($data['date2'])));
+
+    $data['employees'] = DB::select("SELECT users.name,users.id FROM `users`
+                                    where status = 'active' 
+                                    and user_auth_id is not null
+                                    and company_id=4;");
+
+
+    return view('rankings.weeklytaskreport',$data);
+
+}
+
 
 
 public function monthlyadcampaign(Request $request)
@@ -2130,7 +2172,7 @@ public function monthlyadcampaign(Request $request)
     $data['company']=$this->company;
 
 
-    $url="https://nextclickonline.cyradrive.com/testenqapplication/getadcampaign";
+    $url="https://edoxi.cyradrive.com/hrapi/getadcampaign";
 
 
     $yeardata = date('Y',strtotime('-1 month'));
@@ -2307,7 +2349,7 @@ public function monthlyadcampaignreport(Request $request)
     $data['company']=$this->company;
 
 
-    $url="https://nextclickonline.cyradrive.com/testenqapplication/getadcampaignreport";
+    $url="https://edoxi.cyradrive.com/hrapi/getadcampaignreport";
 
 
     $yeardata = date('Y',strtotime('-1 month'));
@@ -2596,6 +2638,96 @@ public function getdailytaskreport(Request $request){
 
                         
     return Reply::dataOnly(['status' => 'success','dltask' => $dltask]);
+    
+}
+
+public function getweeklytaskreport(Request $request){
+    
+        
+    $date1 = $request->input('startdate');
+
+    $date2 = $request->input('enddate');
+
+    $empid = $request->input('empid');
+
+
+    if($empid!=0){
+
+
+        $taskcount = DB::select("SELECT
+                SUM(CASE WHEN tc.column_name = 'Completed' THEN 1 ELSE 0 END) AS cmpcount,
+                SUM(CASE WHEN tc.column_name <> 'Completed' THEN 1 ELSE 0 END) AS pendingcount,
+                SUM(CASE When p.priority='1' Then 1 Else 0 End) as prcount
+                FROM tasks t
+                INNER JOIN taskboard_columns tc ON tc.id = t.board_column_id
+                INNER JOIN projects p ON p.id = t.project_id
+                LEFT join task_users tu on tu.task_id = t.id
+                WHERE 
+                tu.user_id='$empid' AND 
+                (t.start_date BETWEEN '$date1' AND '$date2'
+                OR t.due_date BETWEEN '$date1' AND '$date2');");
+
+
+        $dltask = DB::select("SELECT 
+        t.heading,
+        p.project_name,
+        t.start_date,
+        t.due_date,
+        GROUP_CONCAT(DISTINCT u.name ORDER BY u.name SEPARATOR ', ') AS users_names,
+        tc.column_name AS taskstatus
+        FROM tasks t
+        INNER JOIN projects p ON p.id = t.project_id
+        INNER JOIN task_users tu ON tu.task_id = t.id
+        INNER JOIN users u ON u.id = tu.user_id
+        INNER JOIN taskboard_columns tc ON tc.id = t.board_column_id
+        WHERE 
+        u.id='$empid' and
+        (t.start_date BETWEEN '$date1' AND '$date2'
+        OR t.due_date BETWEEN '$date1' AND '$date2')
+        GROUP BY t.id");
+
+
+
+
+    }else{
+
+
+        $taskcount = DB::select("SELECT
+    SUM(CASE WHEN tc.column_name = 'Completed' THEN 1 ELSE 0 END) AS cmpcount,
+    SUM(CASE WHEN tc.column_name <> 'Completed' THEN 1 ELSE 0 END) AS pendingcount,
+    SUM(CASE When p.priority='1' Then 1 Else 0 End) as prcount
+    FROM tasks t
+    INNER JOIN taskboard_columns tc ON tc.id = t.board_column_id
+    INNER JOIN projects p ON p.id = t.project_id    
+    WHERE 
+    (t.start_date BETWEEN '$date1' AND '$date2'
+    OR t.due_date BETWEEN '$date1' AND '$date2');");
+
+
+        $dltask = DB::select("SELECT 
+        t.heading,
+        p.project_name,
+        t.start_date,
+        t.due_date,
+        GROUP_CONCAT(DISTINCT u.name ORDER BY u.name SEPARATOR ', ') AS users_names,
+        tc.column_name AS taskstatus
+        FROM tasks t
+        INNER JOIN projects p ON p.id = t.project_id
+        INNER JOIN task_users tu ON tu.task_id = t.id
+        INNER JOIN users u ON u.id = tu.user_id
+        INNER JOIN taskboard_columns tc ON tc.id = t.board_column_id
+        WHERE 
+        t.start_date BETWEEN '$date1' AND '$date2'
+        OR t.due_date BETWEEN '$date1' AND '$date2'
+        GROUP BY t.id");
+
+
+
+    }
+ 
+
+                        
+    return Reply::dataOnly(['status' => 'success','dltask' => $dltask,'taskcount' => $taskcount]);
     
 }
     

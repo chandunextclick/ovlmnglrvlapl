@@ -180,7 +180,8 @@ class TaskReportDataTable extends BaseDataTable
             ->addSelect('tasks.company_id') // Company_id is fetched so the we have fetch company relation with it)
             ->whereNull('projects.deleted_at')
             ->with('users', 'activeTimerAll', 'activeTimer')
-            ->groupBy('tasks.id');
+            ->groupBy('tasks.id')
+            ->orderBy('tasks.due_date', 'desc');
 
         if ($startDate !== null && $endDate !== null) {
             $model->where(function ($q) use ($startDate, $endDate) {

@@ -111,7 +111,7 @@
 
 function updateenqdata(startdate,enddate,enqtype){
 
-const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirygeneraldata'; // Replace with your server's endpoint URL
+const apiUrl = 'https://edoxi.cyradrive.com/hrapi/enquirygeneraldata'; // Replace with your server's endpoint URL
 
 
 // Create the data to send as JSON

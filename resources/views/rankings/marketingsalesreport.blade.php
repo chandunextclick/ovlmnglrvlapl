@@ -318,7 +318,7 @@ $.easyAjax({
 
 function updatesalesdata(month,year,course,item,coursecount){
 
-const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/getsalesddata'; // Replace with your server's endpoint URL
+const apiUrl = 'https://edoxi.cyradrive.com/hrapi/getsalesddata'; // Replace with your server's endpoint URL
 
 
 

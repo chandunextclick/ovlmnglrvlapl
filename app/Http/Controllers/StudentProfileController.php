@@ -187,7 +187,7 @@ public function enquiry(Request $request)
     $data['worksuitePlugins']=$this->worksuitePlugins;
     $data['company']=$this->company;
     
-    $url = 'https://nextclickonline.cyradrive.com/testenqapplication/enquiry'; // Replace with the URL you want to fetch data from
+    $url = 'https://edoxi.cyradrive.com/hrapi/enquiry'; // Replace with the URL you want to fetch data from
 
 
 
@@ -451,7 +451,7 @@ public function enquirydetail($id)
     $data['company']=$this->company;
     
 
-    $url = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirydetail'; // Replace with the URL you want to fetch data from
+    $url = 'https://edoxi.cyradrive.com/hrapi/enquirydetail'; // Replace with the URL you want to fetch data from
 
 
 

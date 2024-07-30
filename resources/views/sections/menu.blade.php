@@ -368,6 +368,8 @@
 
                 <x-sub-menu-item :link="route('rankings.dailytaskreport')" :text="__('app.menu.dailytaskreport')" />
 
+                <x-sub-menu-item :link="route('rankings.weeklytaskreport')" :text="__('app.menu.weeklytaskreport')" />
+
                 <x-sub-menu-item :link="route('rankings.monthlymarketingsalesreport')" :text="__('app.menu.monthlymarketingsalesreport')" />
 
             </div>

@@ -333,7 +333,7 @@
 
 function callPhpApi(enqid) {
 
-    const apiUrl = 'https://nextclickonline.cyradrive.com/testenqapplication/enquirylog'; // Replace with your server's endpoint URL
+    const apiUrl = 'https://edoxi.cyradrive.com/hrapi/enquirylog'; // Replace with your server's endpoint URL
     const id = enqid; // Replace with the ID you want to send
 
 // Create the data to send as JSON

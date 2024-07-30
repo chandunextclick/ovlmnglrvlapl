@@ -260,6 +260,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
 
     Route::match(['get', 'post'],'rankings/dailytaskreport', [RankingsController::class, 'dailytaskreport'])->name('rankings.dailytaskreport');
 
+    Route::match(['get', 'post'],'rankings/weeklytaskreport', [RankingsController::class, 'weeklytaskreport'])->name('rankings.weeklytaskreport');
+
     Route::match(['get', 'post'],'rankings/monthlydetailedrankingreport', [RankingsController::class, 'monthlydetailedrankingreport'])->name('rankings.monthlydetailedrankingreport');
 
     Route::match(['get', 'post'],'rankings/monthlymarketingsalesreport', [RankingsController::class, 'monthlymarketingsalesreport'])->name('rankings.monthlymarketingsalesreport');
@@ -279,6 +281,8 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
     Route::post('rankings/getupgradation', [RankingsController::class, 'getupgradation'])->name('rankings.getupgradation');
 
     Route::post('rankings/getdailytaskreport', [RankingsController::class, 'getdailytaskreport'])->name('rankings.getdailytask');
+
+    Route::post('rankings/getweeklytaskreport', [RankingsController::class, 'getweeklytaskreport'])->name('rankings.getweeklytask');
     
     Route::post('rankings/getkeywordrangerankings', [RankingsController::class, 'getkeywordrangerankings'])->name('rankings.getkeywordrangerankings');
     
