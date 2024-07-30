@@ -1,5 +1,8 @@
 <ul>
     <!-- NAV ITEM - DASHBOARD COLLAPSE MENU-->
+
+    @if(user()->id != 54)
+
     @if (in_array('admin', user_roles())
     || $sidebarUserPermissions['view_overview_dashboard'] == 4
     || $sidebarUserPermissions['view_project_dashboard'] == 4
@@ -33,6 +36,21 @@
         </x-menu-item>
     @endif
 
+    @endif
+
+    @if(user()->id == 54)
+
+    <x-menu-item icon="graph-up" :text="__('app.menu.monthlykeywordranking')" :link="route('rankings.monthlykeywordranking')">
+                <x-slot name="iconPath">
+                    <path
+                        d="M7.5 1.018a7 7 0 0 0-4.79 11.566L7.5 7.793V1.018zm1 0V7.5h6.482A7.001 7.001 0 0 0 8.5 1.018zM14.982 8.5H8.207l-4.79 4.79A7 7 0 0 0 14.982 8.5zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z" />
+                </x-slot>
+    </x-menu-item>
+
+    @endif
+
+    @if(user()->id != 54)
+
 <!-- NAV ITEM - CUSTOMERS COLLAPASE MENU -->
     @if (!in_array('client', user_roles()) && in_array('leads', user_modules()) && $sidebarUserPermissions['view_lead'] != 5 && $sidebarUserPermissions['view_lead'] != 'none')
         <x-menu-item icon="person" :text="__('app.menu.lead')" :link="route('leads.index')">
@@ -53,6 +71,7 @@
             </x-slot>
         </x-menu-item>
     @endif
+
 
 <!-- NAV ITEM - HR COLLAPASE MENU -->
     @if (!in_array('client', user_roles()) && (in_array('employees', user_modules()) || in_array('leaves', user_modules()) || in_array('attendance', user_modules()) || in_array('holidays', user_modules())) && ($sidebarUserPermissions['view_employees'] != 5 || $sidebarUserPermissions['view_leave'] != 5 || $sidebarUserPermissions['view_attendance'] != 5 || $sidebarUserPermissions['view_holiday'] != 5) && ($sidebarUserPermissions['view_employees'] != 'none' || $sidebarUserPermissions['view_leave'] != 'none' || $sidebarUserPermissions['view_attendance'] != 'none' || $sidebarUserPermissions['view_holiday'] != 'none' || $sidebarUserPermissions['view_shift_roster'] != 'none'))
@@ -419,6 +438,9 @@
 
 @endif
 
+
+
+
 @if (in_array('reports', user_modules()) && ($sidebarUserPermissions['view_customer_persona'] == 4  ))
 
 <x-menu-item icon="people" :text="__('app.menu.personal')" :link="route('sprofile.customerpersonaview')">
@@ -444,10 +466,6 @@
 
 
 @endif
-
-
-
-
 
 
 @if (in_array('reports', user_modules()) && ($sidebarUserPermissions['view_task_report'] == 4 || $sidebarUserPermissions['view_time_log_report'] == 4 || (isset($sidebarUserPermissions['view_expense_report']) && $sidebarUserPermissions['view_expense_report'] == 4) || $sidebarUserPermissions['view_finance_report'] != 5 || $sidebarUserPermissions['view_income_expense_report'] == 4 || $sidebarUserPermissions['view_leave_report'] == 4 || $sidebarUserPermissions['view_attendance_report'] == 4) && ($sidebarUserPermissions['view_task_report'] != 'none' || $sidebarUserPermissions['view_time_log_report'] != 'none' || $sidebarUserPermissions['view_finance_report'] != 'none' || $sidebarUserPermissions['view_income_expense_report'] != 'none' || $sidebarUserPermissions['view_leave_report'] != 'none' || $sidebarUserPermissions['view_attendance_report'] != 'none' || (isset($sidebarUserPermissions['view_expense_report']) && $sidebarUserPermissions['view_expense_report'] != 'none')))
@@ -490,6 +508,10 @@
             </x-slot>
 </x-menu-item>
 @endif
+
+
+
+
 <!-- NAV ITEM - REPORTS COLLAPASE MENU -->
     <!-- NAV ITEM - SETTINGS -->
     <x-menu-item icon="gear" :text="__('app.menu.settings')"
@@ -517,5 +539,8 @@
 
         </li>
     @endif
+
+@endif
+
 
 </ul>

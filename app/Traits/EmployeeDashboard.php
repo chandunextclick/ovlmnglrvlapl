@@ -480,6 +480,13 @@ trait EmployeeDashboard
             $this->contract = $this->getEmployeesWithEndDate('contract_end_date');
         }
 
+
+        if(user()->id == 54){
+
+            return redirect()->route('rankings.monthlykeywordranking');
+
+        }
+
         return view('dashboard.employee.index', $this->data);
     }
 
