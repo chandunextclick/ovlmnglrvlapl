@@ -803,6 +803,18 @@ public function monthlykeywordranking(Request $request)
 
     $yearmonth = date('F Y');
 
+    if(user()->id==54){
+
+        $yeardata = "2024";
+
+        $monthdata = "July";
+
+        $yearmonth = "July 2024";
+
+    }
+
+
+
     $client = "EDOXI";
     
 
