@@ -801,7 +801,7 @@ public function monthlykeywordranking(Request $request)
 
     $monthdata = date('F',strtotime('-1 month'));
 
-    $yearmonth = date('F Y',strtotime('-1 month'));
+    $yearmonth = date('F Y');
 
     $client = "EDOXI";
     
