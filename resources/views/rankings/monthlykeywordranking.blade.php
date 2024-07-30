@@ -44,7 +44,7 @@ input[type="date"] {
 
             
 
-            <select class="form-control height-35 f-14 {{ user()->id == 8 ? 'd-none' : '' }}" placeholder="yearmonth"  name="yearmonth" id="yearmonth"  required>
+            <select class="form-control height-35 f-14 {{ user()->id == 54 ? 'd-none' : '' }}" placeholder="yearmonth"  name="yearmonth" id="yearmonth"  required>
                             
             <?php
             
