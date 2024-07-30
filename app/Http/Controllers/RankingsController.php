@@ -797,9 +797,9 @@ public function monthlykeywordranking(Request $request)
 
 
 
-    $yeardata = date('Y',strtotime('-1 month'));
+    $yeardata = date('Y');
 
-    $monthdata = date('F',strtotime('-1 month'));
+    $monthdata = date('F');
 
     $yearmonth = date('F Y');
 
