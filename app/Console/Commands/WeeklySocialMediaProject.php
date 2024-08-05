@@ -91,8 +91,13 @@ class WeeklySocialMediaProject extends Command
                 
                 if($template->category->category_name == 'Googlemap Poster' and $client->name != 'Edoxi-London'){
 
+                    if (!in_array($currentDay, ['Saturday', 'Sunday'])){
 
-                    $this->store($template,$client->client_id,$client->name);
+                        $this->store($template,$client->client_id,$client->name);
+
+                    }
+
+                    
 
                 }else{
 
