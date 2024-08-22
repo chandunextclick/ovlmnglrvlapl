@@ -2234,7 +2234,11 @@ public function monthlyadcampaign(Request $request)
 
     $campaign = $data['campaign'];
 
+
+
+
     $campaignarray = array();
+
 
 foreach ($campaign as $value) { 
 

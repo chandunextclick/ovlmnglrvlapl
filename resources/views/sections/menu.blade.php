@@ -391,6 +391,10 @@
 
                 <x-sub-menu-item :link="route('rankings.monthlymarketingsalesreport')" :text="__('app.menu.monthlymarketingsalesreport')" />
 
+                <x-sub-menu-item :link="route('rankings.monthlyadcampaignreport')" :text="__('app.menu.monthlyadcampaignreport')" />
+
+                 
+
             </div>
         </x-menu-item>
 @endif
