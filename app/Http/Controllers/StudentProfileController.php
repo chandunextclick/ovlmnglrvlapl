@@ -52,7 +52,7 @@ public function getquizuserlead(Request $request)
         $data['worksuitePlugins']=$this->worksuitePlugins;
         $data['company']=$this->company;
         
-        $url = 'https://www.learning.edoxi.com/quizzes/getquizuserlead'; // Replace with the URL you want to fetch data from
+        $url = 'https://learning.edoxi.com/quizzes/getquizuserlead'; // Replace with the URL you want to fetch data from
     
     
     
@@ -83,9 +83,14 @@ public function getquizuserlead(Request $request)
             'param2' => $data['date2']
         );
         
+        var_dump($url);
+
+
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
+
+        var_dump($response);
 
         // var_dump($response);
 
@@ -131,7 +136,7 @@ public function getquizleaddetail()
     $data['worksuitePlugins']=$this->worksuitePlugins;
     $data['company']=$this->company;
 
-    $url = 'https://www.learning.edoxi.com/quizzes/getquizuserleaddetail';
+    $url = 'https://learning.edoxi.com/quizzes/getquizuserleaddetail';
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
