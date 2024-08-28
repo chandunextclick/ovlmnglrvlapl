@@ -83,7 +83,7 @@ public function getquizuserlead(Request $request)
             'param2' => $data['date2']
         );
         
-        var_dump($url);
+        // var_dump($url);
 
 
         $ch = curl_init($url);
