@@ -90,8 +90,6 @@ public function getquizuserlead(Request $request)
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
 
-        var_dump($response);
-
         // var_dump($response);
 
         // $data['quizlead'] = $response;
