@@ -2619,38 +2619,81 @@ public function getdailytaskreport(Request $request){
 
 
 
-    $dltask = DB::table('projects as p')
-    ->select('pc.category_name', 'u.name as Client')
-    ->selectSub(function ($query) use ($date1, $date2) {
-        $query->select('tr.result')
-            ->from('task_results as tr')
-            ->where('tr.task_id', function ($subquery) {
-                $subquery->select(DB::raw('min(tasks.id)'))
-                    ->from('tasks')
-                    ->whereRaw('tasks.project_id = p.id');
-            })
-            ->whereRaw('STR_TO_DATE(tr.created_at, "%Y-%m-%d") BETWEEN ? AND ?', [$date1, $date2]);
-    }, 'result')
-    ->selectSub(function ($query) {
-        $query->select('users.name')
-            ->from('task_results as res')
-            ->join('users', 'res.user_id', '=', 'users.id')
-            ->where('res.task_id', function ($subquery) {
-                $subquery->select(DB::raw('min(ts.id)'))
-                    ->from('tasks as ts')
-                    ->whereRaw('ts.project_id = p.id');
-            });
-    }, 'Author')
-    ->join('project_category as pc', 'p.category_id', '=', 'pc.id')
-    ->join('tasks as t', 't.project_id', '=', 'p.id')  // Assuming this join is necessary
-    ->join('users as u', 'u.id', '=', 'p.client_id')
-    ->where('p.completion_percent', '=', 100)
-    ->where('pc.dltask', '=', 1)
-    ->groupBy('p.project_name', 'pc.category_name', 'u.name') // Add 'u.name' to group by client name
-    ->orderByDesc('pc.category_name')
-    ->get();
+    // $dltask = DB::table('projects as p')
+    // ->select('pc.category_name', 'u.name as Client')
+    // ->selectSub(function ($query) use ($date1, $date2) {
+    //     $query->select('tr.result')
+    //         ->from('task_results as tr')
+    //         ->where('tr.task_id', function ($subquery) {
+    //             $subquery->select(DB::raw('min(tasks.id)'))
+    //                 ->from('tasks')
+    //                 ->whereRaw('tasks.project_id = p.id');
+    //         })
+    //         ->whereRaw('STR_TO_DATE(tr.created_at, "%Y-%m-%d") BETWEEN ? AND ?', [$date1, $date2]);
+    // }, 'result')
+    // ->selectSub(function ($query) {
+    //     $query->select('users.name')
+    //         ->from('task_results as res')
+    //         ->join('users', 'res.user_id', '=', 'users.id')
+    //         ->where('res.task_id', function ($subquery) {
+    //             $subquery->select(DB::raw('min(ts.id)'))
+    //                 ->from('tasks as ts')
+    //                 ->whereRaw('ts.project_id = p.id');
+    //         });
+    // }, 'Author')
+    // ->join('project_category as pc', 'p.category_id', '=', 'pc.id')
+    // ->join('tasks as t', 't.project_id', '=', 'p.id')  // Assuming this join is necessary
+    // ->join('users as u', 'u.id', '=', 'p.client_id')
+    // ->where('p.completion_percent', '=', 100)
+    // ->where('pc.dltask', '=', 1)
+    // ->groupBy('p.project_name', 'pc.category_name', 'u.name') // Add 'u.name' to group by client name
+    // ->orderByDesc('pc.category_name')
+    // ->get();
 
-         
+    
+    $dltask = DB::select("SELECT 
+                            pc.category_name, 
+                            u.name AS Client,
+                            (
+                                SELECT tr.result
+                                FROM task_results AS tr
+                                WHERE tr.task_id = (
+                                    SELECT MIN(tasks.id)
+                                    FROM tasks
+                                    WHERE tasks.project_id = p.id
+                                )
+                                AND STR_TO_DATE(tr.created_at, '%Y-%m-%d') BETWEEN '$date1' AND '$date2'
+                                LIMIT 1
+                            ) AS result,
+                            (
+                                SELECT users.name
+                                FROM task_results AS res
+                                JOIN users ON res.user_id = users.id
+                                WHERE res.task_id = (
+                                    SELECT MIN(ts.id)
+                                    FROM tasks AS ts
+                                    WHERE ts.project_id = p.id
+                                )
+                                LIMIT 1
+                            ) AS Author
+                        FROM 
+                            projects AS p
+                        JOIN 
+                            project_category AS pc ON p.category_id = pc.id
+                        JOIN 
+                            tasks AS t ON t.project_id = p.id
+                        JOIN 
+                            users AS u ON u.id = p.client_id
+                        WHERE 
+                            p.completion_percent = 100
+                            AND pc.dltask = 1
+                        GROUP BY 
+                            p.project_name, 
+                            pc.category_name, 
+                            u.name
+                        ORDER BY 
+                            pc.category_name DESC"
+                        );
 
                         
     return Reply::dataOnly(['status' => 'success','dltask' => $dltask]);
