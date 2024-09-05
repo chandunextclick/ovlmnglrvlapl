@@ -385,6 +385,7 @@ Route::group(['middleware' => ['auth', 'multi-company-select', 'email_verified']
             Route::get('archive', [ProjectController::class, 'archive'])->name('projects.archive');
             Route::post('apply-quick-action', [ProjectController::class, 'applyQuickAction'])->name('projects.apply_quick_action');
             Route::post('updateStatus/{id}', [ProjectController::class, 'updateStatus'])->name('projects.update_status');
+            Route::post('updateResult/{id}', [ProjectController::class, 'updateResult'])->name('projects.update_prjresult');
             Route::post('store-pin', [ProjectController::class, 'storePin'])->name('projects.store_pin');
             Route::post('destroy-pin/{id}', [ProjectController::class, 'destroyPin'])->name('projects.destroy_pin');
             Route::post('gantt-data', [ProjectController::class, 'ganttData'])->name('projects.gantt_data');

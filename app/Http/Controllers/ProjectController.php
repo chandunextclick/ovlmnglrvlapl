@@ -197,6 +197,22 @@ class ProjectController extends AccountBaseController
         return Reply::success(__('messages.updateSuccess'));
     }
 
+    public function updateResult(Request $request, $id)
+    {
+
+
+        DB::table('projects')
+            ->where('id', $id)
+            ->update([
+
+                'project_result' => $request->result,
+                
+            ]);
+
+
+        return Reply::success(__('messages.updateSuccess'));
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -784,6 +800,7 @@ class ProjectController extends AccountBaseController
             $hoursLogged = $this->project->times()->sum('total_minutes');
 
             $breakMinutes = ProjectTimeLogBreak::projectBreakMinutes($id);
+
 
             $this->hoursLogged = intdiv($hoursLogged - $breakMinutes, 60);
             $this->expenses = Expense::where(['project_id' => $id, 'status' => 'approved'])->sum('price');

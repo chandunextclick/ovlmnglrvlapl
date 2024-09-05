@@ -11,7 +11,10 @@ $memberIds = $project->members->pluck('user_id')->toArray();
 
 <div class="d-lg-flex">
     <div class="w-100 py-0 py-lg-3 py-md-0 ">
-        <div class="d-flex align-content-center flex-lg-row-reverse mb-4">
+            <div class="ml-lg-4 ml-md-0 ml-0 mr-4 mr-lg-0 mr-md-4">
+                <input type="text" class="height-35 f-14 p-2 border rounded form-control" id="projectresult" placeholder="Project Result" autocomplete="off" value="{{ $project->project_result ?? '' }}">
+            </div><br>
+        <div class="d-flex align-content-center flex-lg-row-reverse mb-4">         
             @if (!$project->trashed())
                 <div class="ml-lg-3 ml-md-0 ml-0 mr-3 mr-lg-0 mr-md-3">
                     @if ($editProjectPermission == 'all' || ($editProjectPermission == 'added' && $project->added_by == user()->id) || ($project->project_admin == user()->id))
@@ -35,6 +38,7 @@ $memberIds = $project->members->pluck('user_id')->toArray();
                         @endforeach
                     @endif
                 </div>
+
 
                 <div class="ml-lg-3 ml-md-0 ml-0 mr-3 mr-lg-0 mr-md-3">
                     <div class="dropdown">
@@ -84,6 +88,7 @@ $memberIds = $project->members->pluck('user_id')->toArray();
                             @endif
                         </div>
                     </div>
+                    
                 </div>
 
                 @if ($projectPin)
@@ -354,6 +359,30 @@ $memberIds = $project->members->pluck('user_id')->toArray();
 
 
 $(document).ready(function() {
+
+
+    $('#projectresult').change(function() {
+                
+            var result = $(this).val();
+
+            var url = "{{ route('projects.update_prjresult', $project->id) }}";
+
+            var token = '{{ csrf_token() }}'
+
+            $.easyAjax({
+                url: url,
+                type: "POST",
+                container: '.content-wrapper',
+                blockUI: true,
+                data: {
+                    result: result,
+                    _token: token
+                }
+            });
+
+
+
+    });
 
 
     //  modified by chandu to view incomplete list task on overview tab on 14/09/23 //

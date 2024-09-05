@@ -292,9 +292,39 @@ class TasksDataTable extends BaseDataTable
                 || ($this->changeStatusPermission == 'both' && (in_array(user()->id, $taskUsers) || $row->added_by == user()->id))
                 || ($row->project_admin == user()->id)
             ) {
+
                 $status = '<select class="form-control select-picker change-status" data-task-id="' . $row->id . '" data-project-id="' . $row->project_id . '">';
 
+                
+                
                 foreach ($taskBoardColumns as $item) {
+
+                    if(($item->column_name == 'Question Requested')||($item->column_name == 'Answered Received')){
+
+                        if (str_contains(strtolower($row->heading), 'upgradation')) {
+
+
+                            $status .= '<option ';
+
+                            if ($item->id == $row->board_column_id) {
+                                $status .= 'selected';
+                            }
+
+                            if (($item->column_name == 'Completed')&&($row->userActiveTimer)) {
+                                $status .= 'stop-timer data-time-id="'. $row->userActiveTimer->id .'"';
+                            }
+
+
+                            $status .= '  data-content="<i class=\'fa fa-circle mr-2\' style=\'color: ' . $item->label_color . '\'></i> ' . $item->column_name . '" value="' . $item->slug . '">' . $item->column_name . '</option>';
+                        
+
+
+                        }
+
+
+                    }else{
+
+
                     $status .= '<option ';
 
                     if ($item->id == $row->board_column_id) {
@@ -307,6 +337,12 @@ class TasksDataTable extends BaseDataTable
 
 
                     $status .= '  data-content="<i class=\'fa fa-circle mr-2\' style=\'color: ' . $item->label_color . '\'></i> ' . $item->column_name . '" value="' . $item->slug . '">' . $item->column_name . '</option>';
+                
+
+
+                    }
+  
+                
                 }
 
                 $status .= '</select>';
