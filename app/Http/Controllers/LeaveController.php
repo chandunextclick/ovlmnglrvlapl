@@ -70,18 +70,19 @@ class LeaveController extends AccountBaseController
         $currentDate = Carbon::now();
         $endOfYear = Carbon::now()->endOfYear();
 
+        $currentYear = date("Y");
+
         $this->employees = User::allEmployees(null, true, ($this->addPermission == 'all' ? 'all' : null));
 
         $this->optionaldates = Holiday::where('optional', 1)
                                 ->whereBetween('date', [$currentDate, $endOfYear])
                                 ->get();
 
-        $this->useroptional = DB::table('optional_userleave')->where('userid',user()->id)
-                                ->whereBetween('leave_date', [$currentDate, $endOfYear])
+        $this->useroptional = DB::table('optional_userleave')
+                                ->where('userid', user()->id)
+                                ->whereBetween(DB::raw("CONCAT($currentYear, '-', month, '-', date)"), [$currentDate, $endOfYear])
                                 ->get();
         
-        // var_dump($this->useroptional);
-
 
         if ($this->addPermission == 'added') {
             $this->defaultAssign = User::with('leaveTypes', 'leaveTypes.leaveType')->findOrFail(user()->id);
