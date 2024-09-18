@@ -12,8 +12,26 @@ $memberIds = $project->members->pluck('user_id')->toArray();
 <div class="d-lg-flex">
     <div class="w-100 py-0 py-lg-3 py-md-0 ">
             <div class="ml-lg-4 ml-md-0 ml-0 mr-4 mr-lg-0 mr-md-4">
-                <input type="text" class="height-35 f-14 p-2 border rounded form-control" id="projectresult" placeholder="Project Result" autocomplete="off" value="{{ $project->project_result ?? '' }}">
-            </div><br>
+            <div class="row">
+                <div class="col-md-4" id="prjresdiv">
+                    @if($prjresult->isEmpty())
+                        <input type="text" class="height-35 f-14 p-2 border rounded form-control" name="prjres[]" id="projectresult" placeholder="Project Result" autocomplete="off">
+                    @else
+
+                        @foreach($prjresult as $result)
+
+                            <input type="text" class="height-35 f-14 p-2 border rounded form-control" name="prjres[]" id="projectresult" placeholder="Project Result" autocomplete="off" value="{{$result}}">
+                        
+                        @endforeach
+
+                    @endif
+                </div>
+                <div class="col-md-4 my-auto">
+                <button class="bg-primary text-white p-1" id="prj-res-addmore">ADD More<button>
+                <button class="bg-warning text-white p-1 ml-1" id="prj-res-remove">Remove<button>
+                </div></div>
+                <button class="bg-success text-white p-1 mt-2" id="prj-res-submit">Submit<button>
+                </div><br>
         <div class="d-flex align-content-center flex-lg-row-reverse mb-4">         
             @if (!$project->trashed())
                 <div class="ml-lg-3 ml-md-0 ml-0 mr-3 mr-lg-0 mr-md-3">
@@ -360,10 +378,43 @@ $memberIds = $project->members->pluck('user_id')->toArray();
 
 $(document).ready(function() {
 
+    
 
-    $('#projectresult').change(function() {
+    $('#prj-res-remove').click(function() {
+
+
+        var inputs = $('#prjresdiv').children('input');
+        if (inputs.length > 1) {
+            inputs.last().remove();
+        } else {
+            alert('Atleast one input field is required');
+        }
+
+
+    });
+
+    $('#prj-res-addmore').click(function() {
+
+        // Example action on click: Appending a new input field
+        $('#prjresdiv').append('<input type="text" class="height-35 f-14 p-2 border rounded form-control" name="prjres[]" id="projectresult" placeholder="Project Result" autocomplete="off">');
+
+      });
+
+
+    $('#prj-res-submit').click(function() {
                 
-            var result = $(this).val();
+            var projectResults = [];
+
+            $('input[name="prjres[]"]').each(function() {
+
+                var value = $(this).val();
+                if (value.trim() !== "") {
+                    projectResults.push(value);
+                }
+
+            });
+
+            // console.log(projectResults);
 
             var url = "{{ route('projects.update_prjresult', $project->id) }}";
 
@@ -375,7 +426,7 @@ $(document).ready(function() {
                 container: '.content-wrapper',
                 blockUI: true,
                 data: {
-                    result: result,
+                    result: projectResults,
                     _token: token
                 }
             });

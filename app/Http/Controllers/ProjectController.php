@@ -200,15 +200,26 @@ class ProjectController extends AccountBaseController
     public function updateResult(Request $request, $id)
     {
 
+       
 
-        DB::table('projects')
-            ->where('id', $id)
-            ->update([
 
-                'project_result' => $request->result,
-                
-            ]);
+        $data = array_map(function($result) use ($id) {
+            return [
+                'project_id' => $id,
+                'result' => $result
+            ];
+        },$request->result);
 
+
+        $existingRecords = DB::table('project_results')->where('project_id', $id)->exists();
+
+        if ($existingRecords) {
+
+            DB::table('project_results')->where('project_id', $id)->delete();
+
+        }
+    
+        DB::table('project_results')->insert($data);
 
         return Reply::success(__('messages.updateSuccess'));
     }
@@ -800,6 +811,10 @@ class ProjectController extends AccountBaseController
             $hoursLogged = $this->project->times()->sum('total_minutes');
 
             $breakMinutes = ProjectTimeLogBreak::projectBreakMinutes($id);
+
+            $this->prjresult  = DB::table('project_results')
+                                ->where('project_id',$id)
+                                ->pluck('result');
 
 
             $this->hoursLogged = intdiv($hoursLogged - $breakMinutes, 60);
