@@ -50,16 +50,11 @@
                                 @endif
                                 @if (isset($leaveQuotas))
                                     @foreach ($leaveQuotas as $leaveQuota)
-                                        @if ($remainingLeaves == 0 && $leaveQuota->leaveType->id == 15)
+                                      
                                             <option value="{{ $leaveQuota->leaveType->id }}">
                                                 {{ mb_ucwords($leaveQuota->leaveType->type_name) }}
                                             </option>
-                                        @endif
-                                        @if ($leaveQuota->no_of_leaves > 0 && $leaveQuota->leaveType->id != 15)
-                                            <option value="{{ $leaveQuota->leaveType->id }}">
-                                                {{ mb_ucwords($leaveQuota->leaveType->type_name) }}
-                                            </option>
-                                        @endif
+                                    
                                     @endforeach
                                 @endif
                             </select>
