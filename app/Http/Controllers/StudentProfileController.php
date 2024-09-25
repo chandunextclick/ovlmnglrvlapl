@@ -100,9 +100,9 @@ public function getquizuserlead(Request $request)
         curl_close($ch);
 
     
-        if (!$data['quizlead']) {
-            die('Failed to fetch data.');
-        }
+        // if (!$data['quizlead']) {
+        //     die('Failed to fetch data.');
+        // }
     
     
         return view('employees.quizlead',$data);
