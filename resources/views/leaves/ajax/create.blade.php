@@ -49,11 +49,14 @@
                                     @endforeach
                                 @endif
                                 @if (isset($leaveQuotas))
+                            
                                     @foreach ($leaveQuotas as $leaveQuota)
-                                      
-                                            <option value="{{ $leaveQuota->leaveType->id }}">
-                                                {{ mb_ucwords($leaveQuota->leaveType->type_name) }}
-                                            </option>
+                                            
+                                    @if ($leaveQuota->leaveType->id != "12" || $remainingoptional > 0)
+                                        <option value="{{ $leaveQuota->leaveType->id }}">
+                                            {{ mb_ucwords($leaveQuota->leaveType->type_name) }}
+                                        </option>
+                                    @endif
                                     
                                     @endforeach
                                 @endif
@@ -105,9 +108,8 @@
                         <x-forms.label class="mt-3" fieldId="" :fieldLabel="__('app.date')" fieldRequired="true">
                         </x-forms.label>
                         <x-forms.input-group>
-                            <select class="form-control select-picker" name="optional_type_id" id="optional_type_id"
+                            <select class="form-control select-picker" name="optional_type_id" id="optional_type_id" 
                                 data-live-search="true">
-                                <option value="">--</option>
                                 @if (isset($optionaldates))
                                     @foreach ($optionaldates as $optionaldate)
                                         <option value="{{ $optionaldate->date->format('d-m-Y') }}" data-custom="{{ $optionaldate->occassion }}" data-chkid="0">{{ mb_ucwords($optionaldate->occassion) }} ( {{ mb_ucwords($optionaldate->date->format('d-m-Y')) }} )

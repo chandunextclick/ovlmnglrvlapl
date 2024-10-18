@@ -79,27 +79,30 @@ class LeaveController extends AccountBaseController
                                 ->get();
 
         $this->useroptional = DB::table('optional_userleave')
-                                ->where('userid', user()->id)
+                                ->where('userid',($this->addPermission == 'added')?user()->id:request()->default_assign)
                                 ->whereBetween(DB::raw("CONCAT($currentYear, '-', month, '-', date)"), [$currentDate, $endOfYear])
                                 ->get();
-        
+
+
+        $this->optavail = DB::select("SELECT (leave_types.no_of_leaves - COUNT(*)) as remaining_leaves
+                                FROM leave_types
+                                INNER JOIN leaves ON leave_types.id = leaves.leave_type_id
+                                WHERE leaves.user_id = :user_id
+                                    AND leave_types.id = :leave_type_id
+                                    AND YEAR(leaves.leave_date) = YEAR(CURRENT_DATE)
+                            ", [
+                                'user_id' => ($this->addPermission == 'added')?user()->id:request()->default_assign,
+                                'leave_type_id' => 12,
+                            ]);
+
+        $this->remainingoptional =  $this->optavail[0]->remaining_leaves;       
+    
 
         if ($this->addPermission == 'added') {
+
+            
             $this->defaultAssign = User::with('leaveTypes', 'leaveTypes.leaveType')->findOrFail(user()->id);
             $this->leaveQuotas = $this->defaultAssign->leaveTypes;
-
-            $this->clavail = DB::select("SELECT (leave_types.no_of_leaves - COUNT(*)) as remaining_leaves
-                                        FROM leave_types
-                                        INNER JOIN leaves ON leave_types.id = leaves.leave_type_id
-                                        WHERE leaves.user_id = :user_id
-                                            AND leave_types.id = :leave_type_id
-                                            AND YEAR(leaves.leave_date) = YEAR(CURRENT_DATE)
-                                    ", [
-                                        'user_id' => user()->id,
-                                        'leave_type_id' => 10,
-                                    ]);
-                    
-            $this->remainingLeaves = $this->clavail[0]->remaining_leaves;
 
            
   
@@ -109,28 +112,16 @@ class LeaveController extends AccountBaseController
 
             $this->defaultAssign = User::with('leaveTypes', 'leaveTypes.leaveType')->findOrFail(request()->default_assign);
             $this->leaveQuotas = $this->defaultAssign->leaveTypes;
-            $this->clavail = DB::select("SELECT (leave_types.no_of_leaves - COUNT(*)) as remaining_leaves
-                                        FROM leave_types
-                                        INNER JOIN leaves ON leave_types.id = leaves.leave_type_id
-                                        WHERE leaves.user_id = :user_id
-                                            AND leave_types.id = :leave_type_id
-                                            AND YEAR(leaves.leave_date) = YEAR(CURRENT_DATE)
-                                    ", [
-                                        'user_id' => request()->default_assign,
-                                        'leave_type_id' => 10,
-                                    ]);
-
-            $this->remainingLeaves = $this->clavail[0]->remaining_leaves;
-
-          
-
+         
 
         }
         else {
+
             $this->leaveTypes = LeaveType::all();
 
            
         }
+
 
         if (request()->ajax()) {
             $this->pageTitle = __('modules.leaves.addLeave');
@@ -166,7 +157,12 @@ class LeaveController extends AccountBaseController
         $totalAllowedLeaves = ($employeeLeaveQuota) ? $employeeLeaveQuota->no_of_leaves : $leaveType->no_of_leaves;
         $uniqueId = Str::random(16);
 
+        // dd($leaveType);
+
         if ($leaveType->monthly_limit > 0) {
+
+            
+
             if ($request->duration != 'multiple') {
                 $duration = match ($request->duration) {
                     'first_half', 'second_half' => 'half day',
@@ -261,6 +257,20 @@ class LeaveController extends AccountBaseController
                     }
                 }
 
+            }
+
+        }else{
+
+            $duration = match ($request->duration) {
+                'first_half', 'second_half' => 'half day',
+                default => $request->duration,
+            };
+
+            $leaveTaken = LeaveType::byUser($request->user_id, $request->leave_type_id, array('approved', 'pending'), $request->leave_date);
+
+
+            if (isset($leaveTaken[0]->leavesCount[0]) && ((($leaveTaken[0]->leavesCount[0]->count - ($leaveTaken[0]->leavesCount[0]->halfday * 0.5)) + (($duration == 'half day') ? 0.5 : 1)) > $totalAllowedLeaves)) {
+                return Reply::error(__('messages.leaveLimitError'));
             }
 
         }
